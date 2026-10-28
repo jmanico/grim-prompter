@@ -1,0 +1,47 @@
+---
+id: reference/tool-credential-boundaries
+title: Tool and Shared Credential Boundaries
+shape: reference
+last_reviewed: 2026-10-28
+---
+# Tool and Shared Credential Boundaries
+
+Use this supporting checklist under the [agent runbook](../runbook.md) whenever supplied evidence includes MCP servers, agent tools, connectors or operations sharing a service identity. Apply only the work allowed by the current stage or method; this is not another method execution or artifact type. Evidence-only and selection work inventories and routes; system modeling maps; analysis derives scenarios; challenge seeks counterevidence; treatment proposes verification; reporting preserves the findings and gaps. Change review compares supplied changes against the actual baseline, including authority changes for existing consumers. Method runs use these concerns only within their selected procedure and output contract. Quick analysis covers these concerns within its disclosed limits.
+
+## Inventory effective authority
+
+Build a sanitized per-tool authority map in the run folder's existing evidence/model artifacts. For each in-scope tool or operation record:
+
+- Server and executor, handler, intended read/write/admin operations and resource/tenant scope.
+- Caller/task identity and inbound client-to-server authentication and authorization, separately from the downstream execution principal and credential reference. An inbound MCP access token and a backend API key are different authority boundaries even if an implementation reuses a value. If an inbound token is forwarded or accepted downstream, examine issuer/audience acceptance and whose authority the backend actually checks; do not assume token passthrough preserves the intended boundary.
+- Credential source by safe symbolic reference, tools sharing it, configured downstream grants, and evidence of effective resource/operation restrictions. Never read or copy secret values to establish equality; configuration references can support sharing, but matching environment-variable names in separate deployments do not prove the same credential.
+- Where caller, tenant, tool, operation and resource are authorized; evidence relevant to whether generic request parameters, alternate handlers, subprocesses or delegated calls can reach broader authority.
+- Which runtime can obtain each credential, including environment inheritance, shared secret stores, credential brokers and fallback identities. Record issuer/audience, lifetime, rotation, revocation and audit attribution where evidenced; unknowns remain gaps.
+
+Use project-relative `path:start-end` evidence. A tool named “read” or annotated read-only is a claim until its implementation and enforcement support it. Do not infer live grants from a sample configuration, or enumerate production permissions by calling a service. Preserve contradictory documentation and implementation observations.
+
+## Model and analyze the boundary
+
+Represent tools, executors, principals, resources and credential-sharing relationships using existing system records, descriptions, dependencies and evidence references. Keep credential values out of the model. Carry this map through cumulative handoffs; use existing coverage and gap records rather than adding schema fields.
+
+Compare each tool's required authority with the backend credential's effective grants. One server credential may accumulate the union of several tools' permissions, including unrelated resources or tenants. Distinguish that credential exposure from the operations a particular handler can actually reach: a shared token alone does not establish an exploitable write path.
+
+State attacker capability in each threat’s existing `actor_assumptions`: input/content control, code execution in the tool runtime or host, or possession of a credential. Treat runtime compromise as an explicit prerequisite of a design hypothesis unless observation establishes it. Trace a grounded scenario from attacker influence or compromised runtime through a reachable handler, parameter, delegation or credential-access path to an unauthorized downstream operation. Consider confused-deputy use without token theft, credential disclosure and direct API use, cross-tenant resource selection, and loss of attribution. Name every prerequisite and the control that could defeat it. Also examine the shared failure domain: rotation, revocation or compromise of one credential can disrupt or expose every consumer. Do not require prompt injection as the entry point.
+
+Challenge with scoped counterevidence: independently enforced caller/resource authorization, fixed operation allowlists, inaccessible credentials or constrained execution may defeat a particular path even with a shared identity. Tool discovery filters, model instructions and approval UI alone do not prove backend enforcement. A successful denial on one handler does not cover another or a direct credential-use path. In-runtime handler checks can defeat input-only attacks but cannot constrain an attacker who controls that runtime and can use its credential directly. For that attacker, evaluate controls outside the compromised runtime: downstream grant limits, independently enforced identity checks, a separately protected broker or credential isolation. Scope every protective observation to the attacker capability it actually constrains.
+
+## Propose enforceable separation
+
+For grounded open threats, compare least-privilege per-tool identities, separate read and write identities, per-user/task downscoped grants, and a broker that independently authorizes each operation. Where a server only accepts one credential, consider separate deployments with different scoped identities and isolated credential access. Establish whether the provider and server support the proposed separation; unconfirmed support or runtime isolation belongs in open gaps linked through the treatment’s `gap_refs`, not invented configuration options or system records. Link `dependency_refs` only to existing modeled dependencies with the required evidence.
+
+Different key strings with the same broad grants do not reduce authority. Separate server names or processes do not establish isolation if both can obtain the write credential through their environment, parent process, secret store or a fallback. Explain residual shared-host compromise exposure and operational tradeoffs: deployment overhead, credential sprawl, rotation coordination, audit correlation and availability. Record proposed outcomes separately from observed controls; exact product/version prescriptions still require an exact resolved secure-coding pack with provenance under the selected prompt’s technology boundary.
+
+## Plan discriminating verification
+
+Propose checks tied to existing threat/control IDs, prerequisite evidence and an explicitly authorized future test environment. Do not run tools, use credentials or cause live effects during modeling. New verifications remain `not_run` with no result evidence.
+
+- Compare an allowed read with an attempted write/admin operation and an out-of-scope resource or tenant under the read identity. Pass requires allowed work to succeed and forbidden operations to be denied at the enforcement boundary without unauthorized effects; an attributable forbidden effect fails; unavailable grant, decision or outcome evidence is inconclusive.
+- Compare each handler path with generic dispatch, delegation, credential fallback and direct backend use where reachable under the stated attacker capability. For proposed isolation, verify that the read runtime cannot obtain or use the write identity. A visible key split alone is insufficient; unknown runtime access leaves that claim inconclusive.
+- Plan rotation/revocation checks for all consumers, including cached credentials and in-flight work, against the stated lifetime/revocation policy. For rotation, pass requires old authority to stop within policy and authorized service to continue under the replacement identity; continued forbidden authority or unintended outage fails. For revocation, pass requires old authority to stop within policy and consumers to follow the specified fail-closed or recovery behavior; continued forbidden authority or behavior contrary to that policy fails. Intentional service loss during emergency revocation is an availability impact to record, not automatically a failed revocation. Missing policy, timing or consumer observations are inconclusive. Require attribution to caller/task/tool without logging secrets.
+
+Report shared authority, verified restrictions, remaining blast radius, proposed separation, unrun checks and missing evidence. Record “not applicable” only with a reason grounded in the inspected scope; missing configuration is not proof that no shared credential exists.

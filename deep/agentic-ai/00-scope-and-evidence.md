@@ -26,6 +26,8 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
+Inventory each tool’s intended operations, downstream credential reference and shared consumers, separately from inbound MCP authentication. Capture evidence of grant scope and runtime credential access without reading secret values; missing configuration remains a gap. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
 Establish the supplied agentic review scope: planning, requesting authorization and executing an external action are different activities. Record original authorized business intent separately from planner instruction, persistent memory, delegated task authority, selected tool capability, execution credential, action approval and actual external effect. Do not infer any component or effect invariant when evidence is empty.

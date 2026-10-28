@@ -26,6 +26,8 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
+Map each tool to its downstream principal, effective grants and shared credential consumers, separately from caller-to-server authorization. Represent credential access and read/write runtime boundaries using existing records and descriptions, without new schema fields. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
 Build an authority map from supplied facts rather than treating the assistant as one trusted box. Use distinct supplied assets for planner, memory, delegate, tool executor and receiving service; actors for the caller, approver and execution principal; data for intent, task grant, untrusted content, action revision, approval and outcome evidence. A capability may be an entry point; link its execution identity without merging it with the human authorizer.

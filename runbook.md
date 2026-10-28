@@ -56,7 +56,7 @@ Otherwise, gather evidence from `PROJECT_ROOT` and write `RUN_DIR/SYSTEM_UNDER_R
 
 1. Existing architecture, security and threat-model documents, and READMEs.
 2. Entry points: routes, handlers, CLI commands, message consumers and scheduled jobs.
-3. Identity and authorization: sign-in, sessions, tokens, role and permission checks.
+3. Identity and authorization: sign-in, sessions, tokens, role and permission checks; tool/MCP server definitions, connector manifests and credential-source references by safe name, never secret value.
 4. Data stores, models, caches and file storage, and what sensitive data they hold.
 5. Calls to external services, webhooks and third-party integrations.
 6. Deployment and infrastructure configuration, CI/CD definitions, and dependency manifests.
@@ -85,6 +85,10 @@ Redactions: <each placeholder, its kind and location, or "none found after inspe
 ```
 
 Cite project-file evidence with a repository-relative path and line range. For caller-supplied files outside the project, use a safe source label and line range, recording their provenance without inventing a repository path. For direct caller statements, record the statement as a caller claim with a session/source label. Note the commit and any uncommitted changes. Unknowns stay as gaps. Never fill one with an assumed defect.
+
+### Shared tool and service credentials
+
+When supplied evidence includes MCP servers, agent tools, connectors or operations sharing a service identity, read [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md). Apply its stage-appropriate checks in every mode and architecture, including continued runs and challenge/change reviews that skip initial collection. Inventory per-tool required and effective authority, inbound versus downstream identities, credential sharing and enforceable separation. Preserve unsupported facts as gaps; do not access secret values or live services. This adds no artifact type or optional-method execution.
 
 ## Step 2a: Read named prior inputs and change evidence
 
