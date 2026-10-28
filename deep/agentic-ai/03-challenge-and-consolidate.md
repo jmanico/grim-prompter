@@ -30,7 +30,7 @@ Challenge shared-token scenarios against actual handler restrictions, downstream
 
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
-Challenge each supplied scenario at its causal boundary. For untrusted content/tool-result influence, seek evidence that the affected content cannot reach the privileged decision or that the exact call is denied without an external effect. For memory/delegation, compare original task authority with the source, scope and lifetime of the stored or delegated instruction. For approval/recovery, compare the approved subject/action/resource/parameters/revision with the attempted and effected values and distinguish cancelled, failed and unknown outcomes.
+Challenge each supplied scenario at its causal boundary. For untrusted content, tool discovery metadata or tool-result influence, seek evidence that the affected content cannot reach the privileged decision or that the exact call is denied without an external effect. For memory/delegation, compare original task authority with the source, scope and lifetime of the stored or delegated instruction. For approval/recovery, compare the approved subject/action/resource/parameters/revision with the attempted and effected values and distinguish cancelled, failed and unknown outcomes.
 
 A blocked call on one path does not establish safety for another tool, delegate, task or revision. Preserve contradictory observations and scoped protective counterexamples; an unsupported claim of sandboxing, human review, alignment or protocol enforcement remains a claim. Identify the next observation that could falsify the hypothesis.
 

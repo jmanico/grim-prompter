@@ -28,7 +28,7 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
-Include the per-tool authority map, shared credential blast radius, observed restrictions, proposed separation and remaining credential-access gaps. Carry linked unrun verification and operational tradeoffs into the action register. Report tool description poisoning coverage, definition/update provenance, cross-tool paths, scoped counterevidence, proposed controls and unrun verification. Keep missing exposure or outcome evidence explicit. Apply the stage-appropriate [tool and credential checks](../../reference/tool-credential-boundaries.md).
+Include the per-tool authority map, shared credential blast radius, observed restrictions, proposed separation and remaining credential-access gaps. Carry linked unrun verification and operational tradeoffs into the action register. Report tool description poisoning coverage, definition provenance, cross-tool paths, scoped counterevidence, proposed controls, unrun verification and evidence gaps. Apply the stage-appropriate [tool and credential checks](../../reference/tool-credential-boundaries.md).
 
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
