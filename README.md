@@ -59,6 +59,8 @@ Keep reports out of version control until you've reviewed them for sensitive det
 
 For more detail, see [running on your project](start-here.md#run-it-on-your-project).
 
+For MCP servers and agent tools, the review maps tools to backend credentials and effective permissions where evidence supports them, and records unknown grants or credential access as gaps. It examines shared-token blast radius and read/write separation. See [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md); conclusions still depend on the inspected evidence.
+
 ## Review the results
 
 1. **Check the scope and evidence.** Correct missing services, misunderstood boundaries, and unsupported assumptions before relying on the findings.

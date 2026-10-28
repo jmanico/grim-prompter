@@ -28,6 +28,8 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
+Include the per-tool authority map, shared credential blast radius, observed restrictions, proposed separation and remaining credential-access gaps. Carry linked unrun verification and operational tradeoffs into the action register. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
 Deliver the full cumulative TM_REPORT first, then the account of authorized intent, planning, memory, delegation, tool request authority, execution credential, approval and observed or unknown external outcome. Retain each original ID and distinguish analyzed paths from missing evidence. Explain the three scenario families as conditional mechanisms, not three mandatory defects.

@@ -21,6 +21,8 @@ For one run, use [Quick Agentic AI Threat Model](../../quick/agentic-ai.md) unde
 
 Analysis runs unattended. The questions below prepare evidence and do not pause the pipeline. If the caller separately requests an interview, limit it to five questions per batch and two batches unless extended; when answers stop, return the available evidence and gaps. Do not combine that optional interview with a required analysis handoff.
 
+For MCP servers and connectors, apply [Tool and Shared Credential Boundaries](../../reference/tool-credential-boundaries.md) throughout the chain, retaining the per-tool authority map and evidence gaps in cumulative artifacts.
+
 ## Evidence to bring
 
 1. What original business intent permits planning, approval requests and external actions separately? Which subject, action, resource, parameters and revision does it cover?

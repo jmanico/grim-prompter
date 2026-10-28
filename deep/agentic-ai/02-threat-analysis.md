@@ -26,6 +26,8 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
+Trace shared-credential excess authority through reachable handlers, delegated calls or credential access to a downstream effect. Include compromise and confused-deputy paths without requiring prompt injection; a broad shared token alone does not prove each handler can exercise every grant. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
 Analyze how the supplied task could exceed its authorized business intent. Ground each hypothesis in the precise writable content or delegated capability, reachable path and action-specific authority condition. Keep design hypotheses distinct from implementation/execution observations.

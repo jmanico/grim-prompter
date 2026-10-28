@@ -140,4 +140,5 @@ Reference files support prompts in this family and are not standalone catalog en
 | [Scope and Evidence Pattern](reference/scope-and-evidence-pattern.md) |
 | [System Model Pattern](reference/system-model-pattern.md) |
 | [Threat Analysis Pattern](reference/threat-analysis-pattern.md) |
+| [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md) |
 | [Treatment and Validation Pattern](reference/treatment-and-validation-pattern.md) |

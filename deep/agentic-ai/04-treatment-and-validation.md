@@ -28,6 +28,8 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
+Compare scoped per-tool identities, read/write separation and independently authorized brokering. If one credential per server requires separate deployments, link existing modeled dependencies and record unconfirmed runtime credential isolation or provider support as open treatment gaps. Plan allowed-read/denied-write and cross-resource checks, direct credential-use checks where reachable, and rotation/revocation checks with pass/fail/inconclusive outcomes. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
 Propose outcomes for the authority boundaries and hypotheses under review. For content influence, constrain the transition from untrusted content/tool data to privileged requests; compare restricting effectful capabilities during planning with a separately authorized execution step. For memory/delegation, preserve original task scope and provenance across storage and delegation, considering narrower task grants versus separate approval. For approval/recovery, bind execution to the authorized subject/action/resource/parameters/revision and reconcile unknown outcomes before proposing another external effect. Discuss loss of autonomy, approval delay, recovery effort and availability tradeoffs; none of these proposals establishes a control.
