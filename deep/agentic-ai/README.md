@@ -21,12 +21,12 @@ For one run, use [Quick Agentic AI Threat Model](../../quick/agentic-ai.md) unde
 
 Analysis runs unattended. The questions below prepare evidence and do not pause the pipeline. If the caller separately requests an interview, limit it to five questions per batch and two batches unless extended; when answers stop, return the available evidence and gaps. Do not combine that optional interview with a required analysis handoff.
 
-For MCP servers and connectors, apply [Tool and Shared Credential Boundaries](../../reference/tool-credential-boundaries.md) throughout the chain, retaining the per-tool authority map and evidence gaps in cumulative artifacts.
+For MCP servers and connectors, apply [Tool and Shared Credential Boundaries](../../reference/tool-credential-boundaries.md) throughout the chain, retaining tool definition exposure, the per-tool authority map and evidence gaps in cumulative artifacts.
 
 ## Evidence to bring
 
 1. What original business intent permits planning, approval requests and external actions separately? Which subject, action, resource, parameters and revision does it cover?
-2. Who can change untrusted content or tool-result data, and which exact path places it before a later privileged action decision? Is that influence observed or merely proposed?
+2. Who can change untrusted content, tool discovery metadata or tool-result data, and which exact path places it before a later privileged action decision? Is that influence observed or merely proposed?
 3. Who writes and reads persistent memory, how is source/task scope retained, and can a remembered preference become an action grant in a later task?
 4. What task authority does each delegate receive, what tools and credentials can it use, and what prevents returned instructions or further delegation from expanding that grant?
 5. Which tool capability is selected, which credential executes it, and where is action-specific authority checked independently of availability or authentication?
@@ -38,7 +38,7 @@ For MCP servers and connectors, apply [Tool and Shared Credential Boundaries](..
 
 Check original intent versus planning; untrusted content versus privileged action; memory provenance and lifetime; delegated scope; selected capability versus execution credential; exact approval versus generated request; retries/cancellation/recovery versus external outcomes; and receiving API resource/operation authorization. Trace attribution and sensitive data across those same boundaries.
 
-Examine three families: untrusted content/tool-result influence on later privileged calls; memory or delegated instructions expanding scope; and approval changes/retries/recovery causing unsupported or duplicate effects. Each needs supplied controllability, a path and action-specific authority evidence. Hostile text alone is neither tool execution nor an exploitable boundary. A supervisor, memory record or authenticated API is not inherently authoritative. Protective evidence can defeat a stated prerequisite without proving universal safety.
+Examine three families: untrusted content, tool discovery metadata or tool-result influence on later privileged calls; memory or delegated instructions expanding scope; and approval changes/retries/recovery causing unsupported or duplicate effects. Each needs supplied controllability, a path and action-specific authority evidence. Hostile text alone is neither tool execution nor an exploitable boundary. A supervisor, memory record or authenticated API is not inherently authoritative. Protective evidence can defeat a stated prerequisite without proving universal safety.
 
 The self-contained baseline uses security scenario lenses. [STRIDE per element](../../methods/stride-per-element.md) is a recommendation, not a performed method. Optional [STRIDE per interaction](../../methods/stride-per-interaction.md), [attack trees](../../methods/attack-trees.md) or [misuse and abuse cases](../../methods/misuse-abuse-cases.md) may be run separately and supplied as typed fragments. Their absence never disables baseline work. Keep technology rules in exact resolved external secure-coding packs; unavailable versions or packs remain unverified dependencies.
 

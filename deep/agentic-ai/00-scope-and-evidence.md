@@ -26,13 +26,13 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
-Inventory each tool’s intended operations, downstream credential reference and shared consumers, separately from inbound MCP authentication. Capture evidence of grant scope and runtime credential access without reading secret values; missing configuration remains a gap. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+Inventory each tool’s intended operations, downstream credential reference and shared consumers, separately from inbound MCP authentication. Capture evidence of grant scope and runtime credential access without reading secret values; missing configuration remains a gap. Inventory tool discovery metadata and its controller, model-visible versus reviewer-visible definitions, revision/cache history and post-approval update handling for tool description poisoning; missing evidence remains a gap. Apply the stage-appropriate [tool and credential checks](../../reference/tool-credential-boundaries.md).
 
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
 Establish the supplied agentic review scope: planning, requesting authorization and executing an external action are different activities. Record original authorized business intent separately from planner instruction, persistent memory, delegated task authority, selected tool capability, execution credential, action approval and actual external effect. Do not infer any component or effect invariant when evidence is empty.
 
-Inventory sanitized task grants, untrusted content/tool-result excerpts, memory provenance and write/read scope, delegation instructions, tool capabilities, credential scopes, approval records and attempt/outcome histories. Preserve original dates/revisions and contradictory accounts. Capture actual caller decisions as caller observation evidence with purpose decision; an agent-generated approval request is not such evidence.
+Inventory sanitized task grants, untrusted content/tool-result excerpts, tool definition snapshots, memory provenance and write/read scope, delegation instructions, tool capabilities, credential scopes, approval records and attempt/outcome histories. Preserve original dates/revisions and contradictory accounts. Capture actual caller decisions as caller observation evidence with purpose decision; an agent-generated approval request is not such evidence.
 
 Record precise needs: who controls the untrusted result; which path can influence which later action; what authority the delegate inherits; what binds approval to the subject, action, resource, parameters and revision; and what outcome exists after cancellation, lost response or retry. Keep optional models, rubrics and method fragments in sanitized typed attachments. Return TM_CONTEXT with evidence, inventory, objectives, exclusions and actionable gaps, without inventing topology or findings. This stage scopes; it does not execute the assistant or an optional method.
 
