@@ -1,0 +1,7 @@
+# Local analysis output may contain private system details.
+/threat-model/
+
+# Local credentials and operating-system metadata are not library content.
+.env
+.env.*
+.DS_Store

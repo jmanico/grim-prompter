@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-labelledby="title desc">
+  <title id="title">Grim Prompter hooded figure</title>
+  <desc id="desc">A dark hooded figure whose face is a glowing text prompt cursor, on a rounded pale lavender square.</desc>
+  <rect width="160" height="160" rx="34" fill="#EEEAF4"/>
+  <path d="M80 26C52 26 36 50 36 78v52h88V78c0-28-16-52-44-52Z" fill="#2B2140"/>
+  <path d="M80 46c-17 0-28 14-28 32v18c0 6 4 10 10 10h36c6 0 10-4 10-10V78c0-18-11-32-28-32Z" fill="#120C1F"/>
+  <path d="M62 74 74 82 62 90" fill="none" stroke="#B9A6E0" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="80" y="86" width="18" height="6" rx="3" fill="#B9A6E0"/>
+</svg>
