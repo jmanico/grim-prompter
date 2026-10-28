@@ -26,7 +26,7 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
-Challenge shared-token scenarios against actual handler restrictions, downstream authorization and runtime credential access. Different key strings or separate server names do not prove narrower authority; preserve evidence that independently enforced restrictions defeat a specific path. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+Challenge shared-token scenarios against actual handler restrictions, downstream authorization and runtime credential access. Different key strings or separate server names do not prove narrower authority; preserve evidence that independently enforced restrictions defeat a specific path. Challenge tool description poisoning against the actual metadata exposure and update paths, definition review/pinning and independent execution restrictions. A trusted signature, scan, approval dialog or denial on the poisoned tool does not establish protection for another tool or revision. Apply the stage-appropriate [tool and credential checks](../../reference/tool-credential-boundaries.md).
 
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 

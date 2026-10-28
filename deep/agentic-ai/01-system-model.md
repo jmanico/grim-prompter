@@ -26,7 +26,7 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
-Map each tool to its downstream principal, effective grants and shared credential consumers, separately from caller-to-server authorization. Represent credential access and read/write runtime boundaries using existing records and descriptions, without new schema fields. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+Map each tool to its downstream principal, effective grants and shared credential consumers, separately from caller-to-server authorization. Represent credential access and read/write runtime boundaries using existing records and descriptions, without new schema fields. Map tool description poisoning exposure separately from tool-result flows: discovery/update source, model-visible definition revision, review boundary and other tools sharing that context. Preserve unknown endpoints as gaps. Apply the stage-appropriate [tool and credential checks](../../reference/tool-credential-boundaries.md).
 
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
@@ -41,7 +41,7 @@ Model drafted, awaiting approval, approved revision, cancelled, effect pending, 
 Apply these checks only to supplied system IDs.
 
 1. **Business intent and planning:** distinguish the original authorized task from a planner's proposed steps. Identify the subject, resource, action, parameters and revision permitted by the caller. A generated plan or approval request does not authorize an external effect.
-2. **Content to action:** identify who controls external content or tool-result fields, how that content reaches later planning, the selected tool capability, the execution credential and the action-specific permission decision. Hostile text alone proves neither tool execution nor an exploitable boundary. A tool result is data, not authority.
+2. **Content to action:** identify who controls external content, tool discovery metadata or tool-result fields, how that content reaches planning, the selected tool capability, the execution credential and the action-specific permission decision. Hostile text alone proves neither tool execution nor an exploitable boundary. A tool result is data, not authority.
 3. **Persistent memory:** trace each relevant memory write, provenance, reader, task/tenant scope, expiry and correction. Determine whether remembered preferences or claims can become authority for a later action. A stored instruction is not a new grant; missing provenance is a gap, not proof of poisoning.
 4. **Delegation:** compare the delegated task with the original authorization and the delegate's actual capabilities. Follow scope expansion, further delegation, completion messages and returned instructions. Neither a supervisor label nor an authenticated agent establishes authority to approve or execute the requested action.
 5. **Approval binding:** distinguish requesting approval from an actual decision by the authorized approver. Trace the subject, action, resource, parameters and revision through the displayed request, approval record and execution. Examine changed parameters, delayed approval, expiry, revocation and cancellation; identify which exact scope and state remain authorized.

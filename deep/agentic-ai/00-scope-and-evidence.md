@@ -26,7 +26,7 @@ This prompt selects `agentic-ai` for its scope. Preserve other supplied architec
 
 ## Work
 
-Inventory each tool’s intended operations, downstream credential reference and shared consumers, separately from inbound MCP authentication. Capture evidence of grant scope and runtime credential access without reading secret values; missing configuration remains a gap. Apply the stage-appropriate [tool credential checks](../../reference/tool-credential-boundaries.md).
+Inventory each tool’s intended operations, downstream credential reference and shared consumers, separately from inbound MCP authentication. Capture evidence of grant scope and runtime credential access without reading secret values; missing configuration remains a gap. Inventory tool discovery metadata and its controller, model-visible versus reviewer-visible definitions, revision/cache history and post-approval update handling for tool description poisoning; missing evidence remains a gap. Apply the stage-appropriate [tool and credential checks](../../reference/tool-credential-boundaries.md).
 
 Adapt the questions to the caller's supplied agentic domain, intent, actions, resources and effects.
 
