@@ -36,7 +36,7 @@ Replace the scaffold challenge-scope reason and status with the actual challenge
 
 Keep one disposition per (source_model_id, source_namespace, source_id) across revisions. Preserve its original mapping ID and source_revision; add corroborating evidence to that mapping rather than a second per-revision alias.
 
-When tool or connector credentials are in scope, apply the current role's checks from [Tool and Shared Credential Boundaries](../reference/tool-credential-boundaries.md). Challenge shared-credential scenarios against their stated attacker capabilities: in-runtime checks may constrain input-only attacks but do not constrain an attacker controlling that runtime. Require independently enforced restrictions for the latter. Preserve scoped counterevidence and unknown runtime isolation; a renamed or newly issued key alone does not prove reduced authority.
+When tool or connector credentials are in scope, apply the current role's checks from [Tool and Shared Credential Boundaries](../reference/tool-credential-boundaries.md). Challenge shared-credential scenarios against their stated attacker capabilities: in-runtime checks may constrain input-only attacks but do not constrain an attacker controlling that runtime. Require independently enforced restrictions for the latter. Preserve scoped counterevidence and unknown runtime isolation; a renamed or newly issued key alone does not prove reduced authority. For tool description poisoning, a pinned, signed, scanned or approved definition does not protect another tool or a later revision.
 
 ## Trust, access and bounded work
 

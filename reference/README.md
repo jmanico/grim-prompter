@@ -22,5 +22,5 @@ The stage and quick-analysis patterns are runnable instructions with their own i
 | [`scope-and-evidence-pattern.md`](scope-and-evidence-pattern.md) | Scope and Evidence Pattern | 2026-10-28 |
 | [`system-model-pattern.md`](system-model-pattern.md) | System Model Pattern | 2026-10-28 |
 | [`threat-analysis-pattern.md`](threat-analysis-pattern.md) | Threat Analysis Pattern | 2026-10-28 |
-| [`tool-credential-boundaries.md`](tool-credential-boundaries.md) | Supporting checklist for MCP tools and shared service identities | 2026-10-28 |
+| [`tool-credential-boundaries.md`](tool-credential-boundaries.md) | Supporting checklist for MCP tools, tool description poisoning and shared service identities | 2026-10-28 |
 | [`treatment-and-validation-pattern.md`](treatment-and-validation-pattern.md) | Treatment and Validation Pattern | 2026-10-28 |

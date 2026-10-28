@@ -88,7 +88,7 @@ Cite project-file evidence with a repository-relative path and line range. For c
 
 ### Shared tool and service credentials
 
-When supplied evidence includes MCP servers, agent tools, connectors or operations sharing a service identity, read [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md). Apply its stage-appropriate checks in every mode and architecture, including continued runs and challenge/change reviews that skip initial collection. Inventory per-tool required and effective authority, inbound versus downstream identities, credential sharing and enforceable separation. Preserve unsupported facts as gaps; do not access secret values or live services. This adds no artifact type or optional-method execution.
+When supplied evidence includes MCP servers, agent tools, connectors or operations sharing a service identity, read [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md). Apply its stage-appropriate checks in every mode and architecture, including continued runs and challenge/change reviews that skip initial collection. Inventory per-tool required and effective authority, inbound versus downstream identities, credential sharing and enforceable separation. Treat model-visible tool definitions and their updates as a separate input surface for tool description poisoning. Preserve unsupported facts as gaps; do not access secret values or live services. This adds no artifact type or optional-method execution.
 
 ## Step 2a: Read named prior inputs and change evidence
 
