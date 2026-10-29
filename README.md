@@ -11,6 +11,9 @@
 
 **Threat model your project with Claude Code, Codex, or another coding agent.** Grim Prompter provides 36 architecture workflows and 29 method and analysis prompts. Your agent follows a structured review of the code, trust boundaries, threats, existing controls, and proposed mitigations, with evidence you can check.
 
+Inspired by [Trim Reaper](https://github.com/jmanico/trim-reaper) and
+[Dread Ledger](https://github.com/jmanico/dread-ledger).
+
 ## Install
 
 Clone once, then link the `threat-model` skill into your agent. Check for an existing installation before running these commands.
