@@ -127,6 +127,16 @@ See the [catalog](catalog.md) for every prompt and the [artifact contract](refer
 
 Send a pull request with the threat-modeling question or boundary your change addresses. Cite method sources, follow the [runbook](runbook.md), and keep private system data out of contributions.
 
+## About the author
+
+Created by Jim Manico of [manicode.ai](https://manicode.ai) and
+[Manicode Security](https://manicode.com).
+
+For teams looking to guide secure coding from the start,
+[manicode.ai](https://manicode.ai) offers commercial secure-coding prompts for AI
+assistants, designed to reduce avoidable security rework and the time and tokens
+spent on it.
+
 ## License
 
 Grim Prompter, including its prompts and documentation, is licensed under the [MIT License](LICENSE). Copyright (c) 2026 Jim Manico.
