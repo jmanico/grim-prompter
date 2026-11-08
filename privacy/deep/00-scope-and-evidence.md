@@ -1,7 +1,12 @@
 ---
 id: privacy/deep/00-scope-and-evidence
 title: Privacy Scope and Evidence
-shape: role
+shape: stage
+stage: 0
+inputs:
+  - SYSTEM_UNDER_REVIEW
+outputs:
+  - TM_CONTEXT
 last_reviewed: 2026-11-07
 sources: []
 ---
@@ -21,7 +26,7 @@ Establish the privacy decision and processing scope before modeling. Record affe
 
 Inventory bounded evidence for collection sources, notices and user choices, processing routes, recipients and vendors, retention and deletion, rights requests, international transfers, profiling and automated decisions, and assessment/breach-response dependencies. Treat policies and contracts as supplied claims about practice unless implementation or execution observations support them. Do not copy personal data or private contract content merely to make the inventory look complete.
 
-Record selected methods and profiles, actual source access, freshness limits, and why a profile's applicability is known or unknown. The default method selection is a request, never a performed execution. Retain source material and prior fragments as sanitized attachments; do not construct threats or fictitious system records at this stage. Missing geographical, contractual, purpose, or affected-person evidence becomes a specific evidence gap.
+Record selected methods and profiles, actual source access, freshness limits, and why a profile's applicability is known or unknown. Populate `selected_methods` with resolved requested and default `METHODS` under the runbook, including selections whose prompts are unavailable. The default method selection is a request, never a performed execution. Retain source material and prior fragments as sanitized attachments; do not construct threats or fictitious system records at this stage. Missing geographical, contractual, purpose, or affected-person evidence becomes a specific evidence gap.
 
 Preserve the review configuration and exclusions in the cumulative envelope using the privacy pattern. This includes explicit exclusions and the distinction between privacy-only and integrated scope. The next stage must recover the work from this file without earlier conversation.
 

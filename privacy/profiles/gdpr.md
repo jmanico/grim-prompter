@@ -22,7 +22,7 @@ For `lawful-basis`, map each purpose to its supplied basis and reasoning. Challe
 
 ## Principles and information
 
-Use the Commission's [principles guidance](https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en) and Article 5 for these topics:
+Use the Commission's [principles guidance](https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en) and Article 5 for these topics; use Articles 12–14 for the specific transparency and notice questions:
 
 | Topic ID | Evidence and assessment questions | Proposed verification |
 | --- | --- | --- |
@@ -39,7 +39,7 @@ For `automated-decisions`, assess profiling and decisions within Article 22's sc
 
 ## Governance, safeguards and assessment
 
-Use Articles 24–36 and the Commission's [obligations guidance](https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/obligations_en):
+Use Articles 24–39 (including Articles 37–39 for DPO designation, position and tasks) and the Commission's [obligations guidance](https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/obligations_en):
 
 | Topic ID | Evidence and assessment questions | Proposed verification |
 | --- | --- | --- |

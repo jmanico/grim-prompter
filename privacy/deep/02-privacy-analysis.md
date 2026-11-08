@@ -1,7 +1,12 @@
 ---
 id: privacy/deep/02-privacy-analysis
 title: Privacy Threat Analysis
-shape: role
+shape: stage
+stage: 2
+inputs:
+  - TM_SYSTEM_MODEL
+outputs:
+  - TM_ANALYSIS
 last_reviewed: 2026-11-07
 sources: []
 ---
@@ -21,7 +26,7 @@ For `REVIEW_SCOPE: privacy`, replace the shared pattern's mandatory security-bas
 
 Examine each in-scope processing activity for harm to people from authorized behavior, misuse, and attack. Consider collection beyond the stated need, purpose drift, unwanted linkage or identification, inference, surveillance, disclosure, coercive choices, unclear notices, inability to exercise rights, excessive retention, and failed disposal. Examine children, vulnerable groups, location/health/biometric information, profiling, automated decisions, and AI processing only where the model supports them. Distinguish confidentiality protection from appropriate recipient use.
 
-Read the scheduled `method-<method>.json` fragments named by the runbook. Preserve and import them under the shared pattern's fragment and identity rules, including their source snapshots, actual phases, evidence, and omissions. Do not rerun a method from an attachment or mark a missing procedure completed. Record bounded general privacy analysis separately from LINDDUN execution.
+Read the scheduled `method-<method>.json` fragments named by the runbook. Preserve and import them under the shared pattern's fragment and identity rules, including their source snapshots, actual phases, evidence, and omissions. Do not rerun a method from an attachment or mark a missing procedure completed. For a valid scheduled fragment, state that its method executed earlier in this run and was imported without re-execution at this stage; generic shared wording about carried-only imports applies to caller-supplied prior-run fragments, not these scheduled executions. Record bounded general privacy analysis separately from LINDDUN execution.
 
 For every supported scenario, identify the affected people, processing purpose and flow, actor capability (which may be legitimate authority), prerequisites, harm, protective counterexample, and evidence that could disconfirm it. Missing documentation alone is a gap, not an evidenced weakness. Keep impact on people distinct from business consequences.
 

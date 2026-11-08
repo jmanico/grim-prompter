@@ -21,7 +21,7 @@ Distinguish an enactment or effective date, a phased compliance date, a submissi
 
 ## Coverage representation
 
-Use the existing version 1.0 contract. Each declared topic gets a Coverage record with lens `privacy:<profile>:<topic>`, a system `target_ref` for the processing scope when available (otherwise null), and `method_ref: null`. Keep separate rows when processing activities have different applicability or findings. Profiles are not Methods; do not create method executions or add arbitrary JSON fields for profile results.
+Use the existing version 1.0 contract. Each declared topic gets a Coverage record with lens `privacy:<profile>:<topic>`, a system `target_ref` for the processing scope when available (otherwise null), and `method_ref: null`. Keep separate rows when processing activities have different applicability or findings. Profiles are not Methods; do not create method executions or add arbitrary JSON fields for profile results. Screening-only follow-ups retain their originating profile namespace: use `privacy:other-regimes-screening:<regime-id>:substantive-review` for a deferred substantive review, so it cannot be mistaken for execution of a future full profile.
 
 Write the Coverage `reason` using these labels:
 

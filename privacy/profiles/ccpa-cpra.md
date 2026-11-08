@@ -10,6 +10,7 @@ sources:
   - https://www.cppa.ca.gov/regulations/ccpa_updates.html
   - https://cppa.ca.gov/announcements/2025/20250923.html
   - https://oag.ca.gov/privacy/ccpa
+  - https://oag.ca.gov/privacy/databreach/reporting
 ---
 # CCPA and CPRA Privacy Assessment Profile
 
@@ -26,17 +27,23 @@ Use the [statute](https://www.cppa.ca.gov/pdf/20260101_ccpa_statute.pdf), especi
 | `access-correction-deletion` | Can requests locate, retrieve, correct or delete relevant data, subject to supported exceptions? | Plan synthetic requests across operational stores, derivatives, backups and vendors. |
 | `sale-sharing` | Identify sale/sharing relationships and opt-out paths, including applicable preference signals and age-related consent rules. | Define signal, anonymous-session and account-level propagation checks. |
 | `sensitive-information` | Identify covered sensitive information and uses requiring limitation handling. | Trace a limitation request through analytics and downstream recipients. |
-| `nondiscrimination` | Do exercising rights or refusing optional processing change service treatment or incentives? | Compare synthetic user paths and document the supplied justification. |
+| `nondiscrimination` | Under Civil Code section 1798.125 and regulations sections 7080–7081, do exercising rights or refusing optional processing change service treatment or incentives, and is any permitted difference supported? | Compare synthetic user paths and document the supplied justification. |
 
 ## Processing and enforcement boundaries
 
-Use the [CCPA regulations](https://www.cppa.ca.gov/regulations/pdf/ccpa_statute_eff_20260101.pdf), particularly sections 7002–7004, 7011–7014, 7020–7027 and 7050–7053. Despite its filename, this linked CPPA document contains the regulations.
+Use the [CCPA regulations](https://www.cppa.ca.gov/regulations/pdf/ccpa_statute_eff_20260101.pdf), particularly sections 7002–7004, 7011–7014, 7020–7027, 7050–7053, 7060–7063 and 7080–7081. The CPPA source index links this document under “CCPA Regulations (Effective January 1, 2026)”; its contents identify Title 11, Division 6, Chapter 1, and the numbered regulatory sections. The filename contains `statute`, but document identity was checked against the index and PDF contents rather than inferred from the filename.
 
 | Topic ID | Evidence and assessment questions | Proposed verification |
 | --- | --- | --- |
 | `purpose-retention` | Map collection, use, disclosure and retention to stated purposes and necessity; identify secondary use and excessive persistence. | Follow a purpose change and an expired synthetic record through queues and restores. |
-| `choice-request-handling` | Inspect choice symmetry, dark patterns, request channels, authorized agents, verification, response timing and denial handling. | Separate impersonation resistance from unnecessary friction; define pass/fail/inconclusive outcomes. |
+| `choice-request-handling` | Inspect choice symmetry, dark patterns, request channels, authorized agents, verification, response timing and denial handling. Sections 7060–7063 distinguish verified requests from opt-outs/limitation requests that must not require identity verification. | Separate impersonation resistance from unnecessary friction; define pass/fail/inconclusive outcomes. |
 | `recipient-contracts` | Compare actual recipient behavior with business/service-provider/contractor roles and supplied contract restrictions. | Trace opt-outs, correction and deletion obligations across recipient boundaries. |
+
+## Security and breach dependencies
+
+For `security-breach`, examine safeguards for the actual information and processing under Civil Code section 1798.100(e), and distinguish the narrower circumstances addressed by section 1798.150's private civil action. The [current CPPA statute compilation](https://www.cppa.ca.gov/pdf/20260101_ccpa_statute.pdf), pages 4 and 46–47, supports these distinct questions. Trace unauthorized access, disclosure, destructive changes and credential exposure; preserve evidence about protection and detection. Plan a synthetic incident timeline covering detection, containment, recipient coordination and decision evidence. Do not infer a private-action claim from every CCPA concern, or treat an audit exemption as eliminating security obligations.
+
+Separately screen California Civil Code [section 1798.81.5](https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=1798.81.5.&lawCode=CIV) for security duties and [section 1798.82](https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?sectionNum=1798.82.&lawCode=CIV) for breach notification. These are not interchangeable with CCPA applicability or audit thresholds. Use coverage lenses `privacy:ccpa-cpra:california-security-screening` and `privacy:ccpa-cpra:california-breach-screening`; identify the entity, data definitions, incident conditions, notification recipients, operative deadlines and exemptions that need confirmation. The [Attorney General's reporting guidance](https://oag.ca.gov/privacy/databreach/reporting) confirms separate notification/reporting duties. Full legislative pages were unavailable during this library review, so this is screening coverage only: obtain current statutory text before reaching a substantive conclusion, and record an open source gap where unavailable. Do not infer notification timing from the CCPA or invent an incident or notice.
 
 ## Risk assessments, audits and ADMT
 

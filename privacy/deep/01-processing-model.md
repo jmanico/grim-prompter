@@ -1,7 +1,12 @@
 ---
 id: privacy/deep/01-processing-model
 title: Privacy Processing Model
-shape: role
+shape: stage
+stage: 1
+inputs:
+  - TM_CONTEXT
+outputs:
+  - TM_SYSTEM_MODEL
 last_reviewed: 2026-11-07
 sources: []
 ---

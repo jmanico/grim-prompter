@@ -1,7 +1,12 @@
 ---
 id: privacy/deep/04-treatment-and-validation
 title: Privacy Treatment and Validation Planning
-shape: role
+shape: stage
+stage: 4
+inputs:
+  - TM_REVIEWED_MODEL
+outputs:
+  - TM_TREATMENT_PLAN
 last_reviewed: 2026-11-07
 sources: []
 ---

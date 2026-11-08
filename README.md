@@ -112,7 +112,7 @@ $threat-model deep web with privacy, using LINDDUN PRO and GDPR and CCPA/CPRA pr
 
 Use `/threat-model` in Claude Code and `$threat-model` in Codex. Privacy has a [quick entry point and full six-stage workflow](privacy/README.md). It inventories processing purposes and data lifecycles, examines harms to people, and records applicability, evidence and gaps for GDPR and CCPA/CPRA. [Other-regime screening](privacy/profiles/other-regimes-screening.md) identifies additional review needs; it is not full coverage of those regimes.
 
-Deep privacy defaults to LINDDUN PRO, quick privacy to LINDDUN GO; unavailable method source material leaves the method partial. Explicit method selections replace these defaults; `without methods` keeps the baseline privacy analysis. Reports support privacy/legal review and assessment preparation, not compliance certification. See the [fictional walkthroughs](privacy/examples.md).
+Deep privacy defaults to LINDDUN PRO, quick privacy to LINDDUN GO; unavailable method source material leaves the method partial. Explicit method selections replace these defaults; `without methods` keeps the baseline privacy analysis. Default privacy reports remain `partial` when required LINDDUN materials, actual GO participant contributions, or necessary organizational/applicability evidence are unavailable. The agent still completes supported work and lists the precise omissions. To request baseline privacy analysis without an optional method, say `without methods`; this does not remove regulatory evidence requirements. Reports support privacy/legal review and assessment preparation, not compliance certification. See the [fictional walkthroughs](privacy/examples.md).
 
 ## Methods
 

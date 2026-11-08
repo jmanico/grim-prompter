@@ -1,7 +1,12 @@
 ---
 id: privacy/deep/03-challenge-and-consolidate
 title: Privacy Challenge and Consolidation
-shape: role
+shape: stage
+stage: 3
+inputs:
+  - TM_ANALYSIS
+outputs:
+  - TM_REVIEWED_MODEL
 last_reviewed: 2026-11-07
 sources: []
 ---

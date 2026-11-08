@@ -26,6 +26,8 @@ For privacy requests without explicit method selection, quick selects [LINDDUN G
 
 The default profiles are [GDPR](profiles/gdpr.md) and [CCPA/CPRA](profiles/ccpa-cpra.md). Profile selection requests assessment; it does not establish legal applicability. An explicit profile list replaces these defaults. Always include [other-regime screening](profiles/other-regimes-screening.md), which identifies additional review needs without pretending those profiles are implemented. An explicit exclusion remains visible in scope and coverage.
 
+Default privacy reports remain `partial` when required LINDDUN materials, actual GO participant contributions, or necessary organizational/applicability evidence are unavailable. The agent still completes supported work and lists the precise omissions. To request baseline privacy analysis without an optional method, say `without methods`; this does not remove regulatory evidence requirements.
+
 ## Workflow and artifacts
 
 | Depth or stage | Privacy prompt | Run-folder output |

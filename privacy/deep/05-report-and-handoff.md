@@ -1,7 +1,12 @@
 ---
 id: privacy/deep/05-report-and-handoff
 title: Privacy Report and Handoff
-shape: role
+shape: stage
+stage: 5
+inputs:
+  - TM_TREATMENT_PLAN
+outputs:
+  - TM_REPORT
 last_reviewed: 2026-11-07
 sources: []
 ---

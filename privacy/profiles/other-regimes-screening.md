@@ -16,7 +16,7 @@ sources:
 
 Profile ID: `other-regimes-screening`. Use the [profile pattern](../../reference/privacy-profile-pattern.md) to screen possible obligations beyond the implemented GDPR and CCPA/CPRA profiles. **All entries here are screening-only.** Completing screening does not complete a substantive assessment under any listed regime. Source pages linked below were inspected for this revision on 2026-11-07; the full legal instruments and every jurisdiction's current amendments were not exhaustively reviewed.
 
-Record one Coverage row per relevant processing scope and topic. State geographic reach, organization/sector, affected people, data, purpose, source access and uncertainty. A supported exclusion may be `not_applicable`; an unresolved trigger is `partial`. If a trigger is supported, mark the bounded screening question assessed while creating a separate `not_assessed` coverage row with lens `privacy:<regime-id>:substantive-review` and an open gap for the unimplemented substantive review. Do not report that regime as fully assessed.
+Record one Coverage row per relevant processing scope and topic. State geographic reach, organization/sector, affected people, data, purpose, source access and uncertainty. A supported exclusion may be `not_applicable`; an unresolved trigger is `partial`. If a trigger is supported, mark the bounded screening question assessed while creating a separate `not_assessed` coverage row with lens `privacy:other-regimes-screening:<regime-id>:substantive-review` and an open gap for the unimplemented substantive review. Do not report that regime as fully assessed.
 
 | Topic ID / regime ID | Screening questions and required follow-up | Primary starting source |
 | --- | --- | --- |
