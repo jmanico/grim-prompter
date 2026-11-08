@@ -81,7 +81,7 @@ Locator: <repo-relative path:start-end>. <Sanitized summary or short excerpt.>
 G1 — Unknown: <what the evidence does not show and what would settle it>.
 ...
 Inspection coverage: <discovery scope, listing/search limits and source revision>.
-Files inspected: <one repo-relative path per file, full read or exact ranges read>.
+Files inspected: <one safe locator per source file, full read or exact ranges read>.
 Files or areas not inspected: <path or bounded area, skipped/unavailable, reason; exclusions labeled separately>.
 Unmapped trust boundaries: <gap label, suspected crossing, evidence basis, missing trace and what would settle it>.
 Redactions: <each placeholder, its kind and location, or "none found after inspection">.
@@ -99,7 +99,11 @@ Every versioned JSON output carries this ledger using the existing contract fiel
 
 Carry this information through all deep stages and through method, challenge, change and selection outputs. Selectors use the same existing JSON inventory, Coverage and Gap fields and summarize them in their Markdown companions. Evidence-only mode records the ledger in `SYSTEM_UNDER_REVIEW.md` without creating a JSON envelope. Do not reopen project files merely to populate coverage when only supplied evidence is authorized. If an older or supplied artifact has no ledger, record coverage as unknown and an open coverage gap; never reconstruct reads from citations. On continuation, preserve the prior ledger and label any newly authorized reads separately without overwriting predecessor artifacts.
 
-Place a short **Inspection coverage** section near the top of every readable analysis report, before findings: inspected scope and read extent, consequential omissions and reasons, unmapped boundaries, and whether evidence was freshly read or carried. Derive it from the JSON ledger and gaps. Avoid coverage percentages without a known denominator, and never equate file counts or a completed handoff with exhaustive analysis. In Step 6, check that the bundle ledger survived the JSON handoffs and that the readable summary agrees with it.
+For each inventory item, identify the collecting stage (or standalone mode) and source revision in `coverage`; carried access describes that original inspection, not a fresh read by the consuming stage. Preserve that provenance on handoff. If authorized inspection extends a partial read of the same file at the same revision, update its single entry with the combined extent and both inspection stages. Different source revisions remain distinct entries. A bundle-only inventory or a collection of citations does not establish source-file coverage: require explicit read extents and provenance, or disclose unknown coverage. Include supplied evidence files and run-folder input copies using safe locators; library prompt reads are instruction provenance, not project inspection coverage.
+
+For global `inspection-coverage`, use `assessed` only when inspection of the stated scope is finished without known omissions or unresolved discovery limits, `partial` for known unread portions or incomplete discovery, and `not_assessed` when inspection extent is unknown or no inspection occurred. Reserve `not_applicable` for an explicitly justified scope requiring no source inspection. Record exclusions in `scope.out_of_scope` as well as inventory reasons. None of these statuses certifies analytical completeness.
+
+Place a short **Inspection coverage** section near the top of every readable analysis report, immediately after any required opening disclaimer and before findings: inspected scope and read extent, consequential omissions and reasons, unmapped boundaries, and whether evidence was freshly read or carried. This required section supplements prompt-specific ordering even when a prompt calls its Markdown companion optional. Derive it from the JSON ledger and gaps (from the ledger itself in evidence-only mode). Avoid coverage percentages without a known denominator, and never equate file counts or a completed handoff with exhaustive analysis.
 
 ### Shared tool and service credentials
 
@@ -153,6 +157,8 @@ Each deep stage reads the complete previous file, not your memory of it. Envelop
 Write each envelope whole. Use the continuation contract's chunks only when a tool limit prevents writing one file. Then write `<name>.part-<index>.json` files, and reassemble and check them before the next stage reads them.
 
 ## Step 6: Check and report
+
+Check that the bundle's inspection ledger survived the JSON handoffs, that inventory provenance distinguishes original reads from carried evidence, and that the readable coverage summary agrees with the ledger and gaps.
 
 After writing, confirm each JSON file parses, using your file tools or the isolated parser form in the operating boundary. Reject duplicate object keys and non-finite numeric values rather than silently discarding or normalizing them; the basic parser example alone does not check these conditions. Check those separately when supported and disclose any unchecked conditions. Parsing is not contract validation, and this library ships no schema validator. Say which checks ran and which didn't.
 
