@@ -14,9 +14,12 @@ The stage and quick-analysis patterns are runnable instructions with their own i
 
 | File | What it is | Reviewed |
 | --- | --- | --- |
-| [`artifact-contract.md`](artifact-contract.md) | Portable Threat Model Artifact Contract | 2026-10-28 |
+| [`artifact-contract.md`](artifact-contract.md) | Portable Threat Model Artifact Contract | 2026-11-07 |
 | [`challenge-and-consolidation-pattern.md`](challenge-and-consolidation-pattern.md) | Challenge and Consolidation Pattern | 2026-10-28 |
-| [`composition-guide.md`](composition-guide.md) | Mixed Architecture Composition and Change Review | 2026-10-28 |
+| [`composition-guide.md`](composition-guide.md) | Mixed Architecture Composition and Change Review | 2026-11-08 |
+| [`privacy-analysis-pattern.md`](privacy-analysis-pattern.md) | Privacy Analysis and Composition Pattern | 2026-11-08 |
+| [`privacy-evidence-pattern.md`](privacy-evidence-pattern.md) | Privacy Code Evidence and Data Inventory | 2026-11-08 |
+| [`privacy-profile-pattern.md`](privacy-profile-pattern.md) | Privacy Regulatory Profile Pattern | 2026-11-08 |
 | [`quick-analysis-pattern.md`](quick-analysis-pattern.md) | Quick Threat Analysis Pattern | 2026-10-28 |
 | [`report-and-handoff-pattern.md`](report-and-handoff-pattern.md) | Report and Handoff Pattern | 2026-10-28 |
 | [`scope-and-evidence-pattern.md`](scope-and-evidence-pattern.md) | Scope and Evidence Pattern | 2026-10-28 |
@@ -24,3 +27,7 @@ The stage and quick-analysis patterns are runnable instructions with their own i
 | [`threat-analysis-pattern.md`](threat-analysis-pattern.md) | Threat Analysis Pattern | 2026-10-28 |
 | [`tool-credential-boundaries.md`](tool-credential-boundaries.md) | Supporting checklist for MCP tools, tool description poisoning and shared service identities | 2026-10-28 |
 | [`treatment-and-validation-pattern.md`](treatment-and-validation-pattern.md) | Treatment and Validation Pattern | 2026-10-28 |
+
+## Privacy across architectures
+
+The [privacy analysis pattern](privacy-analysis-pattern.md) adds processing inventories and harms to people to quick/deep reviews without a new JSON schema. The [privacy evidence pattern](privacy-evidence-pattern.md) defines bounded inspection and JSON-derived inventories. The [privacy profile pattern](privacy-profile-pattern.md) defines applicability, source provenance and obligation coverage. Start with the [privacy workflows](../privacy/README.md); combined runs apply both the architecture and privacy work to each cumulative handoff.

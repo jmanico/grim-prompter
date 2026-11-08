@@ -2,7 +2,7 @@
 id: reference/composition-guide
 title: Mixed Architecture Composition and Change Review
 shape: reference
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-08
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
@@ -28,6 +28,12 @@ Technology-specific instructions require an exact externally resolved secure-cod
 Availability comes from the catalog, file listing and prompt bodies supplied for the run, never from a remembered list. A prompt file present in this repository is runnable draft content. Being present is not an evaluation result or approval. A label without a prompt file is not runnable. Without a supplied catalog or prompt bodies, availability is unverified. An unavailable architecture module does not make a supplied boundary disappear.
 
 Runnable method roles are available for bounded separate use; selection does not run them. Check the [methods folder](../methods/) for which ones exist. A method name without a prompt is not runnable. Keep a general workflow, enumeration variants, full methodologies, privacy methods, safety/reliability analysis, workshops, taxonomies and scoring aids distinct. Do not add a taxonomy or score to make a short analysis appear deeper. Never invent workshop participants, votes or consensus. State objective, evidence, source prerequisites, effort and limitations for each selected method, and explain why omitted alternatives add no current value.
+
+## Privacy composition
+
+Privacy is an orthogonal review scope, not a boundary-owning architecture. Follow the [privacy composition pattern](privacy-analysis-pattern.md) for standalone and combined quick/deep runs. Combined runs apply the matching architecture and privacy instructions before writing one cumulative stage envelope. Selected methods execute at the [runbook](../runbook.md)'s explicit scheduling point; importing their fragments does not imply an additional execution.
+
+Retain processing activities, affected people, regulatory coverage and privacy harm alongside security findings. Profiles are reference instructions, not Method records or compliance attestations. Challenge/change reviews load the privacy pattern when the supplied baseline carries privacy configuration or coverage and derive `DATA_INVENTORY.md` from their own output JSON under the [inventory rules](privacy-evidence-pattern.md#data-inventory-companions). Changing purposes, recipients, retention, derived data or rights handling can alter privacy risk even when no authentication boundary changes. Preserve the baseline's selected profiles and source provenance; record newly needed applicability review as gaps rather than quietly discarding old coverage.
 
 ## Composition rules
 

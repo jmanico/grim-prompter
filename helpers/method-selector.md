@@ -2,7 +2,7 @@
 id: helpers/method-selector
 title: Threat Modeling Method Selector
 shape: role
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-08
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
 ---
@@ -25,6 +25,10 @@ Use the current registry's kind and source decision, not the name alone. Keep ge
 Compare a small set of plausible alternatives using lens method-alternative:<id> and explain why each is omitted, deferred or unverified. For interaction questions, prefer a scoped interaction analysis when source/target/data/authority evidence exists; a goal decomposition requires grounded prerequisites; a state-transition analysis additionally requires explicit states, actions, preconditions/effects and traversal bounds. These are selection prerequisites, not a substitute for the actual procedure. Full methodologies need their stated phases and business/risk inputs; do not label a quick scenario list as completed deep work. Avoid choosing both element and interaction variants by default if they answer the same current question. A catalog lookup or numeric score is never a replacement for threat modeling.
 
 Record method-availability:<id> with actual catalog, prompt-content and access evidence and source prerequisite gaps. Where the role or source procedure is unavailable, describe only the supported selection rationale and the exact excerpt needed, leaving dependent instructions unverified. Do not reproduce worksheets, decks, source code or technology recipes. Use supplied method-source decisions as project evidence; their metadata is not a claim that this run opened the original source. Preserve independent observations versus copied reports in evidence derived_from. Do not create new threats, controls, treatments, ratings or caller decisions during selection. In the Markdown companion, an optional short explanation may compare the proposed set, omitted alternatives and the cheapest next evidence step.
+
+## Privacy workflow selection
+
+For an end-to-end privacy objective, recommend the [privacy workflow](../privacy/README.md) and distinguish it from a single method. LINDDUN GO and PRO remain bounded procedures; neither supplies the full GDPR/CCPA profile review. In quick/deep runs, explicit method choices populate the runbook's `METHODS` schedule; this selector does not execute them. Privacy starts without optional methods or profiles; explicit selections and profile routing are defined by the [runbook](../runbook.md), and unavailable source material remains a gap rather than a completed substitute procedure.
 
 ## Selection and availability
 

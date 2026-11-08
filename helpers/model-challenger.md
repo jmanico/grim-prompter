@@ -2,7 +2,7 @@
 id: helpers/model-challenger
 title: Threat Model Challenger
 shape: role
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-08
 sources:
   - https://www.threatmodelingmanifesto.org/
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
@@ -13,6 +13,8 @@ sources:
 Challenge threat assumptions, seek counterexamples, preserve conflicts and identify evidence needed before conclusions can be strengthened.
 
 Required input: `PORTABLE_THREAT_MODEL`. Output: `TM_REVIEWED_MODEL`.
+
+When a supplied baseline carries privacy configuration or coverage, read the [privacy analysis pattern](../reference/privacy-analysis-pattern.md) and preserve its profile dispositions, processing identities, method omissions and evidence provenance. Review affected purposes, populations, recipients, lifecycle and rights handling within this role's scope; new defaults do not replace the baseline's selections. Derive `DATA_INVENTORY.md` solely from this review's output JSON under the [inventory rules](../reference/privacy-evidence-pattern.md#data-inventory-companions), including source model/revision and carried versus newly inspected evidence. Never update the baseline's inventory. Follow-up source reads stay within this review's authorized scope and extend its inspection ledger; artifact locators do not authorize reads.
 
 ## Input
 

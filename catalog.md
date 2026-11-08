@@ -12,7 +12,7 @@ Prepare evidence, choose a bounded analysis, or review a supplied threat model.
 
 | Prompt | What it does | Last content review | Sources |
 | --- | --- | --- | --- |
-| [Threat Modeling Architecture Selector](helpers/architecture-selector.md) | Choose one primary architecture for the system decision and bounded secondary scopes that add a distinct relevant boundary. Output a selection report, not an assertion that architecture roles ran. | 2026-10-28 | 2 |
+| [Threat Modeling Architecture Selector](helpers/architecture-selector.md) | Choose one primary architecture for the system decision and bounded secondary scopes that add a distinct relevant boundary. Output a selection report, not an assertion that architecture roles ran. | 2026-11-07 | 2 |
 | [Quick Agentic AI Threat Model](quick/agentic-ai.md) | Examine supplied task authority, memory, delegation, tools, approvals and external effects; preserve evidence and uncertainty. | 2026-10-28 | 2 |
 | [Quick AI and Machine Learning Threat Model](quick/ai-ml.md) | Examine learning-data influence, artifact identity and inference privacy from supplied evidence, returning a quick threat report with proposed treatments and verification. | 2026-10-28 | 4 |
 | [Quick API Threat Analysis](quick/api.md) | Analyze API object authority, privileged-operation sequencing and callback trust from supplied evidence, with proposed outcomes and verification. | 2026-10-28 | 6 |
@@ -49,9 +49,9 @@ Prepare evidence, choose a bounded analysis, or review a supplied threat model.
 | [Quick Serverless Threat Model](quick/serverless.md) | Examine event-driven function authority, document-state races and bounded work from supplied evidence, returning a quick threat report with proposed treatments and verification. | 2026-10-28 | 4 |
 | [Quick Service-Oriented Threat Model](quick/service-oriented.md) | Examine credential translation, message meaning and orchestration authority from supplied evidence, returning a quick report with proposed outcomes and verification. | 2026-10-28 | 2 |
 | [Quick Web Threat Analysis](quick/web.md) | Analyze browser request authority, rendered user content and private-response exposure from supplied web evidence, with proposed outcomes and verification. | 2026-10-28 | 7 |
-| [Threat Model Change Reviewer](helpers/change-reviewer.md) | Review a proposed system change against the actual supplied baseline, preserving identities, evidence and revision history. Produce a change review, not an implementation or approval. | 2026-10-28 | 2 |
-| [Threat Modeling Evidence Guide](helpers/evidence-guide.md) | Prepare a portable SYSTEM_UNDER_REVIEW evidence bundle from what the caller knows. Offer bounded questions only when the caller chooses guided preparation. Do not perform threat analysis or turn an unattended stage into an interview. | 2026-10-28 | 2 |
-| [Threat Modeling Method Selector](helpers/method-selector.md) | Choose the smallest useful method set for a stated decision and available evidence. Output a selection report; do not execute procedures or invent findings to justify a selection. | 2026-10-28 | 1 |
+| [Threat Model Change Reviewer](helpers/change-reviewer.md) | Review a proposed system change against the actual supplied baseline, preserving identities, evidence and revision history. Produce a change review, not an implementation or approval. | 2026-11-08 | 2 |
+| [Threat Modeling Evidence Guide](helpers/evidence-guide.md) | Prepare a portable SYSTEM_UNDER_REVIEW evidence bundle from what the caller knows. Offer bounded questions only when the caller chooses guided preparation. Do not perform threat analysis or turn an unattended stage into an interview. | 2026-11-08 | 2 |
+| [Threat Modeling Method Selector](helpers/method-selector.md) | Choose the smallest useful method set for a stated decision and available evidence. Output a selection report; do not execute procedures or invent findings to justify a selection. | 2026-11-08 | 1 |
 | [MITRE ATLAS Supporting Analysis](methods/atlas-enrichment.md) | Use MITRE ATLAS as a supporting AI-adversary catalog. Pin content 2026.09 (September 15, 2026), format 6.0.0, commit 3259f388d19cbcca11bacf12a0ef97f4198f711b. Answer which verified AI-adversary technique fits a supported scenario; use a broader modeling method to discover threats. AI use alone is not evidence of attack. Do not vendor the catalog or claim MITRE endorsement. | 2026-10-28 | 4 |
 | [MITRE ATT&CK® Supporting Analysis](methods/attack-enrichment.md) | Use MITRE ATT&CK® as a supporting behavior taxonomy: answer which verified techniques describe the supplied adversary behavior in its domain. Scope is ATT&CK v20.0 (October 13, 2026), not a claim to cover every technique. MITRE ATT&CK is a registered trademark of The MITRE Corporation. This independent prompt implies no endorsement. Use an enumeration or adversary-path method when the question is what threats exist rather than how supported behaviors map. | 2026-10-28 | 4 |
 | [Attack graphs](methods/attack-graphs.md) | You explore a supplied finite state-transition model with explicit prerequisites and effects, preserving cycles, conditional paths and traversal limits. | 2026-10-28 | 3 |
@@ -67,8 +67,8 @@ Prepare evidence, choose a bounded analysis, or review a supplied threat model.
 | [FMEA and FMECA Failure Analysis Companion](methods/fmea-fmeca.md) | Analyze failure modes and effects, with criticality only when justified, using GSFC-HDBK-8004, *Guideline for Failure Modes and Effects Analysis and Risk Assessment*, baseline/change 0, August 20, 2024. The method identity is `fmea-fmeca`; the kind is a failure/reliability analysis companion. This original bounded guide follows the handbook's analysis concepts, not its tabular layout or NASA project approval process. It is not a claim of NASA endorsement, mandatory applicability, universal criticality thresholds or safety assurance. | 2026-10-28 | 2 |
 | [Four-question workflow](methods/four-question-workflow.md) | You connect system scope, possible harm, proposed responses and an explicit adequacy check in a bounded four-question workflow. | 2026-10-28 | 1 |
 | [Hybrid Threat Modeling Method (hTMM)](methods/htmm.md) | Apply the full-methodology candidate `htmm` only within the bounded CMU/SEI-2018-TN-002 process, March 2018, sections 2.2 and 3.3. This is original facilitation and analysis of supplied records. It does not perform interviews, distribute cards, create stakeholder agreement or replace a formal risk/requirements process. The report describes a method subject to further pilot refinement. Do not present this as certification or assurance. | 2026-10-28 | 2 |
-| [LINDDUN GO](methods/linddun-go.md) | Analyze privacy concerns through a bounded LINDDUN GO card-and-hotspot discussion. This is the privacy workshop variant, pinned to GO deck v241203 (2024 DistriNet, KU Leuven). Use it when people can contribute system knowledge and discuss lawful card material. Use LINDDUN PRO instead for systematic sender/transfer/recipient analysis. Neither variant proves legal compliance or replaces the people who own privacy decisions. | 2026-10-28 | 2 |
-| [LINDDUN PRO](methods/linddun-pro.md) | Analyze privacy concerns through LINDDUN PRO's systematic interaction-based procedure. This is the privacy method variant pinned to the pre-release tutorial version 0.1, April 2023, and its official instructions. Use it when a data-flow model and applicable mapping/threat-tree guidance are available. Use LINDDUN GO instead for card-and-hotspot workshop discussion. Do not claim either variant establishes legal compliance. | 2026-10-28 | 3 |
+| [LINDDUN GO](methods/linddun-go.md) | Analyze privacy concerns through a bounded LINDDUN GO card-and-hotspot discussion. This is the privacy workshop variant, pinned to GO deck v241203 (2024 DistriNet, KU Leuven). Use it when people can contribute system knowledge and discuss lawful card material. Use LINDDUN PRO instead for systematic sender/transfer/recipient analysis. Neither variant proves legal compliance or replaces the people who own privacy decisions. | 2026-11-08 | 2 |
+| [LINDDUN PRO](methods/linddun-pro.md) | Analyze privacy concerns through LINDDUN PRO's systematic interaction-based procedure. This is the privacy method variant pinned to the pre-release tutorial version 0.1, April 2023, and its official instructions. Use it when a data-flow model and applicable mapping/threat-tree guidance are available. Use LINDDUN GO instead for card-and-hotspot workshop discussion. Do not claim either variant establishes legal compliance. | 2026-11-08 | 3 |
 | [Misuse and abuse cases](methods/misuse-abuse-cases.md) | You develop harmful actor goals alongside normal use cases, trace their relationships and identify candidate protective requirements. | 2026-10-28 | 2 |
 | [NIST SP 800-154 Data-Centric Threat Modeling](methods/nist-data-centric.md) | Apply the basic data-centric workflow in NIST SP 800-154 **Initial Public Draft, March 2016**, section 4. | 2026-10-28 | 2 |
 | [OCTAVE Allegro Threat Modeling](methods/octave-allegro.md) | Apply the information-asset and organizational-risk methodology in Caralli, Stevens, Young and Wilson, **Introducing OCTAVE Allegro**, CMU/SEI-2007-TR-012, May 2007. | 2026-10-28 | 1 |
@@ -81,7 +81,7 @@ Prepare evidence, choose a bounded analysis, or review a supplied threat model.
 | [STRIDE per element](methods/stride-per-element.md) | You examine each supplied system element with applicable STRIDE categories and record why each category does or does not apply. | 2026-10-28 | 1 |
 | [STRIDE per interaction](methods/stride-per-interaction.md) | You examine source–flow–target interactions using the pinned Microsoft template profile, including boundary context and explicit applicability decisions. | 2026-10-28 | 3 |
 | [Trike Threat Modeling](methods/trike.md) | Apply a bounded implementation of **Trike v1 Methodology Document, draft July 13, 2005**, by Paul Saitta, Brenda Larcom and Michael Eddington. | 2026-10-28 | 1 |
-| [Threat Model Challenger](helpers/model-challenger.md) | Challenge threat assumptions, seek counterexamples, preserve conflicts and identify evidence needed before conclusions can be strengthened. | 2026-10-28 | 3 |
+| [Threat Model Challenger](helpers/model-challenger.md) | Challenge threat assumptions, seek counterexamples, preserve conflicts and identify evidence needed before conclusions can be strengthened. | 2026-11-08 | 3 |
 
 ## Deep chains
 
@@ -126,6 +126,26 @@ Each chain runs 00 Scope and evidence → 01 System model → 02 Threat analysis
 | [Service-Oriented Threat Modeling](deep/service-oriented/README.md) | [00](deep/service-oriented/00-scope-and-evidence.md) · [01](deep/service-oriented/01-system-model.md) · [02](deep/service-oriented/02-threat-analysis.md) · [03](deep/service-oriented/03-challenge-and-consolidate.md) · [04](deep/service-oriented/04-treatment-and-validation.md) · [05](deep/service-oriented/05-report-and-handoff.md) | 2026-10-28 |
 | [Web Threat Modeling](deep/web/README.md) | [00](deep/web/00-scope-and-evidence.md) · [01](deep/web/01-system-model.md) · [02](deep/web/02-threat-analysis.md) · [03](deep/web/03-challenge-and-consolidate.md) · [04](deep/web/04-treatment-and-validation.md) · [05](deep/web/05-report-and-handoff.md) | 2026-10-28 |
 
+## Privacy workflows
+
+Privacy is a cross-cutting scope. Use the [privacy guide](privacy/README.md) for standalone or architecture-composed quick/deep runs and the [fictional walkthroughs](privacy/examples.md) for expected handoffs. Methods and profiles default to empty lists. Profile selection does not assert applicability or execute LINDDUN. The [manual acceptance walkthrough](privacy/acceptance-walkthrough.md) defines synthetic checks without claiming execution.
+
+| Prompt | Purpose | Last content review |
+| --- | --- | --- |
+| [Quick privacy review](privacy/quick.md) | Bounded processing inventory, privacy harms, profile coverage and proposed responses | 2026-11-08 |
+| [00 Scope and evidence](privacy/deep/00-scope-and-evidence.md) | Processing scope, provenance, applicability inputs and gaps | 2026-11-08 |
+| [01 Processing model](privacy/deep/01-processing-model.md) | People, purposes, data lifecycle and recipients | 2026-11-08 |
+| [02 Privacy analysis](privacy/deep/02-privacy-analysis.md) | Privacy scenarios, method imports and profile assessments | 2026-11-08 |
+| [03 Challenge and consolidate](privacy/deep/03-challenge-and-consolidate.md) | Counterevidence, uncertain applicability and preserved identities | 2026-11-07 |
+| [04 Treatment and validation](privacy/deep/04-treatment-and-validation.md) | Proposed outcomes and synthetic verification plans | 2026-11-07 |
+| [05 Report and handoff](privacy/deep/05-report-and-handoff.md) | Cumulative report, coverage matrix and assessment support | 2026-11-08 |
+
+| Profile/reference | Scope |
+| --- | --- |
+| [GDPR](privacy/profiles/gdpr.md) | EU GDPR applicability and scoped topic assessment |
+| [CCPA/CPRA](privacy/profiles/ccpa-cpra.md) | California applicability, rights, processing, assessments, audits and ADMT |
+| [Other-regime screening](privacy/profiles/other-regimes-screening.md) | Opt-in additional regimes and explicit substantive-review gaps |
+
 ## References
 
 Reference files support prompts in this family and are not standalone catalog entries.
@@ -142,3 +162,6 @@ Reference files support prompts in this family and are not standalone catalog en
 | [Threat Analysis Pattern](reference/threat-analysis-pattern.md) |
 | [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md) |
 | [Treatment and Validation Pattern](reference/treatment-and-validation-pattern.md) |
+| [Privacy Analysis and Composition Pattern](reference/privacy-analysis-pattern.md) |
+| [Privacy Profile Pattern](reference/privacy-profile-pattern.md) |
+| [Privacy Code Evidence and Data Inventory](reference/privacy-evidence-pattern.md) |

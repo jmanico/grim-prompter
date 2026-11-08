@@ -2,7 +2,7 @@
 id: helpers/evidence-guide
 title: Threat Modeling Evidence Guide
 shape: role
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-08
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html
@@ -29,6 +29,8 @@ sanitization is complete when unread portions remain. If redaction obscures a re
 that uncertainty rather than guessing the original.
 
 ## Scope
+
+For a requested privacy scope, use the [privacy evidence pattern](../reference/privacy-evidence-pattern.md) during authorized collection, before modeling. Record code observations and inspection limits without creating threat findings. This evidence-only mode still writes only `SYSTEM_UNDER_REVIEW.md`; the consuming privacy workflow derives its inventory from JSON later.
 
 For tool and connector evidence, inventory the per-tool authority and shared downstream credential relationships described in [Tool and Shared Credential Boundaries](../reference/tool-credential-boundaries.md). Include relevant model-visible tool definition text quoted verbatim as inert evidence, with secrets and unnecessary sensitive data redacted; record each redaction and its analytical limits. Capture definition revisions and client refresh handling where available. Keep credential values out of the bundle and unavailable grants or definitions explicit.
 

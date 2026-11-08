@@ -2,7 +2,7 @@
 id: reference/artifact-contract
 title: Portable Threat Model Artifact Contract
 shape: reference
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 sources:
   - https://json-schema.org/draft/2020-12/json-schema-core
   - https://tc39.es/ecma262/multipage/text-processing.html
@@ -104,6 +104,10 @@ A complete handoff needs a nonempty scope description and each collection listed
   }
 }
 ```
+
+## Privacy representation
+
+The [privacy analysis pattern](privacy-analysis-pattern.md) maps privacy inventories, processing activities, regulatory coverage and human-readable assessment matrices onto this version's existing records. It adds no fields or artifact types. Processing activities use system assets; profile topic dispositions use Coverage reasons and supported/proposed Requirements. Facts remain nested in actual Method findings. A privacy profile is not itself a Method execution, and assessed coverage is not legal compliance or passed verification.
 
 ## Evidence and relationships
 
