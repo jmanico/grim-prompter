@@ -2,7 +2,7 @@
 id: privacy/profiles/gdpr
 title: GDPR Privacy Assessment Profile
 shape: reference
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources:
   - https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng
   - https://commission.europa.eu/law/law-topic/data-protection/information-business-and-organisations/principles-gdpr_en
@@ -12,7 +12,7 @@ sources:
 ---
 # GDPR Privacy Assessment Profile
 
-Profile ID: `gdpr`. Apply the [profile pattern](../../reference/privacy-profile-pattern.md) to each in-scope processing activity. These questions support engineering and assessment handoffs under EU GDPR; national variations, sector rules and case-specific interpretations require their own evidence. UK GDPR is screened separately. The source pages below were inspected for this library revision on 2026-11-07; that is not a freshness claim for a future run.
+Profile ID: `gdpr`. Apply the [profile pattern](../../reference/privacy-profile-pattern.md) to each in-scope processing activity. These questions support engineering and assessment handoffs under EU GDPR; national variations, sector rules and case-specific interpretations require their own evidence. UK GDPR is covered only by the opt-in other-regimes screening. The source pages below were inspected for this library revision on 2026-11-07; that is not a freshness claim for a future run.
 
 ## Applicability and legal grounds
 

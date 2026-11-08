@@ -41,7 +41,7 @@ $threat-model quick privacy without methods
 $threat-model deep api with LINDDUN PRO
 ```
 
-The final example adds a method to the security architecture workflow; it does not implicitly request the full privacy profiles. See [the privacy guide](../../privacy/README.md). A continuation recovers its saved configuration; a change or challenge preserves and reviews existing privacy coverage rather than resetting it to current defaults.
+The final example adds a method to the security architecture workflow; it keeps `REVIEW_SCOPE: security`, adds no profiles and writes no data inventory. See [the privacy guide](../../privacy/README.md). A continuation recovers its saved configuration; a change or challenge preserves and reviews existing privacy coverage rather than resetting it to current defaults.
 
 Architecture ids are the basenames without `.md` in `quick/`, such as `web`, `api`, `microservices`, `rag` or `agentic-ai`. Method ids use the same convention in `methods/`, such as `stride-per-element` or `linddun-go`; they are not paths or frontmatter's path-qualified prompt ids.
 

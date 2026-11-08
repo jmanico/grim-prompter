@@ -10,6 +10,8 @@ State the mode and intended stages before work:
 - **Review-only:** review an existing candidate with the independent reviewers and Astra's decision; record both builds as skipped.
 - **Focused:** a bounded correction may use selected reviewers with reasons for omitted stages. Changes to security guarantees or bypass handling require a Daybreak attempt. An explicit full request overrides this exception.
 
+Contributors without access to a required model record that stage as unavailable; maintainers own the remaining invocations and disposition before merge. This does not waive required stages or authorize a claim that the full lineup completed.
+
 A failed invocation is unavailable, not passed or skipped. Continue useful work while disclosing the missing stage; never silently substitute a model or claim a complete lineup without all required usable results.
 
 ## Stages
@@ -24,7 +26,7 @@ A failed invocation is unavailable, not passed or skipped. Continue useful work 
 | Additional review when requested | Mythos 5.1, `claude-mythos-5-1` | Perform the caller-requested independent review; record unavailable access without substitution. This supplements the required reviews. |
 | Final decision | Astra, `gpt-6-astra` | Read all results, resolve findings against evidence, obtain review of fixes and check the final commit. Recommend disposition; merge only with user authorization and passing required checks. |
 
-Give independent reviewers the same frozen SHA, intent, complete diff, full changed files and repository guidance. Do not share another reviewer's findings before their initial result. Reviewers propose fixes without editing the shared branch. Require a recommendation with exact locations, evidence and concrete corrections, separating new regressions from inherited limitations.
+Use fresh review sessions with no build-session context or peer findings, including when the editorial reviewer uses the same model as the second builder. Independence here means separate execution and context, not a claim that every stage uses a different model. Give independent reviewers the same frozen SHA, intent, complete diff, full changed files and repository guidance. Do not share another reviewer's findings before their initial result. Reviewers propose fixes without editing the shared branch. Require a recommendation with exact locations, evidence and concrete corrections, separating new regressions from inherited limitations.
 
 ## Invocation and evidence
 

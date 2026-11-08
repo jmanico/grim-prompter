@@ -110,7 +110,7 @@ Run a standalone privacy review, or include privacy throughout an architecture r
 $threat-model deep web with privacy, using LINDDUN PRO and GDPR and CCPA/CPRA profiles
 ```
 
-Use `/threat-model` in Claude Code and `$threat-model` in Codex. Privacy has a [quick entry point and full six-stage workflow](privacy/README.md). Both privacy scopes start with code evidence, processing purposes, data lifecycles and harms to people, with `METHODS: []` and `PRIVACY_PROFILES: []`. A bounded evidence pass precedes modeling; each quick/final report includes `DATA_INVENTORY.md` derived from its JSON.
+Use `/threat-model` in Claude Code and `$threat-model` in Codex. Privacy has a [quick entry point and full six-stage workflow](privacy/README.md). Both privacy scopes start with code evidence, processing purposes, data lifecycles and harms to people, with `METHODS: []` and `PRIVACY_PROFILES: []`. A bounded evidence pass precedes modeling; each quick/final report is accompanied by `DATA_INVENTORY.md` derived from its JSON.
 
 LINDDUN GO/PRO, GDPR, CCPA/CPRA and [other-regime screening](privacy/profiles/other-regimes-screening.md) run only when explicitly selected. Missing prerequisites keep selected work partial; unrequested legal profiles create no applicability gaps. Reports support engineering and privacy/legal review, without certifying compliance. See [LINDDUN input instructions](start-here.md#supply-linddun-material), [fictional walkthroughs](privacy/examples.md) and the [manual acceptance walkthrough](privacy/acceptance-walkthrough.md).
 
