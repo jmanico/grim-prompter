@@ -11,6 +11,8 @@ sources:
 
 Choose one primary architecture for the system decision and bounded secondary scopes that add a distinct relevant boundary. Output a selection report, not an assertion that architecture roles ran.
 
+Privacy is a cross-cutting review scope, not an architecture candidate. For a [privacy review](../privacy/README.md), select the actual architecture from system evidence for topology and boundary ownership. Do not add an architecture id named `privacy` or claim the selected architecture's security analysis ran.
+
 ## Scope
 
 Input: a SYSTEM_UNDER_REVIEW description or a portable version 1.0 model, with optional registry excerpts and accessible role bodies. Output: TM_REPORT with analysis_depth quick, scoped to selection.

@@ -29,6 +29,12 @@ Availability comes from the catalog, file listing and prompt bodies supplied for
 
 Runnable method roles are available for bounded separate use; selection does not run them. Check the [methods folder](../methods/) for which ones exist. A method name without a prompt is not runnable. Keep a general workflow, enumeration variants, full methodologies, privacy methods, safety/reliability analysis, workshops, taxonomies and scoring aids distinct. Do not add a taxonomy or score to make a short analysis appear deeper. Never invent workshop participants, votes or consensus. State objective, evidence, source prerequisites, effort and limitations for each selected method, and explain why omitted alternatives add no current value.
 
+## Privacy composition
+
+Privacy is an orthogonal review scope, not a boundary-owning architecture. Follow the [privacy composition pattern](privacy-analysis-pattern.md) for standalone and combined quick/deep runs. Combined runs apply the matching architecture and privacy instructions before writing one cumulative stage envelope. Selected methods execute at the [runbook](../runbook.md)'s explicit scheduling point; importing their fragments does not imply an additional execution.
+
+Retain processing activities, affected people, regulatory coverage and privacy harm alongside security findings. Profiles are reference instructions, not Method records or compliance attestations. Challenge/change reviews load the privacy pattern when the supplied baseline carries privacy configuration or coverage. Changing purposes, recipients, retention, derived data or rights handling can alter privacy risk even when no authentication boundary changes. Preserve the baseline's selected profiles and source provenance; record newly needed applicability review as gaps rather than quietly discarding old coverage.
+
 ## Composition rules
 
 1. Inventory sanitized original fragments by source model, revision and namespace before assigning global IDs. Retain source content and prior change declarations with their source revision. Different models may each use `T-001`; their local IDs are not proof of shared identity. Identical repeats of the same source snapshot add no new observations, mappings or records. If repeated snapshots disagree, preserve both as source claims and record a Conflict.

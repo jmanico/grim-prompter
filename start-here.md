@@ -45,6 +45,18 @@ For a decision that warrants more depth, run the six-stage chain:
 
 Each envelope is cumulative: it carries scope, evidence, attachments and every earlier record. Each stage reads the complete previous file, so stages can run in fresh contexts or subagents. To resume, name the run folder, for example `continue threat-model/2026-10-28-deep-web from stage 03`. Each stage also writes a readable `.md` companion.
 
+## Include privacy
+
+For privacy throughout the six-stage architecture workflow:
+
+```text
+/threat-model deep web with privacy, using LINDDUN PRO and GDPR and CCPA/CPRA profiles
+```
+
+For a standalone privacy review, use `/threat-model deep privacy`; for a bounded pass use `/threat-model quick privacy`. Codex uses `$threat-model` with the same words. The real architecture is still selected for topology, but a standalone privacy run does not claim its security workflow ran.
+
+The [privacy guide](privacy/README.md) defines defaults, regulatory scope and file handoffs. Selected methods run after deep stage 01 and feed stage 02; quick methods run before quick analysis. Every later stage preserves privacy findings and regulatory coverage. Missing legal/organizational evidence or LINDDUN materials remains an explicit gap. Profile applicability is assessed, not assumed. Examples of partial and composed reviews appear in the [fictional walkthroughs](privacy/examples.md).
+
 ## Other things you can ask for
 
 | Ask | What happens |

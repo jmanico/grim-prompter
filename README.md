@@ -101,6 +101,19 @@ Start with a **quick** prompt or choose **deep** for the six-stage workflow. Pic
 | Identity, money and collaboration | Identity federation ([quick](quick/identity-federation.md), [deep](deep/identity-federation/README.md)) · Payments and transactions ([quick](quick/payments-transactions.md), [deep](deep/payments-transactions/README.md)) · Real-time collaboration ([quick](quick/collaboration-realtime.md), [deep](deep/collaboration-realtime/README.md)) · Content and media delivery ([quick](quick/content-media-delivery.md), [deep](deep/content-media-delivery/README.md)) · Enterprise integration ([quick](quick/enterprise-integration.md), [deep](deep/enterprise-integration/README.md)) |
 | Distributed and decentralized | Peer-to-peer ([quick](quick/peer-to-peer.md), [deep](deep/peer-to-peer/README.md)) · Blockchain and smart contracts ([quick](quick/blockchain-smart-contracts.md), [deep](deep/blockchain-smart-contracts/README.md)) · Offline-first sync ([quick](quick/offline-first-sync.md), [deep](deep/offline-first-sync/README.md)) |
 
+## Privacy
+
+Run a standalone privacy review, or include privacy throughout an architecture review:
+
+```text
+/threat-model deep privacy
+$threat-model deep web with privacy, using LINDDUN PRO and GDPR and CCPA/CPRA profiles
+```
+
+Use `/threat-model` in Claude Code and `$threat-model` in Codex. Privacy has a [quick entry point and full six-stage workflow](privacy/README.md). It inventories processing purposes and data lifecycles, examines harms to people, and records applicability, evidence and gaps for GDPR and CCPA/CPRA. [Other-regime screening](privacy/profiles/other-regimes-screening.md) identifies additional review needs; it is not full coverage of those regimes.
+
+Deep privacy defaults to LINDDUN PRO, quick privacy to LINDDUN GO; unavailable method source material leaves the method partial. Explicit method selections replace these defaults; `without methods` keeps the baseline privacy analysis. Reports support privacy/legal review and assessment preparation, not compliance certification. See the [fictional walkthroughs](privacy/examples.md).
+
 ## Methods
 
 Choose a method for a specific question, such as authorization threats, privacy risks, or attack paths. Each prompt saves a JSON result you can bring into a quick or deep review. The [method selector](helpers/method-selector.md) helps you choose.

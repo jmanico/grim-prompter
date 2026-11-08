@@ -11,6 +11,8 @@ sources:
 
 Review a proposed system change against the actual supplied baseline, preserving identities, evidence and revision history. Produce a change review, not an implementation or approval.
 
+When a supplied baseline carries privacy configuration or coverage, read the [privacy analysis pattern](../reference/privacy-analysis-pattern.md) and preserve its profile dispositions, processing identities, method omissions and evidence provenance. Review affected purposes, populations, recipients, lifecycle and rights handling within this role's scope; new defaults do not replace the baseline's selections.
+
 ## Scope
 
 Input: a portable version 1.0 baseline and supplied change evidence, optionally with a candidate updated snapshot and independent fragments. Output: TM_REVIEWED_MODEL. Read the baseline envelope and change evidence from the project or run folder under the runbook; no earlier session or optional method is required.

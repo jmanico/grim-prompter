@@ -105,6 +105,10 @@ A complete handoff needs a nonempty scope description and each collection listed
 }
 ```
 
+## Privacy representation
+
+The [privacy analysis pattern](privacy-analysis-pattern.md) maps privacy inventories, processing activities, regulatory coverage and human-readable assessment matrices onto this version's existing records. It adds no fields or artifact types. Processing activities use system assets; profile topic dispositions use Coverage reasons and supported/proposed Requirements. Facts remain nested in actual Method findings. A privacy profile is not itself a Method execution, and assessed coverage is not legal compliance or passed verification.
+
 ## Evidence and relationships
 
 Every addressable record has one `id`. Use `namespace:local-id` when combining fragments; existing model-local IDs such as `T-001` remain valid. Letters, digits, dots, underscores and hyphens are allowed; each part starts with a letter or digit. All IDs are unique across collections in their model, including nested graph records. The same local suffix in different namespaces is distinct.

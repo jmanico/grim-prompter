@@ -1,6 +1,6 @@
 ---
 name: threat-model
-description: Threat model the current repository with Grim Prompter. Use when the user asks to threat model a project, find design-level security threats, map trust boundaries, run STRIDE, PASTA, LINDDUN or another threat modeling method, challenge an existing threat model, or review how a code change affects one. Reads the project read-only and writes evidence-traceable JSON and Markdown reports to a threat-model/ folder.
+description: Threat model the current repository with Grim Prompter. Use when the user asks to threat model a project, find design-level security threats, map trust boundaries, run STRIDE, PASTA, LINDDUN or another threat modeling method, examine privacy risks or GDPR/CCPA coverage, challenge an existing threat model, or review how a code change affects one. Reads the project read-only and writes evidence-traceable JSON and Markdown reports to a threat-model/ folder.
 ---
 
 # Threat model with Grim Prompter
@@ -19,12 +19,29 @@ Map the user's words to runbook inputs:
 | --- | --- | --- |
 | Nothing specific, or "quick" | `quick` | Architecture from the user, or chosen by the selector |
 | "deep", "full" or "six-stage" | `deep` | Same |
+| "privacy" or "quick privacy" | `quick` | `REVIEW_SCOPE: privacy`; architecture supplied or selected |
+| "deep privacy" | `deep` | `REVIEW_SCOPE: privacy`; architecture supplied or selected |
+| "quick/deep <architecture> with privacy" | Requested depth | `REVIEW_SCOPE: security-and-privacy` |
+| "quick/deep ... with <method>" | Requested depth | `METHODS` = requested method ids; execute at the runbook's scheduled point |
 | A method name, such as "STRIDE per element", "PASTA" or "LINDDUN GO" | `method` | `METHOD` = the matching basename without `.md` in `methods/` |
 | "challenge" or "review this threat model" plus a file | `challenge` | That file |
 | "what changed", or a branch or commit range | `change` | Baseline report and the `git diff` range |
 | "continue" plus a run folder | The run's mode | `RUN_DIR` = that folder |
 | "just gather evidence" | `evidence` | None |
 | "choose an architecture" or "choose methods" | `select` | The matching architecture or method selector |
+
+Resolve quick/deep depth and privacy scope before standalone method routing. A method mentioned with a depth augments that run; it does not replace it. Full profile basenames are `gdpr` and `ccpa-cpra`; CCPA or CPRA resolves to `ccpa-cpra`. When privacy is requested and no methods are specified, quick defaults to `linddun-go` and deep to `linddun-pro`; “without methods” selects none. Bare “LINDDUN” uses the depth-specific variant in quick/deep; in standalone method mode ask which variant if the task context does not determine it. Record the choice. Privacy profiles default to GDPR and CCPA/CPRA applicability assessment; explicit profiles replace these defaults, and “without regulatory profiles” selects none. Other-regime screening remains included. No default asserts applicability or authorizes network access.
+
+Examples:
+
+```text
+/threat-model deep privacy
+$threat-model deep web with privacy, using LINDDUN PRO and GDPR and CCPA/CPRA profiles
+$threat-model quick privacy without methods
+$threat-model deep api with LINDDUN PRO
+```
+
+The final example adds a method to the security architecture workflow; it does not implicitly request the full privacy profiles. See [the privacy guide](../../privacy/README.md). A continuation recovers its saved configuration; a change or challenge preserves and reviews existing privacy coverage rather than resetting it to current defaults.
 
 Architecture ids are the basenames without `.md` in `quick/`, such as `web`, `api`, `microservices`, `rag` or `agentic-ai`. Method ids use the same convention in `methods/`, such as `stride-per-element` or `linddun-go`; they are not paths or frontmatter's path-qualified prompt ids.
 

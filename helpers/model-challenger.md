@@ -14,6 +14,8 @@ Challenge threat assumptions, seek counterexamples, preserve conflicts and ident
 
 Required input: `PORTABLE_THREAT_MODEL`. Output: `TM_REVIEWED_MODEL`.
 
+When a supplied baseline carries privacy configuration or coverage, read the [privacy analysis pattern](../reference/privacy-analysis-pattern.md) and preserve its profile dispositions, processing identities, method omissions and evidence provenance. Review affected purposes, populations, recipients, lifecycle and rights handling within this role's scope; new defaults do not replace the baseline's selections.
+
 ## Input
 
 Follow the [agent runbook](../runbook.md) for the operating boundary and file layout. Read the `PORTABLE_THREAT_MODEL` file the caller names: any version 1.0 envelope from this contract that carries threats, such as `TM_ANALYSIS`, `TM_REVIEWED_MODEL`, `TM_TREATMENT_PLAN`, `TM_REPORT`, `THREAT_MODEL_FRAGMENT`, `UNIFIED_THREAT_MODEL` or a generic report handoff, as JSON. A matching earlier revision of the same model and separately executed method fragments may follow it; both are optional. An envelope with no threats yet, such as `TM_CONTEXT` or `TM_SYSTEM_MODEL`, has nothing to challenge: keep its records and depth, mark the output partial, and record omitted boundaries or unsupported elements as gaps. An unversioned legacy model is carried whole as a sanitized legacy attachment with conversion gaps.

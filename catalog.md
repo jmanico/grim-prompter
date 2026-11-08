@@ -126,6 +126,26 @@ Each chain runs 00 Scope and evidence → 01 System model → 02 Threat analysis
 | [Service-Oriented Threat Modeling](deep/service-oriented/README.md) | [00](deep/service-oriented/00-scope-and-evidence.md) · [01](deep/service-oriented/01-system-model.md) · [02](deep/service-oriented/02-threat-analysis.md) · [03](deep/service-oriented/03-challenge-and-consolidate.md) · [04](deep/service-oriented/04-treatment-and-validation.md) · [05](deep/service-oriented/05-report-and-handoff.md) | 2026-10-28 |
 | [Web Threat Modeling](deep/web/README.md) | [00](deep/web/00-scope-and-evidence.md) · [01](deep/web/01-system-model.md) · [02](deep/web/02-threat-analysis.md) · [03](deep/web/03-challenge-and-consolidate.md) · [04](deep/web/04-treatment-and-validation.md) · [05](deep/web/05-report-and-handoff.md) | 2026-10-28 |
 
+## Privacy workflows
+
+Privacy is a cross-cutting scope. Use the [privacy guide](privacy/README.md) for standalone or architecture-composed quick/deep runs and the [fictional walkthroughs](privacy/examples.md) for expected handoffs. Profile selection does not assert applicability or execute LINDDUN.
+
+| Prompt | Purpose | Last content review |
+| --- | --- | --- |
+| [Quick privacy review](privacy/quick.md) | Bounded processing inventory, privacy harms, profile coverage and proposed responses | 2026-11-07 |
+| [00 Scope and evidence](privacy/deep/00-scope-and-evidence.md) | Processing scope, provenance, applicability inputs and gaps | 2026-11-07 |
+| [01 Processing model](privacy/deep/01-processing-model.md) | People, purposes, data lifecycle and recipients | 2026-11-07 |
+| [02 Privacy analysis](privacy/deep/02-privacy-analysis.md) | Privacy scenarios, method imports and profile assessments | 2026-11-07 |
+| [03 Challenge and consolidate](privacy/deep/03-challenge-and-consolidate.md) | Counterevidence, uncertain applicability and preserved identities | 2026-11-07 |
+| [04 Treatment and validation](privacy/deep/04-treatment-and-validation.md) | Proposed outcomes and synthetic verification plans | 2026-11-07 |
+| [05 Report and handoff](privacy/deep/05-report-and-handoff.md) | Cumulative report, coverage matrix and assessment support | 2026-11-07 |
+
+| Profile/reference | Scope |
+| --- | --- |
+| [GDPR](privacy/profiles/gdpr.md) | EU GDPR applicability and scoped topic assessment |
+| [CCPA/CPRA](privacy/profiles/ccpa-cpra.md) | California applicability, rights, processing, assessments, audits and ADMT |
+| [Other-regime screening](privacy/profiles/other-regimes-screening.md) | Additional regimes and explicit substantive-review gaps |
+
 ## References
 
 Reference files support prompts in this family and are not standalone catalog entries.
@@ -142,3 +162,5 @@ Reference files support prompts in this family and are not standalone catalog en
 | [Threat Analysis Pattern](reference/threat-analysis-pattern.md) |
 | [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md) |
 | [Treatment and Validation Pattern](reference/treatment-and-validation-pattern.md) |
+| [Privacy Analysis and Composition Pattern](reference/privacy-analysis-pattern.md) |
+| [Privacy Profile Pattern](reference/privacy-profile-pattern.md) |

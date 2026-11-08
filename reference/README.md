@@ -24,3 +24,7 @@ The stage and quick-analysis patterns are runnable instructions with their own i
 | [`threat-analysis-pattern.md`](threat-analysis-pattern.md) | Threat Analysis Pattern | 2026-10-28 |
 | [`tool-credential-boundaries.md`](tool-credential-boundaries.md) | Supporting checklist for MCP tools, tool description poisoning and shared service identities | 2026-10-28 |
 | [`treatment-and-validation-pattern.md`](treatment-and-validation-pattern.md) | Treatment and Validation Pattern | 2026-10-28 |
+
+## Privacy across architectures
+
+The [privacy analysis pattern](privacy-analysis-pattern.md) adds processing inventories and harms to people to quick/deep reviews without a new JSON schema. The [privacy profile pattern](privacy-profile-pattern.md) defines applicability, source provenance and obligation coverage. Start with the [privacy workflows](../privacy/README.md); combined runs apply both the architecture and privacy work to each cumulative handoff.
