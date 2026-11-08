@@ -115,6 +115,13 @@ Output heading: `# SYSTEM_UNDER_REVIEW`
   retain safe source model/revision/namespace/IDs when supplied. Separately label supplied proposed
   treatments, verification plans, observed checks and caller decisions. Mark absent categories not
   supplied. Do not claim method execution from its selection or prompt text.
+- Inspection coverage: follow the runbook's inspection ledger. List every actually read file by
+  safe path, source revision and full/partial read extent, even if it produced no finding. List
+  known skipped or unavailable files/areas with reasons and separate out-of-scope exclusions.
+  Disclose listing/search limits and unknown unread portions; search hits are not full reads.
+  Distinguish current reads from coverage claimed by supplied artifacts. Missing prior coverage
+  stays unknown. Include suspected but unmapped trust boundaries with stable gap labels, supporting
+  evidence, missing traces and the evidence needed; do not invent topology.
 - Uncertainties and conflicts: source labels, what is disputed or ambiguous, and what remains
   unresolved.
 - Evidence gaps: a stable gap label, the exact missing fact, which scope or boundary it limits, and

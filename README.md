@@ -52,7 +52,7 @@ The [runbook](runbook.md) requires read-only inspection and file-and-line citati
 
 Results go into a new folder under `threat-model/`:
 
-- `SYSTEM_UNDER_REVIEW.md`: scope, evidence, assumptions, and missing information.
+- `SYSTEM_UNDER_REVIEW.md`: scope, evidence, assumptions, inspected files and read extent, skipped areas with reasons, and unmapped trust boundaries.
 - `report.md`: findings, proposed mitigations, and verification plans for quick and deep runs.
 - JSON artifacts: the model and stage handoffs for later reviews.
 
@@ -66,7 +66,7 @@ For MCP servers and agent tools, the review maps tools to backend credentials an
 
 ## Review the results
 
-1. **Check the scope and evidence.** Correct missing services, misunderstood boundaries, and unsupported assumptions before relying on the findings.
+1. **Check the scope and evidence.** Start with the report's inspection coverage summary: compare the file ledger with the repository, review skipped areas and unmapped boundaries, and distinguish fresh reads from carried evidence. Correct missing services, misunderstood boundaries, and unsupported assumptions before relying on the findings.
 2. **Challenge each threat.** Check its prerequisites, affected assets, and existing controls. Missing documentation alone does not establish a defect.
 3. **Prioritize the work.** Supply your risk criteria, choose mitigations, and assign owners. The agent should not invent ratings or approvals.
 4. **Verify the fixes.** Review each proposed test's pass, fail, and inconclusive criteria. Authorize execution separately and record actual results. A plan is not a passed test.

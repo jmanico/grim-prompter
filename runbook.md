@@ -80,11 +80,26 @@ Locator: <repo-relative path:start-end>. <Sanitized summary or short excerpt.>
 ...
 G1 — Unknown: <what the evidence does not show and what would settle it>.
 ...
-Inspection log: <what you read; what you skipped and why; budget limits>.
+Inspection coverage: <discovery scope, listing/search limits and source revision>.
+Files inspected: <one repo-relative path per file, full read or exact ranges read>.
+Files or areas not inspected: <path or bounded area, skipped/unavailable, reason; exclusions labeled separately>.
+Unmapped trust boundaries: <gap label, suspected crossing, evidence basis, missing trace and what would settle it>.
 Redactions: <each placeholder, its kind and location, or "none found after inspection">.
 ```
 
 Cite project-file evidence with a repository-relative path and line range. For caller-supplied files outside the project, use a safe source label and line range, recording their provenance without inventing a repository path. For direct caller statements, record the statement as a caller claim with a session/source label. Note the commit and any uncommitted changes. Unknowns stay as gaps. Never fill one with an assumed defect.
+
+### Inspection coverage in every handoff
+
+Keep an inspection ledger as evidence is collected, including files that yielded no finding. A directory listing, search hit, filename or imported citation is not a full file read. Record each file actually read, its source revision and read extent; mark excerpts, truncated output and search-only matches partial with the unread extent stated or unknown. Record known in-scope files or bounded areas not inspected and why (for example size, binary content, access restrictions or context budget). Label out-of-scope exclusions separately. Group skipped trees by explicit directory or pattern when needed, without implying that every member was enumerated. Disclose discovery limits: an incomplete tree listing cannot establish that all omitted files are known. Never open secrets or expand authorized scope to fill the ledger.
+
+For suspected boundary crossings that cannot be traced, record an open topology gap with the supporting evidence, missing connection and evidence needed. Do not invent endpoints or assert that a suspected boundary exists. A gap may have no affected record yet. Distinguish these from boundaries that were mapped but not analyzed.
+
+Every versioned JSON output carries this ledger using the existing contract fields: per-file `processed_inputs` items with `access: read|partial`, and `unprocessed_inputs` items for skipped/unavailable files or bounded areas. Use `locator` for the safe path, `coverage` for revision, read extent and whether inspection happened in this run or was carried from a named source, and `reason` for omissions. A partial file appears once, in `processed_inputs`, with its unread portion and reason. Preserve these source inventories as well as the inventory of the bundle or predecessor itself; reading an envelope does not mean its cited source files were reread. Use `model.gaps` with `kind: topology` for unmapped crossings and global `model.coverage` with `lens: inspection-coverage`, null target and method refs, and a reason summarizing scope, omissions and provenance. Its status describes actual inspection extent, not analytical confidence or security.
+
+Carry this information through all deep stages and through method, challenge and change outputs. Do not reopen project files merely to populate coverage when only supplied evidence is authorized. If an older or supplied artifact has no ledger, record coverage as unknown and an open coverage gap; never reconstruct reads from citations. On continuation, preserve the prior ledger and label any newly authorized reads separately without overwriting predecessor artifacts. Selection and evidence-only outputs summarize coverage in their existing Markdown companions; do not add model fields to a selector's separate format.
+
+Place a short **Inspection coverage** section near the top of every readable analysis report, before findings: inspected scope and read extent, consequential omissions and reasons, unmapped boundaries, and whether evidence was freshly read or carried. Derive it from the JSON ledger and gaps. Avoid coverage percentages without a known denominator, and never equate file counts or a completed handoff with exhaustive analysis. In Step 6, check that the bundle ledger survived the JSON handoffs and that the readable summary agrees with it.
 
 ### Shared tool and service credentials
 

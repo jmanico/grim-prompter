@@ -576,6 +576,23 @@ For a satisfying set, `node_refs` contains leaves only; logical evaluation trave
 | `coverage` | string |
 | `reason` | string or null |
 
+The runbook's inspection ledger uses these existing fields; it does not add a schema property or
+change version `1.0`. Include each actually read source file, even when no evidence finding resulted.
+Use `locator` for its safe path and `coverage` for source revision, full or partial read extent and
+current-versus-carried provenance. A partially read file occurs once in `processed_inputs`, with
+the unread extent and reason. Known skipped/unavailable files or bounded areas belong in
+`unprocessed_inputs`; state why and distinguish exclusions from uninspected in-scope material.
+Record discovery limits rather than assuming the inventory enumerates the repository. Preserve
+source inventory across handoffs alongside bundle/predecessor inventory; reading the latter never
+establishes fresh access to its sources.
+
+Include scope-wide Coverage with `lens: inspection-coverage`, null `target_ref` and `method_ref`,
+and a reason describing inspected scope, omissions and provenance. Missing historical inspection
+information requires an open coverage Gap, not an inferred file-read history. Suspected unmapped
+crossings use open topology Gaps with the evidence basis, missing trace and needed evidence;
+`affected_refs` may be empty if no system record is grounded yet. Summarize these inventories and
+gaps near the top of the Markdown report. Inspection coverage does not measure analysis quality.
+
 ### Attachment
 
 | Field | Type |
