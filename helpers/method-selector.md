@@ -2,7 +2,7 @@
 id: helpers/method-selector
 title: Threat Modeling Method Selector
 shape: role
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
 ---

@@ -2,7 +2,7 @@
 id: reference/artifact-contract
 title: Portable Threat Model Artifact Contract
 shape: reference
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 sources:
   - https://json-schema.org/draft/2020-12/json-schema-core
   - https://tc39.es/ecma262/multipage/text-processing.html

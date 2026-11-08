@@ -2,7 +2,7 @@
 id: helpers/model-challenger
 title: Threat Model Challenger
 shape: role
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 sources:
   - https://www.threatmodelingmanifesto.org/
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html

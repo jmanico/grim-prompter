@@ -2,7 +2,7 @@
 id: reference/composition-guide
 title: Mixed Architecture Composition and Change Review
 shape: reference
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html

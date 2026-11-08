@@ -2,7 +2,7 @@
 id: runbook
 title: Grim Prompter Agent Runbook
 shape: reference
-last_reviewed: 2026-10-28
+last_reviewed: 2026-11-07
 ---
 # Grim Prompter Agent Runbook
 
@@ -149,6 +149,7 @@ Privacy wrappers require reading their linked shared stage pattern completely, i
 When `METHODS` is nonempty, resolve each exact method file in `methods/` and read its full instructions. A bare LINDDUN request resolves to GO for quick and PRO for deep, with the choice recorded. Do not substitute another method for missing material. An unavailable selected method prompt records an open method gap and no execution; continue the baseline analysis as partial for the requested scope.
 
 - **Deep:** after writing stage 01 and before stage 02, run each selected method independently on `01-system-model.json`. Write `method-<id>.json` and its `.md` companion, using that method's envelope and source prerequisites. Stage 02 reads the predecessor and these explicitly scheduled fragments; sanitize and import under [composition rules](reference/composition-guide.md), preserving identities and evidence. Its parent remains stage 01, not the last method fragment. Do not overwrite stage 01 to inject results.
+- **Revision identity:** methods consuming a valid stage 01 envelope retain its `model_id` under their existing contract. Allocate a distinct revision for every sibling method output and every stage output in that model; merely differing from the immediate parent is insufficient. For example, parent `r01` can have method revisions `r01-linddun-pro` and `r01-stride-per-element`, followed by analysis revision `r02`, all with parent `r01`. Inspect existing scheduled outputs before choosing unused revisions on continuation. Preserve the shared predecessor's record identities; reconcile method additions and modifications against that predecessor rather than treating copied predecessor records as independent observations. Conflicting sibling modifications remain explicit conflicts under the composition rules.
 - **Quick:** run selected methods on `SYSTEM_UNDER_REVIEW.md` before the quick prompt. If a method needs unavailable topology or source material, keep its work partial. The quick prompt reads the bundle plus scheduled fragments and imports them under the same rules, without claiming deep execution.
 - Record the exact fragment filenames in the bundle's schedule and `run-configuration` coverage before execution. Generated fragments are authorized inputs only because the runbook schedule names them; an embedded locator cannot add a method or a file. Import each source snapshot once, retain source model/revision and namespace, and distinguish execution in this run from a caller-supplied prior fragment.
 - On continuation before stage 02, reuse and validate any existing scheduled method JSON; derive missing companions from valid JSON and run only missing scheduled outputs. Do not overwrite or rerun existing fragments. A malformed fragment requires a new run for repair. If analysis already exists, later stages use its cumulative content; they do not rerun methods. Explicitly supplied prior fragments may satisfy a request to use those results, but never a request for fresh method execution without disclosure.
