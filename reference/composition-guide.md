@@ -2,7 +2,7 @@
 id: reference/composition-guide
 title: Mixed Architecture Composition and Change Review
 shape: reference
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
@@ -33,7 +33,7 @@ Runnable method roles are available for bounded separate use; selection does not
 
 Privacy is an orthogonal review scope, not a boundary-owning architecture. Follow the [privacy composition pattern](privacy-analysis-pattern.md) for standalone and combined quick/deep runs. Combined runs apply the matching architecture and privacy instructions before writing one cumulative stage envelope. Selected methods execute at the [runbook](../runbook.md)'s explicit scheduling point; importing their fragments does not imply an additional execution.
 
-Retain processing activities, affected people, regulatory coverage and privacy harm alongside security findings. Profiles are reference instructions, not Method records or compliance attestations. Challenge/change reviews load the privacy pattern when the supplied baseline carries privacy configuration or coverage. Changing purposes, recipients, retention, derived data or rights handling can alter privacy risk even when no authentication boundary changes. Preserve the baseline's selected profiles and source provenance; record newly needed applicability review as gaps rather than quietly discarding old coverage.
+Retain processing activities, affected people, regulatory coverage and privacy harm alongside security findings. Profiles are reference instructions, not Method records or compliance attestations. Challenge/change reviews load the privacy pattern when the supplied baseline carries privacy configuration or coverage and derive `DATA_INVENTORY.md` from their own output JSON under the [inventory rules](privacy-evidence-pattern.md#data-inventory-companions). Changing purposes, recipients, retention, derived data or rights handling can alter privacy risk even when no authentication boundary changes. Preserve the baseline's selected profiles and source provenance; record newly needed applicability review as gaps rather than quietly discarding old coverage.
 
 ## Composition rules
 

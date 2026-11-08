@@ -2,7 +2,7 @@
 id: privacy/profiles/other-regimes-screening
 title: Additional Privacy Regimes Screening
 shape: reference
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources:
   - https://www.gov.uk/data-protection
   - https://eur-lex.europa.eu/eli/dir/2002/58/oj/eng
@@ -14,7 +14,7 @@ sources:
 ---
 # Additional Privacy Regimes Screening
 
-Profile ID: `other-regimes-screening`. Use the [profile pattern](../../reference/privacy-profile-pattern.md) to screen possible obligations beyond the implemented GDPR and CCPA/CPRA profiles. **All entries here are screening-only.** Completing screening does not complete a substantive assessment under any listed regime. Source pages linked below were inspected for this revision on 2026-11-07; the full legal instruments and every jurisdiction's current amendments were not exhaustively reviewed.
+Profile ID: `other-regimes-screening`. Run only when explicitly selected or preserved from the baseline; privacy alone does not select screening. Use the [profile pattern](../../reference/privacy-profile-pattern.md) to screen possible obligations beyond the implemented GDPR and CCPA/CPRA profiles. **All entries here are screening-only.** Completing screening does not complete a substantive assessment under any listed regime. Source pages linked below were last inspected on 2026-11-07; the full legal instruments and every jurisdiction's current amendments were not exhaustively reviewed.
 
 Record one Coverage row per relevant processing scope and topic. State geographic reach, organization/sector, affected people, data, purpose, source access and uncertainty. A supported exclusion may be `not_applicable`; an unresolved trigger is `partial`. If a trigger is supported, mark the bounded screening question assessed while creating a separate `not_assessed` coverage row with lens `privacy:other-regimes-screening:<regime-id>:substantive-review` and an open gap for the unimplemented substantive review. Do not report that regime as fully assessed.
 

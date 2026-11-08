@@ -7,7 +7,7 @@ inputs:
   - TM_CONTEXT
 outputs:
   - TM_SYSTEM_MODEL
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources: []
 ---
 # Privacy Processing Model
@@ -32,4 +32,4 @@ This stage establishes the processing model and coverage; it does not run threat
 
 ## Handoff
 
-Write `01-system-model.json` and `01-system-model.md` in the run folder. Preserve predecessor records and safe attachments under the shared pattern's lineage rules; never overwrite a prior stage. The readable report must agree with the JSON about inspected evidence, privacy coverage, method execution, unknowns, and unperformed work. Use the privacy pattern's completion criteria as well as the shared stage's requirements. No meaningful input yields a partial artifact with targeted gaps and no fabricated findings.
+Write `01-system-model.json` and `01-system-model.md` in the run folder. Derive the immutable preliminary `01-data-inventory.md` solely from this JSON using the [inventory rules](../../reference/privacy-evidence-pattern.md#data-inventory-companions); include its exact model/revision and inspection coverage. Later stages never update this companion. Preserve predecessor records and safe attachments under the shared pattern's lineage rules; never overwrite a prior stage. The readable report must agree with the JSON about inspected evidence, privacy coverage, method execution, unknowns, and unperformed work. Use the privacy pattern's completion criteria as well as the shared stage's requirements. No meaningful input yields a partial artifact with targeted gaps and no fabricated findings.

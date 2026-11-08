@@ -7,7 +7,7 @@ inputs:
   - TM_TREATMENT_PLAN
 outputs:
   - TM_REPORT
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources: []
 ---
 # Privacy Report and Handoff
@@ -24,7 +24,7 @@ For `REVIEW_SCOPE: privacy`, run this privacy stage with the shared pattern. For
 
 Retain the full cumulative envelope, including processing records, method source fragments, profile coverage, conflicting claims, treatments, verification plans, and evidence gaps. Derive all readable views from the JSON; do not create a second incompatible privacy model.
 
-After the required inspection-coverage summary, explain the review scope, affected people and purposes, the processing inventory and key flows, consequential privacy harms, protective evidence, and residual uncertainty. Present selected-profile applicability and per-topic coverage, with source/revision limits and further review needs. State which additional regimes were only screened and which were not assessed.
+After the required inspection-coverage summary, explain the review scope, affected people and purposes, the processing inventory and key flows, consequential privacy harms, protective evidence, and residual uncertainty. Present selected-profile applicability and per-topic coverage, with source/revision limits and further review needs. If screening was selected, state which additional regimes were only screened. Otherwise state that no additional-regime screening was requested; do not invent dispositions for unselected profiles.
 
 Carry the shared pattern's action register keyed to every relevant treatment, verification, and open gap. Show actual statuses, evidence needed next, and supplied decisions without inventing owners, dates, acceptance, or test results. Separate proposed verification from execution and distinguish carried method work from work performed in this run.
 
@@ -34,4 +34,4 @@ State whether this was standalone privacy review or integrated security/privacy 
 
 ## Handoff
 
-Write `05-report.json` and `report.md` in the run folder. Preserve predecessor records and safe attachments under the shared pattern's lineage rules; never overwrite a prior stage. The readable report must agree with the JSON about inspected evidence, privacy coverage, method execution, unknowns, and unperformed work. Use the privacy pattern's completion criteria as well as the shared stage's requirements. No meaningful input yields a partial artifact with targeted gaps and no fabricated findings.
+Write `05-report.json` and `report.md` in the run folder. Derive final `DATA_INVENTORY.md` solely from `05-report.json` using the [inventory rules](../../reference/privacy-evidence-pattern.md#data-inventory-companions). Preserve `01-data-inventory.md` unchanged; it records the preliminary stage 01 source. Preserve predecessor records and safe attachments under the shared pattern's lineage rules; never overwrite a prior stage. The readable report must agree with the JSON about inspected evidence, privacy coverage, method execution, unknowns, and unperformed work. Use the privacy pattern's completion criteria as well as the shared stage's requirements. No meaningful input yields a partial artifact with targeted gaps and no fabricated findings.

@@ -30,7 +30,7 @@ Map the user's words to runbook inputs:
 | "just gather evidence" | `evidence` | None |
 | "choose an architecture" or "choose methods" | `select` | The matching architecture or method selector |
 
-Resolve quick/deep depth and privacy scope before standalone method routing. A method mentioned with a depth augments that run; it does not replace it. Full profile basenames are `gdpr` and `ccpa-cpra`; CCPA or CPRA resolves to `ccpa-cpra`. When privacy is requested and no methods are specified, quick defaults to `linddun-go` and deep to `linddun-pro`; “without methods” selects none. Bare “LINDDUN” uses the depth-specific variant in quick/deep; in standalone method mode ask which variant if the task context does not determine it. Record the choice. Privacy profiles default to GDPR and CCPA/CPRA applicability assessment; explicit profiles replace these defaults, and “without regulatory profiles” selects none. Other-regime screening remains included. No default asserts applicability or authorizes network access.
+Resolve quick/deep depth and privacy scope before standalone method routing. A method mentioned with a depth augments that run; it does not replace it. Full profile basenames are `gdpr` and `ccpa-cpra`; CCPA or CPRA resolves to `ccpa-cpra`. Both privacy scopes default to `METHODS: []` and `PRIVACY_PROFILES: []` for engineering analysis; only explicit selections add methods or profiles. Bare “LINDDUN” uses the depth-specific variant in quick/deep; in standalone method mode ask which variant if the task context does not determine it. Record the choice. “Without methods” and “without regulatory profiles” confirm empty selections. `other-regimes-screening` is opt-in too. An empty profile list creates no legal-applicability gaps solely for unrequested profiles. Selection neither asserts applicability nor authorizes network access.
 
 Examples:
 
@@ -51,4 +51,4 @@ A branch range alone is not a baseline threat model. In change mode, use the cal
 
 Read `LIBRARY_ROOT/runbook.md` completely and follow it exactly: its operating boundary, evidence collection, prompt loading, file hand-offs and final report. The runbook and the selected prompt govern the work, not this summary.
 
-When you finish, list the files you actually wrote for this mode, using the runbook's output table: `report.md` for quick and deep runs, or the mode's own `.json` and `.md` files otherwise. Then say what wasn't done.
+When you finish, list the files you actually wrote for this mode, using the runbook's output table: `report.md` for quick and deep runs, or the mode's own `.json` and `.md` files otherwise. For privacy quick/deep and privacy-baseline challenge/change runs, also link `DATA_INVENTORY.md`; deep stage 01 writes the immutable preliminary `01-data-inventory.md`. Follow the runbook's evidence pass before modeling and its JSON-source binding on continuation. Then say what wasn't done.

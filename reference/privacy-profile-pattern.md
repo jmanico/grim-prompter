@@ -2,7 +2,7 @@
 id: reference/privacy-profile-pattern
 title: Privacy Regulatory Profile Pattern
 shape: reference
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources:
   - https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng
   - https://www.cppa.ca.gov/regulations/
@@ -13,7 +13,7 @@ Use a profile within the [privacy analysis pattern](privacy-analysis-pattern.md)
 
 ## Selection and source evidence
 
-Select profiles from the caller's request and supported processing context. A profile selection is not a finding that the law applies. Record the people, geography, entity roles, processing purposes, exemptions and temporal scope needed to decide applicability. Do not infer residency from a hosting region, legal role from a variable name, or an exemption from a sector label.
+Load profiles only from the caller's explicit request (or preserved baseline selections), including the optional `other-regimes-screening` profile. Supported processing context can motivate a recommendation, but never silently adds a profile or legal-applicability gap. Empty profile selections leave engineering analysis available without regulatory assessment. A profile selection is not a finding that the law applies. Record the people, geography, entity roles, processing purposes, exemptions and temporal scope needed to decide applicability. Do not infer residency from a hosting region, legal role from a variable name, or an exemption from a sector label.
 
 Use only source access authorized by the runbook. A profile's source list and `last_reviewed` are library provenance, not proof the agent consulted those sources during this run. With no current primary source or supplied lawful source snapshot, continue engineering analysis, identify the unavailable authority and keep dependent legal conclusions unverified. Do not fetch sources merely because they are linked. Record the actual source title, URL or supplied locator, provision, version/publication date, access date, read extent and access limitations as Evidence. Record applicability evidence separately from evidence of implementation.
 

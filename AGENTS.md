@@ -9,4 +9,5 @@ Grim Prompter is a threat modeling prompt library for AI coding agents. `README.
 - Keep the project simple: plain Markdown prompts and embedded JSON contracts. Do not introduce an application, framework or test harness.
 - Never publish private system material, credentials, customer data or internal planning documents. Never fabricate system facts or execution results.
 - Validate changes with `git diff --check` and check that every local link and referenced file exists. There is no application build or test suite.
+- Follow [MODELS.md](MODELS.md) for the contributor model workflow, recording actual stages and keeping execution evidence outside tracked content.
 - Use a descriptive topic branch, commit reviewable changes and open a pull request against `main`. Merge only when the user has authorized it and all configured required checks pass. Never bypass repository protection.

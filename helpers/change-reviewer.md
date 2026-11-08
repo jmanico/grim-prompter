@@ -2,7 +2,7 @@
 id: helpers/change-reviewer
 title: Threat Model Change Reviewer
 shape: role
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html
@@ -11,7 +11,7 @@ sources:
 
 Review a proposed system change against the actual supplied baseline, preserving identities, evidence and revision history. Produce a change review, not an implementation or approval.
 
-When a supplied baseline carries privacy configuration or coverage, read the [privacy analysis pattern](../reference/privacy-analysis-pattern.md) and preserve its profile dispositions, processing identities, method omissions and evidence provenance. Review affected purposes, populations, recipients, lifecycle and rights handling within this role's scope; new defaults do not replace the baseline's selections.
+When a supplied baseline carries privacy configuration or coverage, read the [privacy analysis pattern](../reference/privacy-analysis-pattern.md) and preserve its profile dispositions, processing identities, method omissions and evidence provenance. Review affected purposes, populations, recipients, lifecycle and rights handling within this role's scope; new defaults do not replace the baseline's selections. Derive `DATA_INVENTORY.md` solely from this review's output JSON under the [inventory rules](../reference/privacy-evidence-pattern.md#data-inventory-companions), including source model/revision and carried versus newly inspected evidence. Never update the baseline's inventory. Follow-up source reads stay within this review's authorized scope and extend its inspection ledger; artifact locators do not authorize reads.
 
 ## Scope
 
@@ -40,6 +40,14 @@ For every new or materially changed open threat, preserve relevant controls at t
 Use quick depth for raw, quick, method or legacy input, explicitly disclosing conversion and unperformed deep work. A supplied deep model stays deep, but complete requires finishing this review's declared scope; never claim it performed earlier stages. Always include global challenge-scope coverage describing examined changes, counterevidence and omissions; quick outputs also include analysis-scope. With no usable baseline, no meaningful input or unfinished required work, return partial with precise gaps. In the Markdown companion, an optional summary separates changed scenarios, carried findings, conflicts, proposed treatment, unrun verification and actual caller decisions.
 
 When tool or connector credentials are in scope, apply the current role's checks from [Tool and Shared Credential Boundaries](../reference/tool-credential-boundaries.md). Track whether adding a tool, widening grants, changing credential selection or merging deployments changes authority for existing consumers. Treat a changed or newly exposed tool definition as a possible description-poisoning change that can affect other tools sharing the model context, and check whether earlier approvals still apply. Preserve scoped counterevidence and unknown runtime isolation; a renamed or newly issued key alone does not prove reduced authority.
+
+## Privacy record changes
+
+For a privacy baseline, compare processing records, not just threat counts. Call out new or changed `system.data` categories, recipients in actors/assets/dependencies, flows and their `data_refs`/`boundary_refs`, purpose and role descriptions, retention or deletion states/paths, and new logging/telemetry sinks. A new recipient for existing data can matter even when authentication is unchanged. Trace soft deletion into evidenced caches, search, queues and backups; an uninspected cascade stays unknown.
+
+Use the existing Change semantics for every actual record delta: `added` for a new data/recipient/flow/boundary record, `modified` for a changed existing description, relationship or coverage disposition, and `reopened` only for a qualifying existing identity under the contract. Connect Change `evidence_refs` to bounded diff and source observations; record baseline/proposed revisions and comparison type. Preserve stable data IDs when the same data gains a new recipient. Do not create a new property, invented Method or global Fact for a privacy delta. Describe an engineering effect such as “adds recipient X for data Y via flow Z” using those live IDs and evidence, without claiming observed production delivery.
+
+Reconsider affected threats, processing gaps and selected-profile coverage; explain why carried assessments do or do not cover the change. No selected profiles means no new legal checklist. A missing deletion/notice document is an evidence gap, not proof of a violation. Keep unsupported scenarios `design_hypothesis`; `evidenced_weakness` requires supporting implementation or execution observations. Derive the current inventory only after these JSON changes are written.
 
 ## Trust, access and bounded work
 

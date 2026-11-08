@@ -7,7 +7,7 @@ inputs:
   - TM_SYSTEM_MODEL
 outputs:
   - TM_ANALYSIS
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources: []
 ---
 # Privacy Threat Analysis
@@ -30,7 +30,7 @@ Read the scheduled `method-<method>.json` fragments named by the runbook. Preser
 
 For every supported scenario, identify the affected people, processing purpose and flow, actor capability (which may be legitimate authority), prerequisites, harm, protective counterexample, and evidence that could disconfirm it. Missing documentation alone is a gap, not an evidenced weakness. Keep impact on people distinct from business consequences.
 
-Assess each selected profile topic and additional-regime screening using the profile pattern. Separate legal applicability from implementation evidence and from threat discovery. Preserve unknown applicability, unsupported source freshness, and missing organizational evidence. Link supported obligation concerns to existing system records and scenarios without declaring violations or claiming compliance.
+Assess only selected profile topics using the profile pattern, including additional-regime screening only when explicitly selected. Empty selections require no legal-applicability work. Separate legal applicability from implementation evidence and from threat discovery. Preserve unknown applicability, unsupported source freshness, and missing organizational evidence. Link supported obligation concerns to existing system records and scenarios without declaring violations or claiming compliance.
 
 ## Handoff
 

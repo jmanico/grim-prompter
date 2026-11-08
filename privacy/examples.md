@@ -2,7 +2,7 @@
 id: privacy/examples
 title: Fictional Privacy Workflow Walkthroughs
 shape: reference
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources: []
 ---
 # Fictional privacy workflow walkthroughs
@@ -20,18 +20,18 @@ Review the account export and deletion lifecycle in this project.
 
 Fictional input: a caller describes a small subscription service, provides a diagram with application/database/analytics flows, and supplies a deletion-handler excerpt. The excerpt schedules deletion from the primary store but says nothing about analytics or backup restoration. Customer geography, contractual roles, retention policy, and LINDDUN PRO mapping/tree guidance are unavailable.
 
-The runbook chooses an actual architecture from the supplied system, for example `web`, and records why. The scope stays privacy-only; selecting `web` does not imply a security review. Default profiles are not assertions that either law applies.
+The runbook chooses an actual architecture from the supplied system, for example `web`, and records why. The scope stays privacy-only; selecting `web` does not imply a security review. The explicitly selected profiles do not assert that either law applies.
 
 | Handoff | Expected work and honest limits |
 | --- | --- |
 | `SYSTEM_UNDER_REVIEW.md` | Inventory the supplied materials and their read extent. Separate the caller's design claims from the inspected handler. List unavailable geography, contracts, retention policy, and method guidance. |
 | `00-context.json` | Record the privacy objective, configuration, source provenance, bounded scope, and specific evidence needs. Do not create threat findings yet. |
-| `01-system-model.json` | Model account data, affected people, deletion request, primary store, and analytics path only as supported. Model unavailable downstream deletion and restore behavior as gaps. |
+| `01-system-model.json` and derived `01-data-inventory.md` | Model account data, affected people, deletion request, primary store, and analytics path only as supported. Model unavailable downstream deletion and restore behavior as gaps. |
 | `method-linddun-pro.json` | Preserve the model and record only phases actually possible. Without mapping/tree material, do not claim interaction elicitation ran or that PRO completed. Record its omissions. |
 | `02-analysis.json` | Import the partial fragment. Separately develop a general privacy hypothesis: retained analytics or restored copies could keep an account link after a deletion request. Tie it to the modeled copies and unknown deletion paths. Do not label an uninspected downstream implementation defective. Record profile applicability as unknown. |
 | `03-reviewed-model.json` | Consider the counterexample that analytics records are irreversibly aggregated or removed by an independent process. Retain the gap that would distinguish these cases. Missing policy evidence alone is not a violation. |
 | `04-treatment-plan.json` | Propose accountable deletion propagation and restore handling, with synthetic-data verification. Keep execution `not_run`, result evidence empty, risk unrated without supplied criteria, and owners/dates unknown. |
-| `05-report.json` and `report.md` | Preserve partial PRO execution, unknown profile applicability, the affected-person harm, proposed outcome, and remaining evidence needs. Do not certify GDPR/CCPA compliance or completion of a DPIA. |
+| `05-report.json`, `report.md` and derived `DATA_INVENTORY.md` | Preserve partial PRO execution, unknown profile applicability, the affected-person harm, proposed outcome, and remaining evidence needs. Do not certify GDPR/CCPA compliance or completion of a DPIA. |
 
 A relevant proposed verification would create synthetic linked records only in a separately authorized test environment, request deletion, inspect the declared downstream copies, and exercise a bounded restore scenario. Pass would require the specified deletion outcome across all declared copies; a retained usable link would fail that criterion; inaccessible recipients or restore paths would make the result inconclusive. None of those actions occurs merely because the plan was written.
 
@@ -58,7 +58,7 @@ Keep both findings linked to the same system records rather than cloning the dat
 
 If supplied scope and source evidence establish that this specific processing activity has no international transfer, the relevant GDPR transfer topic may be `not_applicable` with a scoped rationale. That does not exempt the whole service from GDPR or make the privacy scenarios disappear. If the evidence only says the primary database is local, recipients and remote access remain unknown, so non-applicability is unsupported.
 
-Additional-regime screening still runs. A jurisdiction or sector outside the implemented profiles creates a further-review need; screening is not a complete assessment of that regime. Explicitly unselected CCPA/CPRA assessment stays outside this run's scope rather than being silently marked assessed.
+Additional-regime screening was not selected and does not run. If the caller explicitly adds it in a new run, screening can identify further-review needs without claiming substantive assessment of those regimes. Unselected CCPA/CPRA assessment stays outside this run's scope rather than being silently marked assessed.
 
 ## Quick review with no optional method
 
@@ -69,13 +69,15 @@ $threat-model quick privacy with no optional method and GDPR profiles
 Review the supplied registration flow and analytics notice.
 ```
 
-The explicit method choice overrides default GO selection. The run still inventories processing, examines grounded privacy harms, assesses selected profile topics and other-regime screening, and proposes outcomes/verification using [quick privacy](quick.md). It writes `quick-report.json` and `report.md`; it does not fabricate a method fragment or advertise LINDDUN completion. The report states that the deep modeling/challenge sequence was not performed. A missing analytics recipient remains a gap even when the visible notice describes a purpose.
+The empty method selection matches the default; GDPR was explicitly selected. The run still inventories processing, examines grounded privacy harms, assesses the selected profile topics, and proposes outcomes/verification using [quick privacy](quick.md). It writes `quick-report.json`, `report.md` and a JSON-derived `DATA_INVENTORY.md`; it does not fabricate a method fragment or advertise LINDDUN completion. The report states that the deep modeling/challenge sequence was not performed. A missing analytics recipient remains a gap even when the visible notice describes a purpose.
 
 ## Continue or review a change
 
-For a paused deep run that already has `02-analysis.json`, name the existing run folder and ask to continue from stage 03. Recover the original review configuration and source provenance from the artifacts. Read the complete predecessor; do not recreate missing earlier evidence from conversation. If stage 03 JSON exists but its Markdown companion is missing, derive that companion without rerunning the stage. Use a new run for refreshed evidence, changed profiles, or a different library revision.
+For reproducible engineering-only checks with a synthetic email-log, SDK and soft-delete sample, use the [manual acceptance walkthrough](acceptance-walkthrough.md). Its expected outcomes are not execution claims.
 
-For a later change review, name the previous `05-report.json` and the exact branch/commit range. A range alone is insufficient. Suppose the fictional change adds a new analytics recipient: preserve the prior model's privacy IDs and historical coverage, map the new flow from diff evidence, and identify which purpose, recipient, retention, deletion, transfer, and profile assessments need reconsideration. Do not carry earlier assessed coverage forward as fresh assurance for the new recipient. The change review produces its own `change-review.json` and `.md`; it does not overwrite the baseline or pretend the complete six-stage privacy workflow reran.
+For a paused deep run that already has `02-analysis.json`, name the existing run folder and ask to continue from stage 03. Recover the original review configuration and source provenance from the artifacts. Read the complete predecessor; do not recreate missing earlier evidence from conversation. If stage 03 JSON exists but its Markdown companion is missing, derive that companion without rerunning the stage. Derive a missing `01-data-inventory.md` from stage 01 or final `DATA_INVENTORY.md` from stage 05 only; existing companions remain immutable and any source mismatch requires a new run. Use a new run for refreshed evidence, changed profiles, or a different library revision.
+
+For a later change review, name the previous `05-report.json` and the exact branch/commit range. A range alone is insufficient. Suppose the fictional change adds a new analytics recipient: preserve the prior model's privacy IDs and historical coverage, map the new flow from diff evidence, and identify which purpose, recipient, retention, deletion, transfer, and profile assessments need reconsideration. Do not carry earlier assessed coverage forward as fresh assurance for the new recipient. The change review produces its own `change-review.json`, `.md` and JSON-derived `DATA_INVENTORY.md`; it does not overwrite the baseline or pretend the complete six-stage privacy workflow reran.
 
 ## Manual review checks
 

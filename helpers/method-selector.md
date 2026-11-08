@@ -2,7 +2,7 @@
 id: helpers/method-selector
 title: Threat Modeling Method Selector
 shape: role
-last_reviewed: 2026-11-07
+last_reviewed: 2026-11-08
 sources:
   - https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html
 ---
@@ -28,7 +28,7 @@ Record method-availability:<id> with actual catalog, prompt-content and access e
 
 ## Privacy workflow selection
 
-For an end-to-end privacy objective, recommend the [privacy workflow](../privacy/README.md) and distinguish it from a single method. LINDDUN GO and PRO remain bounded procedures; neither supplies the full GDPR/CCPA profile review. In quick/deep runs, explicit method choices populate the runbook's `METHODS` schedule; this selector does not execute them. Privacy defaults and profile routing are defined by the [runbook](../runbook.md), and unavailable source material remains a gap rather than a completed substitute procedure.
+For an end-to-end privacy objective, recommend the [privacy workflow](../privacy/README.md) and distinguish it from a single method. LINDDUN GO and PRO remain bounded procedures; neither supplies the full GDPR/CCPA profile review. In quick/deep runs, explicit method choices populate the runbook's `METHODS` schedule; this selector does not execute them. Privacy starts without optional methods or profiles; explicit selections and profile routing are defined by the [runbook](../runbook.md), and unavailable source material remains a gap rather than a completed substitute procedure.
 
 ## Selection and availability
 
