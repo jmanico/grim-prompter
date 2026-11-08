@@ -73,7 +73,7 @@ LINDDUN GO and PRO remain distinct procedures with their existing prerequisites.
 
 ## Stage obligations
 
-At stage 00 record privacy scope, processing evidence, profile applicability inputs, missing organizational material and selections. At stage 01 build the processing inventory and flows with explicit unknowns. These stages do not claim later threat analysis or legal conclusions.
+At stage 00 record privacy scope, processing evidence and selections, plus applicability inputs and missing organizational material for selected profiles. At stage 01 build the processing inventory and flows with explicit unknowns. These stages do not claim later threat analysis or legal conclusions.
 
 Populate `selected_methods` with resolved explicitly requested or saved method IDs from stage 00 onward without inventing executions. Execute selected methods on the saved stage 01 model under the runbook's scheduling rule. Scheduled fragments are executed earlier in this run and imported without re-execution at stage 02; caller-supplied prior fragments remain carried from their source run. This distinction overrides generic shared wording that describes all imports as carried rather than run. At stage 02 import their sanitized fragments and perform baseline privacy scenarios and profile assessments. Actual method execution and regulatory assessment remain separately identifiable. A regulatory concern is not automatically a legal violation; retain the question, basis and need for review.
 
@@ -83,7 +83,7 @@ At stage 04 propose minimization, purpose restriction, separation, retention/del
 
 Verification plans use synthetic data by default and define pass, fail and inconclusive observations. Include rights request authorization without excessive identity collection, withdrawal/opt-out propagation, deletion across derivatives and restored backups, retention expiry, recipient enforcement and access boundaries. Execution requires separate authorization; planned tests remain `not_run`. A planned deletion check is not evidence that deletion works.
 
-At stage 05 report inspection coverage first, then scoped processing inventory, privacy findings, profile matrix, proposed responses, residual uncertainty and questions requiring organizational/legal review. Preserve method omissions and unassessed profiles. Identify what would be needed for DPIA/risk-assessment completion and any supplied decisions without inventing approval.
+At stage 05 report inspection coverage first, then scoped processing inventory, privacy findings, any selected-profile matrix, proposed responses, residual uncertainty and questions requiring organizational/legal review. Preserve method omissions and unassessed selected-profile topics. Identify what would be needed for DPIA/risk-assessment completion and any supplied decisions without inventing approval.
 
 Quick runs cover the same subjects within a bounded pass; they do not claim six stages, independent challenge or exhaustive lifecycle coverage.
 

@@ -44,7 +44,7 @@ Integrated runs load the matching architecture prompt and privacy prompt, then w
 
 ## Review the result
 
-Check the inspection ledger, processing inventory, affected people, privacy scenarios, profile applicability and topic coverage, proposed treatments, residual uncertainty, and the action register. Review privacy impact on people separately from organizational impact. A privacy risk may exist even when processing is authorized or a particular legal regime does not apply.
+Check the inspection ledger, processing inventory, affected people, privacy scenarios, any selected-profile applicability and topic coverage, proposed treatments, residual uncertainty, and the action register. Review privacy impact on people separately from organizational impact. A privacy risk may exist even when processing is authorized or a particular legal regime does not apply.
 
 Repository inspection cannot establish actual contracts, organizational practice, external recipients' behavior, legal decisions, or control effectiveness without corresponding evidence. Reports support DPIA and privacy-risk-assessment work; they do not certify compliance or replace a required formal assessment. No test runs, live requests, real-person re-identification, or publication of run artifacts are authorized by these prompts.
 

@@ -17,7 +17,7 @@ A failed invocation is unavailable, not passed or skipped. Continue useful work 
 | Stage | Model | Work |
 | --- | --- | --- |
 | Build | Astra, `gpt-6-astra` | Read project guidance, implement the approved scope on a descriptive topic branch based on `main` (or the authorized existing PR branch), validate and commit a reviewable candidate. |
-| Second build | Opus 5.5, `claude-opus-5-5` | Inspect the actual candidate and sources, correct scope/correctness problems and remove unnecessary prose. Commit edits before review; an evidenced no-change result is valid. |
+| Second build | Opus 5.5, `claude-opus-5-5` | Inspect the actual candidate and sources, correct scope/correctness problems and remove unnecessary prose. Its edits are committed before review; an evidenced no-change result is valid. |
 | Independent correctness review | Sol 6.1, `gpt-6.1-sol` | Check prompt behavior, evidence rules, artifacts, lineage, routing and regressions. |
 | Independent adversarial review | Daybreak Blue, `gpt-daybreak-blue-latest` | Check trust boundaries, injection paths, authority expansion, false evidence and control bypasses using explicit `daybreak_blue` access. |
 | Independent editorial review | Opus 5.5, `claude-opus-5-5` | Check clarity, duplication, placement and plain US English while preserving protections. |
@@ -38,6 +38,6 @@ After fixes, commit and send the changed content for re-review. A bounded delta 
 
 ## Validate and hand off
 
-Keep this project plain Markdown with embedded JSON contracts. Do not introduce an application, framework or test harness. After the last edit run `git diff --check`; check local links/referenced files, path-matching frontmatter IDs and catalog entries. Review changed contract examples for parseability and internal consistency. Use manual acceptance walkthroughs when behavior needs evaluation, retain actual results outside tracked content and distinguish inspected instructions from executed runs. There is no application build or test suite.
+After the last edit, apply the [AGENTS.md](AGENTS.md) validation and simplicity rules, including path-matching frontmatter IDs and catalog entries. Review changed contract examples for parseability and internal consistency. Use manual acceptance walkthroughs when behavior needs evaluation, retain actual results outside tracked content and distinguish inspected instructions from executed runs.
 
-Use a topic branch, commit reviewable changes and open or update the authorized PR against `main`. Report changes, actual stage status, validation, limitations and unresolved findings. A recommendation to merge is not authorization. Merge only when the user authorized it and all configured required checks pass; never bypass repository protection. Sending messages or posting reviews requires explicit authorization.
+Open or update the authorized PR under AGENTS.md. Report changes, actual stage status, validation, limitations and unresolved findings. A recommendation to merge is not authorization, and sending messages or posting reviews also requires explicit authorization.
