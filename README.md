@@ -155,6 +155,6 @@ spent on it.
 
 ## License
 
-Grim Prompter, including its prompts and documentation, is licensed under the [MIT License](LICENSE). Copyright (c) 2026 Jim Manico.
+Grim Prompter, including its prompts and documentation, is available under the [MIT License](LICENSE), with copyright held by Manicode Security. You may use, modify, distribute, and sell copies, including in commercial products, provided that you retain the copyright and permission notices in copies or substantial portions of the software. The license does not require public promotional credit for every commercial use.
 
 Method names such as STRIDE, PASTA, LINDDUN, OCTAVE, CVSS, MITRE ATT&CK®, MITRE ATLAS and CAPEC belong to their respective owners. The prompts describe how to apply those methods. They do not reproduce or replace the original method publications.
