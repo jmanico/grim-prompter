@@ -9,7 +9,7 @@
   Point Claude Code, Codex or any coding agent at your repo. Get a threat model traced to your code.
 </p>
 
-**Threat model your project with Claude Code, Codex, or another coding agent.** Grim Prompter provides 36 architecture workflows and 29 method and analysis prompts. Your agent follows a structured review of the code, trust boundaries, threats, existing controls, and proposed mitigations, with evidence you can check.
+**Threat model your project with Claude Code, Codex, or another coding agent.** Grim Prompter provides 36 architecture workflows and 29 method and analysis prompts. Your agent follows a structured review of the code, trust boundaries, threats, existing controls, and proposed mitigations, with evidence you can check. Dedicated [privacy workflows](#privacy) examine data processing and harms to people, on their own or alongside a security review.
 
 Inspired by [Trim Reaper](https://github.com/jmanico/trim-reaper) and
 [Dread Ledger](https://github.com/jmanico/dread-ledger).
@@ -41,6 +41,8 @@ Open your project in your coding agent and ask:
 | A quick threat model, architecture chosen for you | `/threat-model` | `$threat-model` |
 | A quick model for a specific architecture | `/threat-model quick api` | `$threat-model quick api` |
 | The full six-stage analysis | `/threat-model deep web` | `$threat-model deep web` |
+| A quick privacy review | `/threat-model quick privacy` | `$threat-model quick privacy` |
+| A full privacy review | `/threat-model deep privacy` | `$threat-model deep privacy` |
 | One method on your code | `/threat-model STRIDE per element` | `$threat-model STRIDE per element` |
 | A review of how a branch changes an existing model | `/threat-model change main...feature` | `$threat-model change main...feature` |
 
@@ -103,16 +105,58 @@ Start with a **quick** prompt or choose **deep** for the six-stage workflow. Pic
 
 ## Privacy
 
-Run a standalone privacy review, or include privacy throughout an architecture review:
+Review how collecting, using, sharing and retaining data can harm people—even when the processing is intended and authorized. Start with a standalone privacy review, or include privacy throughout a security architecture review.
+
+### Choose a flow
+
+Use these requests in Claude Code; in Codex, replace `/threat-model` with `$threat-model`.
+
+| You want | Request |
+| --- | --- |
+| A bounded privacy review | `/threat-model quick privacy` |
+| A full six-stage privacy review | `/threat-model deep privacy` |
+| Security and privacy together for a web application | `/threat-model deep web with privacy` |
+| Quick privacy with LINDDUN GO | `/threat-model quick privacy using LINDDUN GO` |
+| Deep privacy with LINDDUN PRO | `/threat-model deep privacy using LINDDUN PRO` |
+| Deep privacy with optional regulatory profiles | `/threat-model deep privacy using GDPR and CCPA/CPRA profiles` |
+
+These are natural-language requests to the installed skill. Name the decision, directories and exclusions, just as for a security review. Privacy is a review scope, not an architecture: standalone privacy still models the system's actual architecture but does not claim its security analysis ran. A combined review produces one cumulative model covering both.
+
+Bare privacy requests start with engineering analysis, with no LINDDUN method, regulatory profile or additional-regime screening selected. You can explicitly combine methods and profiles, for example `deep web with privacy using LINDDUN PRO and GDPR and CCPA/CPRA profiles`.
+
+### What the agent examines
+
+Before modeling, a bounded, read-only [evidence pass](reference/privacy-evidence-pattern.md) inspects relevant code for:
+
+- Personal data passed to logs, traces and error reporters.
+- Analytics/telemetry initialization, event payloads and third-party recipients.
+- Retention, soft deletion and evidenced deletion paths into downstream copies.
+- Potentially unnecessary collection, stable identifiers and cross-context linkage.
+- Sensitive data categories identified by the project itself.
+
+Observations cite files and line ranges without carrying personal values or secrets. “No consumer found” stays limited to the inspected scope; missing documentation alone does not prove a privacy defect. Unsupported scenarios remain hypotheses with explicit evidence gaps.
+
+### Stages and outputs
+
+Quick privacy produces `quick-report.json`, `report.md` and `DATA_INVENTORY.md`. Deep privacy follows six stages: **scope and evidence → processing model → privacy analysis → challenge → treatment and verification planning → report and handoff**. Selected methods run after the deep processing model and before privacy analysis; quick methods run before quick analysis. Verification is planned, not executed without separate authorization.
+
+The deep workflow saves cumulative JSON and readable stage companions, ending with `05-report.json`, `report.md` and `DATA_INVENTORY.md`. The inventory lists modeled data, purposes, affected people, recipients, flows, retention/deletion details and unknowns, with supporting evidence. It is derived only from its source JSON. Deep stage 01 also saves an immutable preliminary `01-data-inventory.md`.
+
+Continue by naming the run folder and next missing stage. To review a later branch, name the saved privacy baseline:
 
 ```text
-/threat-model deep privacy
-$threat-model deep web with privacy, using LINDDUN PRO and GDPR and CCPA/CPRA profiles
+/threat-model change main...feature using threat-model/<your-deep-run>/05-report.json as the baseline
 ```
 
-Use `/threat-model` in Claude Code and `$threat-model` in Codex. Privacy has a [quick entry point and full six-stage workflow](privacy/README.md). Both privacy scopes start with code evidence, processing purposes, data lifecycles and harms to people, with `METHODS: []` and `PRIVACY_PROFILES: []`. A bounded evidence pass precedes modeling; each quick/final report is accompanied by `DATA_INVENTORY.md` derived from its JSON.
+Replace `<your-deep-run>` with your actual run folder. Change review preserves the baseline and records privacy-relevant changes, such as a new recipient, additional data collection, changed logging or retention, with evidence and its own updated inventory.
 
-LINDDUN GO/PRO, GDPR, CCPA/CPRA and [other-regime screening](privacy/profiles/other-regimes-screening.md) run only when explicitly selected. Missing prerequisites keep selected work partial; unrequested legal profiles create no applicability gaps. Reports support engineering and privacy/legal review, without certifying compliance. See [LINDDUN input instructions](start-here.md#supply-linddun-material), [fictional walkthroughs](privacy/examples.md) and the [manual acceptance walkthrough](privacy/acceptance-walkthrough.md).
+### Supply optional method and profile inputs
+
+[LINDDUN GO](methods/linddun-go.md) needs lawful card material and actual participant contributions; [LINDDUN PRO](methods/linddun-pro.md) needs a data-flow model and lawful applicable mapping/threat-tree guidance. Name the local source files in your request. The agent carries permitted, sanitized material through the run's input files and artifacts. It does not reconstruct missing source material or simulate a workshop. Missing prerequisites leave the selected method partial while supported engineering analysis continues.
+
+[GDPR](privacy/profiles/gdpr.md), [CCPA/CPRA](privacy/profiles/ccpa-cpra.md) and [other-regime screening](privacy/profiles/other-regimes-screening.md) are explicit opt-ins. Their applicability and coverage depend on supplied evidence. Unrequested profiles do not create legal-applicability gaps. Outputs support privacy and legal review; they do not establish consent, certify compliance or complete a formal DPIA.
+
+See the [privacy workflow guide](privacy/README.md) for exact stage handoffs, [LINDDUN input instructions](start-here.md#supply-linddun-material) for source requirements, [fictional walkthroughs](privacy/examples.md) for composed reviews, and the [manual acceptance walkthrough](privacy/acceptance-walkthrough.md) for evaluation cases.
 
 ## Methods
 
