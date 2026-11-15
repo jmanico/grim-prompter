@@ -9,7 +9,12 @@
   "executive_summary": {
     "system_overview": [],
     "key_components": [],
-    "next_steps": []
+    "next_steps": [],
+    "verdicts": {
+      "threats": null,
+      "controls": null,
+      "actions": null
+    }
   },
   "scope_and_approach": {
     "approach": [],
@@ -24,5 +29,13 @@
   "options": {
     "show_excerpts": false,
     "include_data_download": false
-  }
+  },
+  "records": {},
+  "assumptions": [],
+  "document_control": {
+    "versions": [],
+    "reviewers": [],
+    "distribution": []
+  },
+  "review_triggers": []
 }

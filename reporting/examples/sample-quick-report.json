@@ -85,7 +85,7 @@
       "locator": "apps/admin-console/",
       "access": "skipped",
       "coverage": "a1b2c3d",
-      "reason": "Excluded by the caller: out of scope for the partner API decision."
+      "reason": "Excluded by the client: out of scope for the partner API decision."
     }
   ],
   "attachments": [],
@@ -100,7 +100,7 @@
         "Refund endpoint"
       ],
       "out_of_scope": [
-        "Admin console (excluded by caller)"
+        "Admin console (excluded by the client)"
       ],
       "objectives": [
         "Support the decision to open the partner API in Q1"
@@ -267,6 +267,36 @@
         "limitations": "",
         "excerpt": null,
         "derived_from": []
+      },
+      {
+        "id": "E12",
+        "locator": "test-results/auth-suite-2026-11-09.xml:1-64",
+        "source_kind": "test_result",
+        "source_revision": "a1b2c3d",
+        "date": "2026-11-09",
+        "statement": "The client's automated authentication suite ran 42 cases covering expired, unsigned and wrong-issuer tokens; all were rejected.",
+        "status": "observation",
+        "purpose": "execution",
+        "access": "read",
+        "limitations": "Covers token validation only, not authorisation of individual records.",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E13",
+        "locator": "test-results/auth-suite-2026-11-09.xml:1-64",
+        "source_kind": "test_result",
+        "source_revision": "a1b2c3d",
+        "date": "2026-11-09",
+        "statement": "Token validation was shown to be effective by the passing authentication suite.",
+        "status": "observation",
+        "purpose": "effectiveness",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": [
+          "E12"
+        ]
       }
     ],
     "system": {
@@ -1102,12 +1132,15 @@
           "T-002",
           "T-005"
         ],
-        "status": "implemented",
+        "status": "tested",
         "evidence_refs": [
-          "E7"
+          "E7",
+          "E13"
         ],
         "limitations": "Authenticates the caller; does not authorise access to individual objects.",
-        "verification_refs": [],
+        "verification_refs": [
+          "V-005"
+        ],
         "architecture_ids": [
           "api"
         ]
@@ -1661,6 +1694,25 @@
         "inconclusive_criteria": "Concurrency cannot be reproduced.",
         "status": "not_run",
         "result_evidence_refs": []
+      },
+      {
+        "id": "V-005",
+        "threat_refs": [],
+        "control_refs": [
+          "C-001"
+        ],
+        "approach": "Review the results of the client's automated authentication test suite for token validation on every API route.",
+        "expected_outcome": "Expired, unsigned and wrong-issuer tokens are rejected on every route.",
+        "prerequisite_evidence_refs": [
+          "E7"
+        ],
+        "pass_criteria": "Every invalid-token case is rejected.",
+        "fail_criteria": "Any invalid token is accepted.",
+        "inconclusive_criteria": "The suite does not cover a route.",
+        "status": "passed",
+        "result_evidence_refs": [
+          "E12"
+        ]
       }
     ],
     "decisions": [],

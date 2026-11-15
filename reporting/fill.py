@@ -34,7 +34,13 @@ REPORTABLE = {
     "THREAT_MODEL_FRAGMENT",
 }
 ENGAGEMENT_KEYS = {"engagement_version", "title", "subtitle", "client", "project", "report_version", "report_date", "report_status", "authors",
-                   "executive_summary", "scope_and_approach", "artefacts", "workshops", "risk_matrix", "options"}
+                   "executive_summary", "scope_and_approach", "artefacts", "workshops", "risk_matrix", "options",
+                   "records", "assumptions", "document_control", "review_triggers"}
+RECORD_KEYS = {"title", "impact", "response", "response_note", "target_rating", "coverage", "coverage_note", "priority",
+               "effort", "owner", "target_date", "type", "environment"}
+RECORD_ENUMS = {"response": {"mitigate", "eliminate", "transfer", "accept", "undecided"},
+                "coverage": {"none", "partial", "controlled", "verified"},
+                "type": {"confirm_weakness", "retest_fix", "test_control"}}
 ENGAGEMENT_OPTIONS = {"show_excerpts", "include_data_download"}
 # Wording that names the tooling or its process. The report is a client document, so fill.py warns when it appears.
 TOOL_TERMS = re.compile(r"grim[\s_-]?prompter|SYSTEM_UNDER_REVIEW|runbook|quick[- ]report\.json|\b0[0-5]-[a-z-]+\.json|coding agent|\bAI agent\b|\bLLM\b|deep stage|quick (run|mode|analysis)|challenge stage|TM_[A-Z_]+", re.I)
@@ -149,8 +155,13 @@ def check_engagement(eng):
         _text(eng.get(key), key, 300)
     _text_list(eng.get("authors"), "authors", 200, 50)
     summary = eng.get("executive_summary") or {}
-    if not isinstance(summary, dict) or set(summary) - {"system_overview", "key_components", "next_steps"}:
-        raise InputError("engagement: executive_summary may use only system_overview, key_components and next_steps")
+    if not isinstance(summary, dict) or set(summary) - {"system_overview", "key_components", "next_steps", "verdicts"}:
+        raise InputError("engagement: executive_summary may use only system_overview, key_components, next_steps and verdicts")
+    verdicts = summary.get("verdicts") or {}
+    if not isinstance(verdicts, dict) or set(verdicts) - {"threats", "controls", "actions"}:
+        raise InputError("engagement: executive_summary.verdicts may use only threats, controls and actions")
+    for key, value in verdicts.items():
+        _text(value, f"executive_summary.verdicts.{key}", 600)
     _text_list(summary.get("system_overview"), "executive_summary.system_overview", 4000, 12)
     _rows(summary.get("key_components"), "executive_summary.key_components", ("ref", "name", "why"), count=20)
     _rows(summary.get("next_steps"), "executive_summary.next_steps", ("step",), ("refs",), count=20)
@@ -163,6 +174,24 @@ def check_engagement(eng):
     _rows(approach.get("activities"), "scope_and_approach.activities", ("phase", "description"), count=50)
     _rows(eng.get("artefacts"), "artefacts", ("name", "type", "version", "date", "source", "notes"))
     _rows(eng.get("workshops"), "workshops", ("date", "title", "purpose"), ("attendees", "outcomes"), count=200)
+    _rows(eng.get("assumptions"), "assumptions", ("statement", "if_wrong"), ("refs",), count=100)
+    _text_list(eng.get("review_triggers"), "review_triggers", 400, 30)
+    control = eng.get("document_control") or {}
+    if not isinstance(control, dict) or set(control) - {"versions", "reviewers", "distribution"}:
+        raise InputError("engagement: document_control may use only versions, reviewers and distribution")
+    _rows(control.get("versions"), "document_control.versions", ("version", "date", "author", "change"), count=100)
+    _rows(control.get("reviewers"), "document_control.reviewers", ("name", "role", "responsibility", "date"), count=50)
+    _text_list(control.get("distribution"), "document_control.distribution", 300, 50)
+    records = eng.get("records") or {}
+    if not isinstance(records, dict) or len(records) > 5000:
+        raise InputError("engagement: records must map record ids to objects")
+    for rid, rec in records.items():
+        if not isinstance(rec, dict) or set(rec) - RECORD_KEYS:
+            raise InputError(f"engagement: records[{rid!r}] may use only {sorted(RECORD_KEYS)}")
+        for key, value in rec.items():
+            _text(value, f"records[{rid}].{key}", 160 if key in ("title", "priority", "owner", "target_date", "effort", "target_rating") else 1200)
+            if key in RECORD_ENUMS and value is not None and value not in RECORD_ENUMS[key]:
+                raise InputError(f"engagement: records[{rid!r}].{key} must be one of {sorted(RECORD_ENUMS[key])}")
     opts = eng.get("options") or {}
     if not isinstance(opts, dict) or set(opts) - ENGAGEMENT_OPTIONS or not all(isinstance(v, bool) for v in opts.values()):
         raise InputError(f"engagement: options must be booleans from {sorted(ENGAGEMENT_OPTIONS)}")
@@ -301,6 +330,25 @@ def main(argv):
             pieces.append(head)
         eng = dict(eng)
         eng["generated_at"] = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
+        known = set()
+        def collect(value):
+            if isinstance(value, dict):
+                if isinstance(value.get("id"), str):
+                    known.add(value["id"])
+                for item in value.values():
+                    collect(item)
+            elif isinstance(value, list):
+                for item in value:
+                    collect(item)
+        collect(model["model"])
+        stray = sorted(set(eng.get("records") or {}) - known)
+        if stray:
+            warnings.append("engagement records refer to ids that are not in the model: " + ", ".join(stray[:10]))
+        labels = {str(r.get("label", "")).strip().lower() for r in ((eng.get("risk_matrix") or {}).get("ratings") or [])}
+        bad_targets = sorted(rid for rid, rec in (eng.get("records") or {}).items()
+                             if rec.get("target_rating") and labels and rec["target_rating"].strip().lower() not in labels)
+        if bad_targets:
+            raise InputError("engagement: target_rating must use a label from risk_matrix.ratings: " + ", ".join(bad_targets[:10]))
         model = client_copy(model)
         mentions = tool_mentions(model["model"], "model") + tool_mentions(eng, "engagement")
         html = (pieces[0] + font_css() + pieces[1] + embed(model) + pieces[2] + embed(eng)
@@ -324,7 +372,9 @@ def main(argv):
         ("next steps", summary.get("next_steps")), ("approach narrative", (eng.get("scope_and_approach") or {}).get("approach")),
         ("limitations in client wording", (eng.get("scope_and_approach") or {}).get("limitations")),
         ("artefact register (Appendix A)", eng.get("artefacts")), ("workshops (Appendix B)", eng.get("workshops")),
-        ("risk matrix (Appendix C)", eng.get("risk_matrix"))) if not present]
+        ("risk matrix (Appendix C)", eng.get("risk_matrix")), ("document control", eng.get("document_control")),
+        ("business impact for each threat", all((eng.get("records") or {}).get(t.get("id"), {}).get("impact") for t in m.get("threats", []))),
+        ("owners and target dates", any(r.get("owner") for r in (eng.get("records") or {}).values()))) if not present]
     if missing:
         print("not supplied, shown as such in the report: " + "; ".join(missing))
     if not any(r.get("status") == "rated" for r in m.get("risks", []) if isinstance(r, dict)):

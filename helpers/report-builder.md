@@ -15,15 +15,15 @@ Required input: a portable threat model envelope, normally `quick-report.json` o
 
 ## The report
 
-The structure is fixed and the renderer builds it:
+The structure is fixed and the renderer builds it. The reader should finish with three answers: what the current threats are, whether today's controls cover them, and what they need to do.
 
-1. **Executive summary**: what the system is and does, key components, key next steps, headline counts and a summary table.
-2. **Technical summary**: an interactive architecture diagram with threats, controls and verification marked on each component; an overview table of every threat with its controls, recommendations and verification; and the component inventory.
-3. **Threats**: framework mapping table, then each threat in detail.
-4. **Controls**: what is in place now.
-5. **Recommendations**: proposed treatments, requirements and any decisions.
-6. **Verification required**: planned tests with pass, fail and inconclusive criteria.
-7. **Scope and approach**: scope, approach, methods applied, inspection coverage, limitations and open unknowns.
+1. **Executive summary**: what the system is and does; three verdicts (current threats, controls in place, what you need to do); a threats-at-a-glance table showing, per threat, the risk now and target, the control coverage today and the actions required; key components; key next steps.
+2. **Technical summary**: an interactive architecture diagram grouped by trust zone, with threats, controls and verification marked on each component and a written key for print; an overview table; the component inventory.
+3. **Threats**: framework mapping, then one self-contained entry per threat: what could happen, why it matters, the controls in place today, what we recommend and how to verify it.
+4. **Controls**: coverage by threat (no control, partly controlled, controlled but unverified, verified), then the control register.
+5. **Recommendations**: a prioritised plan with owner, target date and decision status, then details.
+6. **Verification required**: an ordered test plan with purpose, environment, owner and status, then pass, fail and inconclusive criteria.
+7. **Scope and approach**: scope, approach, what was reviewed, assumptions, limitations, open questions, when to revisit, and terms used.
 8. **Appendix A, Artefacts**; **Appendix B, Workshops**; **Appendix C, Risk matrix**.
 
 ## Input
@@ -44,7 +44,16 @@ Engagement details come only from the caller: their words in the request, or fil
    - **Approach** (`scope_and_approach.approach`): how the review was done, in the delivery team's voice: the code and design documentation reviewed, the workshops held, and the frameworks applied. `activities` lists engagement phases only if the caller describes them.
    - **What was reviewed** (`scope_and_approach.review_coverage`): one short paragraph naming the areas of code and documentation reviewed in full, partly, and not at all, from the envelope's inspection coverage.
    - **Limitations** (`scope_and_approach.limitations`): restate the envelope's limitations in client wording. Keep every real limit (what was not reviewed, that nothing was tested against a running system, what the findings depend on); drop only the process vocabulary.
-   - **Artefacts, workshops and risk matrix**: copy only what the caller supplied. Never invent a workshop, attendee, date, document version or matrix. If the caller did not supply one, leave it empty; the report then says it was not supplied. Ask once, in a single question, for whichever of these three is missing when the caller is present; when unattended, leave them empty and say so in the summary.
+   - **Artefacts, workshops and risk matrix**: copy only what the caller supplied. Never invent a workshop, attendee, date, document version, matrix, owner, due date, decision or target rating. If the caller did not supply one, leave it empty; the report then says it was not supplied. Ask once, in a single question, for whichever of these three is missing when the caller is present; when unattended, leave them empty and say so in the summary.
+   - **Per-record annotations** (`records`, keyed by record id):
+     - `title` for every threat, control, recommendation and verification: a plain name of at most about ten words, so tables and the diagram key read without the full text.
+     - `impact` for every threat: one or two sentences on what it would cost the business or its customers, drawn from the data and assets the threat affects. Do not use severity words unless the threat is rated.
+     - `coverage` and `coverage_note` for a threat only when the derived status would mislead, for example when the only linked control's recorded limitation shows it does not address the threat. Cite that limitation in the note. The renderer derives coverage otherwise: no implemented control means none; a weakness observed despite a control means partial; verified requires a passed test of a control against that threat.
+     - `response` (`mitigate`, `eliminate`, `transfer`, `accept`, `undecided`), `response_note`, `target_rating`, `owner`, `target_date`, `effort`, `environment` and `priority`: only what the caller supplied or a recorded decision states. Leave them out otherwise; the report shows "to be agreed" and marks a response as proposed where a recommendation exists.
+     - `type` for a verification (`confirm_weakness`, `retest_fix`, `test_control`) only to correct the derived purpose.
+   - **Verdicts** (`executive_summary.verdicts`): leave empty so the report states the counts itself, unless the caller wants specific wording.
+   - **Assumptions** (`assumptions`): each assumption from the envelope, the threats that rely on it (`refs`) and, where the envelope supports it, what changes if it is wrong.
+   - **Document control** (`document_control`) and **review triggers** (`review_triggers`): from the caller only. Without triggers the report lists general ones.
    - **Title, client, project, report version, report status, authors**: from the caller. Default the title to "Threat model report" and the status to "Draft for review".
 3. **Write a client document.** A person reviews the report before it is issued, and it goes out under the delivery team's name. Nothing you write may mention this library, an AI or coding agent, prompts, runs, modes, stages, envelopes, file names such as `quick-report.json`, or checks the tooling performed. Describe what was reviewed: the code (repository and revision), the design documentation and the workshops. `fill.py` warns when such wording appears in the engagement file or in the envelope's own text; reword the engagement file, and tell the caller which envelope records need rewording, since you must not change the envelope.
 4. **Keep the narrative honest.**
@@ -84,4 +93,5 @@ Write only `RUN_DIR/report-<name>.engagement.json` and `RUN_DIR/report-<name>.ht
 - links to the two files written;
 - which engagement details the caller supplied and which appendices are empty;
 - whether threats are rated and which frameworks are mapped;
+- which threats have no control or no recommendation, and which annotations (impact, owners, dates, responses, target ratings) are still to be supplied;
 - a reminder that the summary narrative is a draft for the caller to review, and that the file embeds the full model.

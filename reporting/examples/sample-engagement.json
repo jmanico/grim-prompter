@@ -11,7 +11,7 @@
   "executive_summary": {
     "system_overview": [
       "The Invoice API lets customer finance users and partner systems read invoices, export them as CSV files, receive status webhooks and request refunds. It is a Node.js service behind a public REST API, backed by a PostgreSQL database, with background workers for exports and webhooks and a separate payments service for refunds.",
-      "This review supports the decision to open the API to partners. It found three weaknesses evidenced in code and two design hypotheses. The most significant is that bulk exports are not authorised per invoice, and the export worker reads with an all-tenant service role."
+      "This review supports the decision to open the API to partners. It found five open threats: three were observed in the code and two are design concerns still to be confirmed. The most significant is that bulk exports are not authorised per invoice, while the export worker reads with a service role that can see every tenant's data."
     ],
     "key_components": [
       {
@@ -65,7 +65,7 @@
         ]
       },
       {
-        "step": "Run the four planned verification tests in an isolated environment.",
+        "step": "Run the four outstanding verification tests in an isolated environment.",
         "refs": [
           "V-001",
           "V-002",
@@ -288,5 +288,173 @@
       }
     ]
   },
-  "report_status": "Draft for review"
+  "report_status": "Draft for review",
+  "records": {
+    "T-001": {
+      "title": "Bulk export exposes other users' invoices",
+      "impact": "A customer or partner user could download invoices, including contact and financial details, that belong to other users. This would be a reportable privacy breach and would undermine partner confidence in the API.",
+      "target_rating": "Low",
+      "response": "mitigate",
+      "response_note": "Agreed in the risk rating workshop on 13 November 2026.",
+      "coverage_note": "Download links are time-limited and private, but nothing checks that the invoices in an export belong to the requester."
+    },
+    "T-002": {
+      "title": "Any tenant user can read every invoice in the tenant",
+      "impact": "Staff at a customer could read invoices they have no business need to see. Whether this is a defect depends on the intended sharing model, which is undocumented.",
+      "target_rating": "Low",
+      "coverage_note": "Requests are authenticated and limited to the caller's tenant, but not to the invoice owner."
+    },
+    "T-003": {
+      "title": "Webhook dispatcher can be redirected to internal services",
+      "impact": "An attacker with a customer account could make the platform call internal addresses from inside the application network, exposing cloud credentials or internal admin functions.",
+      "target_rating": "Low",
+      "response": "mitigate",
+      "response_note": "Agreed in the risk rating workshop on 13 November 2026."
+    },
+    "T-004": {
+      "title": "Duplicate refunds through replayed or concurrent requests",
+      "impact": "The same payment could be refunded more than once, causing direct financial loss and reconciliation effort.",
+      "target_rating": "Low"
+    },
+    "T-005": {
+      "title": "Leaked partner credential gives tenant-wide access",
+      "impact": "A single leaked partner secret could expose every invoice in a tenant. The size of the exposure depends on how partner credentials are scoped, which is not yet designed.",
+      "coverage": "partial",
+      "coverage_note": "Token validation is tested and effective, but it confirms who is calling, not what a partner credential may access.",
+      "response": "undecided",
+      "response_note": "Awaiting the partner credential design."
+    },
+    "C-001": {
+      "title": "Token validation on every API route"
+    },
+    "C-002": {
+      "title": "Private export bucket with short-lived links"
+    },
+    "C-003": {
+      "title": "Refund idempotency keys"
+    },
+    "TR-001": {
+      "title": "Authorise every invoice in an export",
+      "effort": "Medium",
+      "owner": "API team lead",
+      "target_date": "2026-12-12"
+    },
+    "TR-002": {
+      "title": "Bind invoice reads to the owner or an explicit grant",
+      "effort": "Medium",
+      "owner": "API team lead",
+      "target_date": "2027-01-30"
+    },
+    "TR-003": {
+      "title": "Validate webhook destinations and block redirects",
+      "effort": "Medium",
+      "owner": "Platform team lead",
+      "target_date": "2026-12-12"
+    },
+    "TR-004": {
+      "title": "Make refund idempotency atomic and durable",
+      "effort": "Small",
+      "owner": "Payments team lead",
+      "target_date": "2027-01-30"
+    },
+    "V-001": {
+      "title": "Cross-user export test",
+      "environment": "Isolated test tenant with two users",
+      "owner": "Client QA lead",
+      "target_date": "2026-12-19"
+    },
+    "V-002": {
+      "title": "Cross-user invoice read test",
+      "environment": "Isolated test tenant with two users",
+      "owner": "Client QA lead",
+      "target_date": "2027-02-06"
+    },
+    "V-003": {
+      "title": "Webhook redirect to private address test",
+      "environment": "Isolated network with a test redirect server",
+      "owner": "Client QA lead",
+      "target_date": "2026-12-19"
+    },
+    "V-004": {
+      "title": "Concurrent refund test",
+      "environment": "Payments sandbox",
+      "owner": "Client QA lead",
+      "target_date": "2027-02-06"
+    },
+    "V-005": {
+      "title": "Authentication test suite review"
+    },
+    "G1": {
+      "owner": "Client product owner"
+    },
+    "G2": {
+      "owner": "Payments team lead"
+    },
+    "G3": {
+      "owner": "Client product owner"
+    },
+    "G4": {
+      "owner": "Payments team lead"
+    }
+  },
+  "assumptions": [
+    {
+      "statement": "The API gateway enforces TLS for all public traffic.",
+      "refs": [
+        "T-005"
+      ],
+      "if_wrong": "Tokens and invoice data could be intercepted in transit; reassess every threat at the public entry point."
+    },
+    {
+      "statement": "Invoice identifiers can be learned or guessed by an authenticated user.",
+      "refs": [
+        "T-001",
+        "T-002"
+      ],
+      "if_wrong": "The likelihood of T-001 and T-002 falls; the ratings should be revisited."
+    },
+    {
+      "statement": "Customers can register any webhook address without approval.",
+      "refs": [
+        "T-003"
+      ],
+      "if_wrong": "If addresses are vetted before use, T-003 becomes harder to exploit."
+    }
+  ],
+  "document_control": {
+    "versions": [
+      {
+        "version": "0.1",
+        "date": "2026-11-14",
+        "author": "Product Security team",
+        "change": "First draft after the risk rating workshop."
+      },
+      {
+        "version": "1.0 draft",
+        "date": "2026-11-15",
+        "author": "Product Security team",
+        "change": "Draft issued for internal review."
+      }
+    ],
+    "reviewers": [
+      {
+        "name": "To be assigned",
+        "role": "Engagement lead",
+        "responsibility": "Technical review before issue",
+        "date": null
+      },
+      {
+        "name": "To be assigned",
+        "role": "Client engineering lead",
+        "responsibility": "Accepts the findings and owns the action plan",
+        "date": null
+      }
+    ],
+    "distribution": [
+      "Client engineering lead",
+      "Client product owner",
+      "Client risk manager"
+    ]
+  },
+  "review_triggers": []
 }

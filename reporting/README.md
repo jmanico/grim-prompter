@@ -14,22 +14,30 @@ Output goes into the run folder as `report-<name>.html` and `report-<name>.engag
 
 ## Structure
 
+The report is built so the reader finishes with three answers: what the current threats are, whether today's controls cover them, and what they need to do.
+
 | Section | Contents | Comes from |
 | --- | --- | --- |
-| Executive summary | What the system is and does, key components, key next steps, headline counts, summary table, basis and limits | Narrative from the engagement file; everything else from the model |
-| Technical summary | Architecture diagram with threats, controls and verification on each component; overview table; component and flow inventory | Model |
-| Threats | Framework mapping table; threat details; attack trees and conflicts when present | Model (mappings come from method findings) |
-| Controls | Controls in place with status, limitations and the threats they address | Model |
-| Recommendations | Proposed treatments with alternatives and trade-offs; requirements and decisions when present | Model |
-| Verification required | Planned tests with pass, fail and inconclusive criteria | Model |
-| Scope and approach | Scope, approach, methods applied, inspection coverage, limitations, open unknowns | Model, plus approach narrative from the engagement file |
-| Appendix A: Artefacts | Artefact register with versions; sources and revisions cited by evidence; files inspected; evidence ledger | Engagement file and model |
+| Executive summary | Narrative; three verdicts (threats, controls, actions); threats-at-a-glance table with risk now and target, control coverage and required actions; key components; next steps; basis | Narrative and annotations from the engagement file; counts, coverage and links from the model |
+| Technical summary | Architecture diagram grouped by trust zone with threat, control and verification markers and a written key; overview table; inventory | Model |
+| Threats | Framework mapping; one self-contained entry per threat (what could happen, why it matters, controls today, recommendation, verification); attack trees | Model, with impact and titles from the engagement file |
+| Controls | Coverage by threat; control register with test status | Model |
+| Recommendations | Prioritised plan with owner, target date and decision; details; threats without a recommendation | Model, with owners and dates from the engagement file |
+| Verification required | Ordered test plan with purpose, environment, owner and status; pass, fail and inconclusive criteria | Model, with owners and dates from the engagement file |
+| Scope and approach | Scope, approach, what was reviewed, assumptions, limitations, open questions, when to revisit, terms used | Model and engagement file |
+| Appendix A: Artefacts | Artefact register with versions; sources and revisions cited by evidence; files reviewed; evidence references | Engagement file and model |
 | Appendix B: Workshops | Date, title, attendees, purpose, outcomes | Engagement file |
 | Appendix C: Risk matrix | The matrix, rating definitions, rated threats placed on it, risk register | Engagement file and model |
 
-The architecture diagram is drawn from the model's flow records, arranged in flow order from the actors. Each component carries markers for its threats, controls and verification tests. Hover over a marker to see what it is; select it to open that entry. Select a component to highlight its connections. Flows that cross a trust boundary are dashed. Use the checkboxes to hide a layer and the zoom buttons to resize.
+**Coverage** is derived for each open threat: *no control in place* (no implemented control), *partly controlled* (a control exists but the weakness was observed despite it), *controlled, not yet verified*, or *controlled and verified* (a test of a control against that threat has passed). A reviewer can override it per threat with a note.
 
-When the engagement file leaves something out, the report says so and falls back to the model where it can: the scope description for the summary, the components with the most open threats, and the recommendations for the first open threats.
+**Priority** follows the risk rating of the threats an action addresses; P1 is the highest rating present in the report. **Verification purpose** is derived as confirm the weakness, confirm then retest after the fix, or test an existing control.
+
+**The diagram** groups components into trust zones: components joined by flows that cross no trust boundary share a zone. Threat markers are coloured by risk rating, the bar above a component shows its weakest coverage, and data stores are drawn with open sides. Hover over a marker to see what it is; select it to open that entry. A written key beneath the diagram carries the same information for print.
+
+**Export action plan (CSV)** downloads recommendations, verification tests and open questions with priority, owner, date and status for import into a tracker.
+
+When the engagement file leaves something out, the report says so or falls back to the model: full record text instead of short titles, "to be agreed" for owners and dates, and general review triggers.
 
 ## Engagement file
 
@@ -41,6 +49,11 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 | `executive_summary.system_overview` | One to three paragraphs: what the system is and does, and what the review found |
 | `executive_summary.key_components` | `{ "ref": "<record id>", "name": "...", "why": "..." }` |
 | `executive_summary.next_steps` | `{ "step": "...", "refs": ["<record ids>"] }` |
+| `executive_summary.verdicts` | Optional wording for the three verdict cards: `threats`, `controls`, `actions` |
+| `records` | Annotations keyed by record id: `title`, `impact`, `response`, `response_note`, `target_rating`, `coverage`, `coverage_note`, `priority`, `effort`, `owner`, `target_date`, `type`, `environment` |
+| `assumptions` | `{ "statement", "refs": ["<threat ids>"], "if_wrong" }` |
+| `document_control` | `versions` (`version`, `date`, `author`, `change`), `reviewers` (`name`, `role`, `responsibility`, `date`), `distribution` |
+| `review_triggers` | Events that should prompt a revisit; general ones are listed when empty |
 | `scope_and_approach.approach` | Paragraphs on how the engagement was delivered |
 | `scope_and_approach.activities` | `{ "phase": "...", "description": "..." }` |
 | `scope_and_approach.review_coverage` | Paragraph on which code and documentation was reviewed in full, partly or not at all |
@@ -50,7 +63,7 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 | `risk_matrix` | `name`, `version`, `source`, `likelihood` and `consequence` levels (`label`, `description`), `cells` (one row per likelihood level, one rating label per consequence level) and `ratings` (`label`, `color`, `description`, highest first) |
 | `options` | `show_excerpts` (code excerpts in the evidence references, default off) and `include_data_download` (a button to download the underlying data, default off) |
 
-The agent drafts the summary narrative from the model and cites record ids, so you can check each statement. Workshops, artefact versions and the risk matrix are never invented: supply them in the request or in files you name.
+The agent drafts the narrative, short titles and impact statements from the model, so you can check each against its record. Workshops, artefact versions, the risk matrix, owners, dates, decisions and target ratings are never invented: supply them in the request or in files you name.
 
 ### Risk ratings
 
