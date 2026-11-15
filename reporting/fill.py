@@ -35,14 +35,15 @@ REPORTABLE = {
 }
 ENGAGEMENT_KEYS = {"engagement_version", "title", "subtitle", "client", "project", "report_version", "report_date", "report_status", "authors",
                    "executive_summary", "scope_and_approach", "artefacts", "workshops", "risk_matrix", "options",
-                   "records", "assumptions", "document_control", "review_triggers", "code_access", "validation"}
+                   "records", "assumptions", "document_control", "review_triggers", "code_access", "validation", "test_plan"}
 RECORD_KEYS = {"title", "impact", "response", "response_note", "target_rating", "coverage", "coverage_note", "priority",
                "effort", "owner", "target_date", "type", "environment", "responsibility"}
 RECORD_ENUMS = {"response": {"mitigate", "eliminate", "transfer", "accept", "undecided"},
                 "coverage": {"none", "partial", "reported", "controlled", "verified"},
                 "responsibility": {"client", "vendor", "shared", "unknown"},
                 "type": {"confirm_weakness", "retest_fix", "test_control", "review_configuration", "vendor_assurance", "design_review"}}
-ENGAGEMENT_OPTIONS = {"show_excerpts", "include_data_download"}
+TEST_PLAN_KEYS = {"objective", "approach", "environment", "in_scope", "out_of_scope", "prerequisites", "rules_of_engagement", "paths"}
+ENGAGEMENT_OPTIONS = {"show_excerpts", "include_data_download", "test_plan"}
 VALIDATION_OUTCOMES = {"confirmed", "corrected", "rejected", "added", "deferred", "not_discussed"}
 # Wording that names the tooling or its process. The report is a client document, so fill.py warns when it appears.
 TOOL_TERMS = re.compile(r"grim[\s_-]?prompter|SYSTEM_UNDER_REVIEW|runbook|quick[- ]report\.json|\b0[0-5]-[a-z-]+\.json|coding agent|\bAI agent\b|\bLLM\b|deep stage|quick (run|mode|analysis)|challenge stage|TM_[A-Z_]+", re.I)
@@ -204,6 +205,23 @@ def check_engagement(eng):
             _text(value, f"records[{rid}].{key}", 160 if key in ("title", "priority", "owner", "target_date", "effort", "target_rating") else 1200)
             if key in RECORD_ENUMS and value is not None and value not in RECORD_ENUMS[key]:
                 raise InputError(f"engagement: records[{rid!r}].{key} must be one of {sorted(RECORD_ENUMS[key])}")
+    plan = eng.get("test_plan") or {}
+    if not isinstance(plan, dict) or set(plan) - TEST_PLAN_KEYS:
+        raise InputError(f"engagement: test_plan may use only {sorted(TEST_PLAN_KEYS)}")
+    for key in ("approach", "environment"):
+        _text(plan.get(key), f"test_plan.{key}", 1200)
+    _text_list(plan.get("objective"), "test_plan.objective", 2000, 6)
+    for key in ("in_scope", "out_of_scope", "prerequisites", "rules_of_engagement"):
+        _text_list(plan.get(key), f"test_plan.{key}", 600, 40)
+    _rows(plan.get("paths"), "test_plan.paths", ("id", "title", "objective", "start", "success", "priority", "effort", "notes"),
+          ("route", "threat_refs", "control_refs", "verification_refs", "test_cases"), count=40)
+    seen = set()
+    for row in plan.get("paths") or []:
+        pid = row.get("id")
+        if pid is not None and (not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9-]{0,19}", pid) or pid in seen):
+            raise InputError("engagement: test_plan.paths ids must be unique and use letters, digits and hyphens, such as AP-01")
+        seen.add(pid)
+        _text_list(row.get("test_cases"), "test_plan.paths.test_cases", 1200, 30)
     opts = eng.get("options") or {}
     if not isinstance(opts, dict):
         raise InputError("engagement: options must be an object")
@@ -362,6 +380,14 @@ def main(argv):
         stray = sorted(set(eng.get("records") or {}) - known)
         if stray:
             warnings.append("engagement records refer to ids that are not in the model: " + ", ".join(stray[:10]))
+        plan_refs = set()
+        for row in (eng.get("test_plan") or {}).get("paths") or []:
+            for key in ("route", "threat_refs", "control_refs", "verification_refs"):
+                value = row.get(key) or []
+                plan_refs.update([value] if isinstance(value, str) else value)
+        stray = sorted(plan_refs - known)
+        if stray:
+            warnings.append("test_plan paths refer to ids that are not in the model and will be left out: " + ", ".join(stray[:10]))
         labels = {str(r.get("label", "")).strip().lower() for r in ((eng.get("risk_matrix") or {}).get("ratings") or [])}
         bad_targets = sorted(rid for rid, rec in (eng.get("records") or {}).items()
                              if rec.get("target_rating") and labels and rec["target_rating"].strip().lower() not in labels)

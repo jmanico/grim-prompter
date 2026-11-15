@@ -22,6 +22,7 @@ Follow the [engagement rules](rules.md) and the narrative rules in the [report b
    - `executive_summary`: `system_overview`, `key_components`, `next_steps`;
    - `scope_and_approach`: `approach` (the documents reviewed, the workshops held, the validation call, the frameworks applied), `activities`, `review_coverage`, `limitations`;
    - `records`: titles and impacts for every record; `responsibility` for components; `coverage` and `coverage_note` only where the derived status would mislead; `type` for verification that is a configuration review, design review or vendor assurance request; and, only where the client stated them, `response`, `response_note`, `target_rating`, `owner`, `target_date`, `effort`, `environment`;
+   - `test_plan`: the penetration test plan, as the report builder describes: three to seven key attack paths through the most critical components, each with its route, the threats it exercises, the controls to challenge, test cases and what success looks like. Keep test cases to what the client runs or configures; route vendor-run components to assurance requests and list them as out of scope;
    - `assumptions` with the threats that rely on each;
    - `document_control` and `review_triggers`, from the consultant only.
 3. **Build the report**:
@@ -31,7 +32,7 @@ Follow the [engagement rules](rules.md) and the narrative rules in the [report b
    ```
 
    Reports are never overwritten: use a new name for each build, such as `report-draft-1`. Relay the tool's notes on anything not supplied and on tool or process wording to fix.
-4. **Check the result against the envelope**: every open threat appears with a title, impact, coverage and at least one action; no threat is described with a severity word it was not rated with; nothing is described as tested, fixed or approved without evidence.
+4. **Check the result against the envelope**: every open threat appears with a title, impact, coverage and at least one action; every attack path follows recorded flows and cites only recorded threats and controls; no threat is described with a severity word it was not rated with; nothing is described as tested, fixed or approved without evidence.
 5. **Set the report phase** to `awaiting_review`.
 
 ## Finish

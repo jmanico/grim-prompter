@@ -77,7 +77,7 @@ Turn a finished run into one self-contained HTML report:
 /threat-model deep api with STRIDE per element and ATT&CK, with html report
 ```
 
-The report has a fixed structure: executive summary, technical summary (a clickable architecture diagram with threats, controls and verification marked on each component, plus an overview table), threats mapped to the frameworks used, controls in place, recommendations, verification required, scope and approach, and appendices for artefacts, workshops and the risk matrix. It loads nothing from the network and embeds the full model, so review it before sharing. See the [reporting guide](reporting/README.md).
+The report has a fixed structure: executive summary, technical summary (a clickable architecture diagram with threats, controls and verification marked on each component, plus an overview table), threats mapped to the frameworks used, controls in place, recommendations, verification required, a penetration test plan (priority targets and key attack paths), scope and approach, and appendices for artefacts, workshops and the risk matrix. It loads nothing from the network and embeds the full model, so review it before sharing. See the [reporting guide](reporting/README.md).
 
 ## Run a client engagement
 

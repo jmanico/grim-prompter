@@ -335,5 +335,136 @@
     "EP3": {
       "responsibility": "vendor"
     }
+  },
+  "test_plan": {
+    "objective": "Show whether an attacker could take control of payroll administration, read the nightly employee extract, or change payroll journals and payments, and whether the controls Northwind relies on would stop them.",
+    "approach": "Grey-box: the tester has this report, the architecture diagram and test accounts. Testing is limited to what Northwind runs or configures; PayStream's own platform is covered by vendor assurance.",
+    "in_scope": [
+      "Northwind's PayStream tenant configuration and accounts, within PayStream's published testing policy",
+      "The integration host and its extract job",
+      "The general ledger journal endpoint",
+      "The payroll administrator's workstation and the payment file handling process"
+    ],
+    "out_of_scope": [
+      "PayStream's platform, data store and other tenants",
+      "The bank portal",
+      "Vendor support access (T-005), which is addressed by the assurance request V-005"
+    ],
+    "paths": [
+      {
+        "id": "AP-01",
+        "title": "Take over payroll administration through an account outside single sign-on",
+        "objective": "Gain administrator access to the PayStream tenant without passing Entra ID multi-factor authentication.",
+        "start": "A corporate network position and no credentials; then repeated with the credentials of a test account set up as a leaver.",
+        "route": [
+          "A2",
+          "EP2",
+          "S4",
+          "S5"
+        ],
+        "threat_refs": [
+          "T-001",
+          "T-006"
+        ],
+        "control_refs": [
+          "C-001"
+        ],
+        "verification_refs": [
+          "V-001",
+          "V-006"
+        ],
+        "test_cases": [
+          "Attempt to sign in to the administration console with a local account, bypassing single sign-on, from inside and outside the corporate network.",
+          "Test the local sign-in for lockout, password policy and whether multi-factor authentication can be skipped.",
+          "Disable a test user in Entra ID, then check whether its PayStream session and local password still work.",
+          "With administrator access, establish what can be read and changed: bank details, pay rates, and the payment file."
+        ],
+        "success": "Administrator access is obtained without multi-factor authentication, or a disabled user still reaches payroll data.",
+        "effort": "2 days"
+      },
+      {
+        "id": "AP-02",
+        "title": "Post a forged payroll journal to the general ledger",
+        "objective": "Create or replay a journal entry that the general ledger accepts as coming from PayStream.",
+        "start": "A network position from which the journal endpoint is reachable, and one captured genuine journal request.",
+        "route": [
+          "S4",
+          "S7"
+        ],
+        "threat_refs": [
+          "T-004"
+        ],
+        "control_refs": [
+          "C-006"
+        ],
+        "verification_refs": [
+          "V-004"
+        ],
+        "test_cases": [
+          "Send an unsigned journal request to the endpoint from an allowed address.",
+          "Replay a captured journal request unchanged, then with an altered amount.",
+          "Check whether the address restriction can be bypassed from other hosts on the corporate network."
+        ],
+        "success": "The general ledger accepts a journal that PayStream did not send.",
+        "effort": "1 day"
+      },
+      {
+        "id": "AP-03",
+        "title": "Read the employee extract or reuse the SFTP key from the integration host",
+        "objective": "Obtain the full employee extract, or the key that uploads it, from the integration host.",
+        "start": "A standard corporate user account with no rights on the integration host; then a low-privilege account on the host.",
+        "route": [
+          "S1",
+          "S2",
+          "EP3"
+        ],
+        "threat_refs": [
+          "T-002"
+        ],
+        "control_refs": [
+          "C-002",
+          "C-003"
+        ],
+        "verification_refs": [
+          "V-002"
+        ],
+        "test_cases": [
+          "Enumerate who can sign in to the integration host and read the service account's files.",
+          "Locate the SFTP private key and check its file permissions and whether it has a passphrase.",
+          "Locate archived extract files and check who can read them.",
+          "With the key, check what the SFTP account can list, download or overwrite at the vendor endpoint (upload of a marked test file only)."
+        ],
+        "success": "A user other than the service account can read an extract or the private key.",
+        "effort": "1.5 days",
+        "notes": "Uploading to the SFTP endpoint needs PayStream's agreement. Use a marked test file, never a real extract."
+      },
+      {
+        "id": "AP-04",
+        "title": "Alter the payment file before it reaches the bank",
+        "objective": "Change payee account details in the payment file without the approver noticing.",
+        "start": "User-level access to the payroll administrator's workstation.",
+        "route": [
+          "A2",
+          "S6"
+        ],
+        "threat_refs": [
+          "T-003"
+        ],
+        "control_refs": [
+          "C-004"
+        ],
+        "verification_refs": [
+          "V-003"
+        ],
+        "test_cases": [
+          "Establish where the payment file is saved and who can modify it between download and upload.",
+          "Alter a test payment file and walk it through the approval step in a test pay run, without releasing a payment.",
+          "Check whether the approver sees payee details or only totals."
+        ],
+        "success": "An altered file reaches the approval step and the change is not visible to the approver.",
+        "effort": "1 day",
+        "notes": "Process test with the payroll team present. The bank portal itself is not tested."
+      }
+    ]
   }
 }

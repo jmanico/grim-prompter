@@ -24,6 +24,7 @@ The report is built so the reader finishes with three answers: what the current 
 | Controls | Coverage by threat; control register with test status | Model |
 | Recommendations | Prioritised plan with owner, target date and decision; details; threats without a recommendation | Model, with owners and dates from the engagement file |
 | Verification required | Ordered test plan with purpose, environment, owner and status; pass, fail and inconclusive criteria | Model, with owners and dates from the engagement file |
+| Penetration test plan | Priority targets; key attack paths with route, threats exercised, controls to challenge, test cases and what success looks like; prerequisites and scope for the test | Model, with attack paths from the engagement file |
 | Scope and approach | Scope, approach, what was reviewed, assumptions, limitations, open questions, when to revisit, terms used | Model and engagement file |
 | Appendix A: Artefacts | Artefact register with versions; sources and revisions cited by evidence; files reviewed; evidence references | Engagement file and model |
 | Appendix B: Workshops | Date, title, attendees, purpose, outcomes | Engagement file |
@@ -51,6 +52,7 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 | `executive_summary.next_steps` | `{ "step": "...", "refs": ["<record ids>"] }` |
 | `executive_summary.verdicts` | Optional wording for the three verdict cards: `threats`, `controls`, `actions` |
 | `records` | Annotations keyed by record id: `title`, `impact`, `response`, `response_note`, `target_rating`, `coverage`, `coverage_note`, `priority`, `effort`, `owner`, `target_date`, `type`, `environment`, `responsibility` |
+| `test_plan` | The penetration test plan: `objective`, `approach`, `environment`, `in_scope`, `out_of_scope`, `prerequisites`, `rules_of_engagement` and `paths` (see below) |
 | `code_access` | `none`, `partial` or `full`: whether source code was reviewed. Sets how the report words what its findings are based on |
 | `validation` | The client validation record: `sessions` (`date`, `title`, `attendees`) and `items` (`ref`, `outcome`, `note`) |
 | `assumptions` | `{ "statement", "refs": ["<threat ids>"], "if_wrong" }` |
@@ -63,7 +65,7 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 | `artefacts` | `{ "name", "type", "version", "date", "source", "notes" }`, plus optional `id`, `category` (`code`, `configuration`, `design`, `diagram`, `vendor`, `workshop`, `other`), `file`, `text_file` and `reviewed` (`full`, `partial`, `none`). With `file` set, the report can show which artefacts each finding is based on |
 | `workshops` | `{ "date", "title", "attendees": [], "purpose", "outcomes": [] }` |
 | `risk_matrix` | `name`, `version`, `source`, `likelihood` and `consequence` levels (`label`, `description`), `cells` (one row per likelihood level, one rating label per consequence level) and `ratings` (`label`, `color`, `description`, highest first) |
-| `options` | `show_excerpts` (code excerpts in the evidence references, default off), `include_data_download` (a button to download the underlying data, default off) and `pack: "validation"` (build the short client validation pack instead of the report) |
+| `options` | `show_excerpts` (code excerpts in the evidence references, default off), `include_data_download` (a button to download the underlying data, default off) and `test_plan` (set to `false` to leave the penetration test plan out) and `pack: "validation"` (build the short client validation pack instead of the report) |
 
 The agent drafts the narrative, short titles and impact statements from the model, so you can check each against its record. Workshops, artefact versions, the risk matrix, owners, dates, decisions and target ratings are never invented: supply them in the request or in files you name.
 
@@ -81,6 +83,18 @@ The same report serves a code-backed review and an architecture review of a thir
 ### Validation pack
 
 `options.pack: "validation"` produces a short draft for a client call instead of the report: the system as understood, components and who runs them, assumptions, controls believed to be in place, draft threats and open questions, each with a column to confirm. It carries no ratings, recommendations or verification. The [engagement workflow](../engagement/README.md) builds both with `engage.py build`, which assembles the engagement file from the workspace.
+
+### Penetration test plan
+
+Section 7 turns the model into a starting scope for a penetration test. It overlaps with Verification required on purpose: verification lists every check, including reviews and vendor assurance; the test plan covers what an attacker-style test can demonstrate, organised by attack path.
+
+- **Priority targets** are always derived: components ranked by the open threats against them, then by exposure, with who runs each and whether third-party permission is needed.
+- **Key attack paths** come from `test_plan.paths`. Each path is `{ "id": "AP-01", "title", "objective", "start", "route": ["<actor, entry point and component ids in order>"], "threat_refs", "control_refs", "verification_refs", "test_cases": [], "success", "priority", "effort", "notes" }`. Only `title` or `threat_refs` is required: controls and verification default to those linked to the threats, the route to the shortest recorded flow path, and priority to the highest-rated threat on the path.
+- **Without `test_plan.paths`** the report derives one path per open threat and marks each "derived from the model". That is a usable draft, but chained paths written by a person are better.
+- **Before testing starts** lists prerequisites, rules of engagement and scope from the engagement file, with derived prerequisites when none are given, and the verification items that are reviews, not tests.
+- The section has its own CSV export, one row per test case.
+
+The plan is a scoping proposal. It never says a test was run, and it is not an authorisation to test.
 
 ### Risk ratings
 

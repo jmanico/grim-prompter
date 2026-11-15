@@ -15,7 +15,7 @@ You drive it with an AI coding agent (Claude Code or Codex) and one small helper
 | 4 | Workshops | Run them; save transcripts; `/engagement workshop` | Workshop records; answered questions; updated understanding | Enough to model, or another workshop? |
 | 5 | Base threat model | `/engagement model` | Draft threat model with controls, recommendations, verification | Is the draft fit to show the client? |
 | 6 | Validation | `/engagement validation-pack`; hold the call; `/engagement validate` | Validation pack and agenda; outcomes; updated model | Accept corrections, ratings and decisions |
-| 7 | Final report | `/engagement report` | Client report (HTML, prints to PDF) and action plan (CSV) | Review, complete owners and dates, issue |
+| 7 | Final report | `/engagement report` | Client report with a penetration test plan (HTML, prints to PDF); action plan and test plan (CSV) | Review, complete owners and dates, issue |
 
 Nothing moves to the next phase on its own. Each phase ends "awaiting review", and you mark it complete by name.
 
@@ -193,6 +193,8 @@ The agent records the outcome for each item discussed (confirmed, corrected, rej
 
 The agent writes the narrative and builds `07-final/report-<name>.html`. Open it in a browser. It prints to PDF (A4 landscape) from the button in the sidebar and exports the action plan as CSV. See the [reporting guide](../reporting/README.md) for its structure.
 
+The report includes a **penetration test plan** (section 7): the priority targets, and the key attack paths to test with their routes, the controls each should challenge, test cases and what success looks like. The agent drafts the paths from the model; you add effort, environment and rules of engagement. It exports as its own CSV for the test team. To leave it out, set `"options": {"test_plan": false}` in `narrative.json`.
+
 Supply, in your request or by editing `07-final/narrative.json`: report title and version, authors, owners and target dates for recommendations and tests, target ratings, the reviewers for document control, and your branding file. Anything you leave out shows as "to be agreed".
 
 ### Before issuing
@@ -204,10 +206,11 @@ Supply, in your request or by editing `07-final/narrative.json`: report title an
 > 3. **Severity**: no severity word appears for an unrated threat. Ratings match the matrix in Appendix C.
 > 4. **Controls**: nothing is called implemented or tested without evidence.
 > 5. **Diagram**: trust zones and owners are right. Zone names are inferred from the model; correct the model if one is wrong.
-> 6. **Scope and limitations**: what was not reviewed is stated, including missing vendor assurance.
-> 7. **Appendices**: document versions and dates (A), workshop attendees and dates (B), and the client's matrix (C) are correct.
-> 8. **Wording**: no tool, process or internal wording. The build prints a warning listing any it finds.
-> 9. **Confidentiality**: the HTML file embeds the full assessment data. Send it only to people who may see all of it, or send the PDF.
+> 6. **Penetration test plan**: each attack path is one you would hand to a tester; test cases stay within what the client may authorise; third-party permission is flagged where needed.
+> 7. **Scope and limitations**: what was not reviewed is stated, including missing vendor assurance.
+> 8. **Appendices**: document versions and dates (A), workshop attendees and dates (B), and the client's matrix (C) are correct.
+> 9. **Wording**: no tool, process or internal wording. The build prints a warning listing any it finds.
+> 10. **Confidentiality**: the HTML file embeds the full assessment data. Send it only to people who may see all of it, or send the PDF.
 >
 > When satisfied, set `"report_status": "Final"` in `narrative.json`, rebuild under a new name, and mark the phase complete.
 

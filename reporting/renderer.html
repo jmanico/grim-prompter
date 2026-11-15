@@ -164,6 +164,13 @@ details.fold>summary small{font-family:var(--f-body);font-weight:400;color:var(-
 dl.fields{display:grid;grid-template-columns:190px minmax(0,1fr);gap:7px 16px;margin:10px 0;font-size:15px}
 dl.fields dt{color:var(--muted);font-size:13.5px}
 dl.fields dd{margin:0}
+.route{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px 0;margin:10px 0 14px}
+.route .hop{border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--panel);padding:7px 11px;font-size:13.5px;line-height:1.3;max-width:230px}
+.route .hop small{display:block;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.route .hop.vendor{border-left-color:var(--muted)} .route .hop.goal{border-left-color:var(--bad)}
+.route .arrow{display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:44px;padding:0 6px;color:var(--muted);font-size:17px;line-height:1}
+.route .arrow small{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--bad);margin-top:3px;text-align:center;max-width:150px;line-height:1.25}
+ol.cases{margin:0;padding-left:20px} ol.cases li{margin:3px 0}
 .criteria{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
 .criteria div{padding:10px 12px;font-size:14px;border-left:3px solid var(--line);background:var(--panel)}
 .criteria .pass{border-color:var(--loop)} .criteria .fail{border-color:var(--bad)} .criteria .inc{border-color:var(--verif)}
@@ -295,7 +302,7 @@ svg .chip rect{stroke-width:1.3}
   #page{padding:0}
   .cover{padding:16mm 14mm 12mm}.cover h1{font-size:30pt}.cover .lede{font-size:13pt;margin-bottom:14px}
   section.sec{break-before:auto;margin-top:22px;padding-top:0}
-  #tech,#threats,#controls,#recs,#verif,#scope,#app-a{break-before:page;margin-top:0;padding-top:5mm}
+  #tech,#threats,#controls,#recs,#verif,#pentest,#scope,#app-a{break-before:page;margin-top:0;padding-top:5mm}
   .shead{padding-bottom:6px;margin-bottom:12px}.shead h2{font-size:20pt}.shead p{font-size:10pt;margin-top:4px}.shead small{font-size:9pt}
   h3{font-size:13pt;margin:18px 0 4px}h4{font-size:9pt;margin:10px 0 4px}
   p.lead{font-size:10pt;max-width:none}p.intro,.note{font-size:8pt;max-width:none}
@@ -1233,7 +1240,183 @@ svg .chip rect{stroke-width:1.3}
     return section('verif', '6', 'Verification required', 'What needs to be tested, in what order, and how to tell pass from fail.', out, [['verif-plan', 'Verification plan'], ['verif-detail', 'Test details']]);
   }
 
-  // ---------- 7 Scope and approach ----------
+
+  // ---------- 7 Penetration test plan ----------
+  // Priority targets and attack paths for scoping a penetration test. Paths come from the engagement
+  // file when supplied; otherwise one is derived per open threat from the recorded flows.
+  var TP = obj(eng.test_plan);
+  var PT_TESTABLE = { confirm_weakness: 1, retest_fix: 1, test_control: 1 };
+  var isNode = function (id) { var k = kindOf.get(id); return k === 'actors' || k === 'entry_points' || k === 'assets' || k === 'dependencies'; };
+  function flowBetween(a, b) { return arr(sys.flows).filter(function (f) { return f.source_ref === a && f.target_ref === b; })[0] || arr(sys.flows).filter(function (f) { return f.source_ref === b && f.target_ref === a; })[0]; }
+  function threatTargets(t) {
+    var out = [];
+    arr(t.affected_refs).forEach(function (id) {
+      if (isNode(id)) out.push(id);
+      else if (kindOf.get(id) === 'flows') { var f = byId.get(id); if (f && f.target_ref) out.push(f.target_ref); }
+    });
+    return uniq(out);
+  }
+  function deriveRoute(t) {
+    var targets = threatTargets(t); if (!targets.length) return [];
+    var flows = arr(sys.flows), prev = new Map(), queue = [], seen = new Set();
+    var starts = arr(sys.actors).map(function (a) { return a.id; });
+    if (!starts.length) starts = uniq(flows.map(function (f) { return f.source_ref; })).filter(function (id) { return id && !flows.some(function (f) { return f.target_ref === id; }); });
+    starts.forEach(function (id) { seen.add(id); queue.push(id); });
+    var hit = null;
+    while (queue.length && !hit) {
+      var cur = queue.shift();
+      if (targets.indexOf(cur) >= 0 && kindOf.get(cur) !== 'actors') { hit = cur; break; }
+      flows.forEach(function (f) { if (f.source_ref === cur && f.target_ref && !seen.has(f.target_ref)) { seen.add(f.target_ref); prev.set(f.target_ref, cur); queue.push(f.target_ref); } });
+    }
+    if (!hit) return targets.slice(0, 4);
+    var path = [hit]; while (prev.has(path[0])) path.unshift(prev.get(path[0]));
+    return path;
+  }
+  function pathPrio(p) { var ns = p.threats.map(prioNum).filter(Boolean); return ns.length ? Math.min.apply(null, ns) : 99; }
+  function testPaths() {
+    var own = arr(TP.paths).filter(function (x) { return x && (x.title || arr(x.threat_refs).length); });
+    var derived = !own.length, out;
+    if (derived) {
+      out = sortedThreats.filter(function (t) { return t.status === 'open'; }).map(function (t) {
+        return { title: nameOf(t.id), objective: str(t.objective), start: uniq(arr(t.prerequisites).concat(arr(t.actor_assumptions)).map(str)).join('; '), route: deriveRoute(t), threats: [t], controlIds: null, verifIds: null, cases: [], success: '', effort: '', notes: '', priority: '', derived: true };
+      });
+    } else {
+      out = own.map(function (x) {
+        var ts = arr(x.threat_refs).map(function (id) { return byId.get(id); }).filter(function (t) { return t && kindOf.get(t.id) === 'threats'; });
+        return { id: str(x.id), title: str(x.title) || (ts[0] ? nameOf(ts[0].id) : 'Attack path'), objective: str(x.objective), start: str(x.start), route: arr(x.route).map(str).filter(function (id) { return byId.has(id); }), threats: ts,
+          controlIds: arr(x.control_refs).length ? arr(x.control_refs).map(str) : null, verifIds: arr(x.verification_refs).length ? arr(x.verification_refs).map(str) : null,
+          cases: paras(x.test_cases), success: str(x.success), effort: str(x.effort), notes: str(x.notes), priority: str(x.priority), derived: false };
+      });
+    }
+    out.forEach(function (p, i) {
+      if (!p.id) p.id = 'AP-' + (i < 9 ? '0' : '') + (i + 1);
+      if (!p.route.length && p.threats.length) p.route = deriveRoute(p.threats[0]);
+      p.controls = (p.controlIds || uniq([].concat.apply([], p.threats.map(function (t) { return arr(controlsByThreat.get(t.id)).map(function (c) { return c.id; }); })))).map(function (id) { return byId.get(id); }).filter(Boolean);
+      var vs = (p.verifIds || uniq([].concat.apply([], p.threats.map(function (t) { return arr(verifsByThreat.get(t.id)).map(function (v) { return v.id; }); })))).map(function (id) { return byId.get(id); }).filter(Boolean);
+      p.tests = vs.filter(function (v) { return PT_TESTABLE[vtype(v)]; }); p.reviews = vs.filter(function (v) { return !PT_TESTABLE[vtype(v)]; });
+      p.vendor = uniq(p.route.length ? p.route : [].concat.apply([], p.threats.map(threatTargets))).filter(function (id) { return respOf(id) === 'vendor' || respOf(id) === 'shared'; });
+      p.prio = pathPrio(p);
+    });
+    return { paths: out, derived: derived };
+  }
+  function pathPrioTag(p) { if (p.priority) return h('span', { class: 'prio p2' }, p.priority); return p.prio < 99 ? h('span', { class: 'prio p' + Math.min(p.prio, 4) }, 'P' + p.prio) : h('span', { class: 'empty', title: 'Exercises threats that are not yet rated' }, 'Unranked'); }
+  function routeStrip(p) {
+    if (!p.route.length) return null;
+    var kids = [];
+    p.route.forEach(function (id, i) {
+      if (i) { var f = flowBetween(p.route[i - 1], id), bs = arr(f && f.boundary_refs).map(function (b) { return nameOf(b); }); kids.push(h('span', { class: 'arrow' }, '→', bs.length ? h('small', null, 'crosses ' + trunc(bs[0], 48)) : null)); }
+      var r = respOf(id), k = kindOf.get(id);
+      kids.push(h('span', { class: 'hop' + (r === 'vendor' ? ' vendor' : '') + (i === p.route.length - 1 ? ' goal' : '') }, h('small', null, (k === 'actors' ? 'Start' : (k === 'entry_points' ? 'Entry point' : 'Component')) + (r ? ' · ' + RESPWORD[r] : '')), ref(id), ' ', trunc(nameOf(id), 60)));
+    });
+    return h('div', { class: 'route' }, kids);
+  }
+  function testTargets(paths) {
+    var why = {}; arr(obj(eng.executive_summary).key_components).forEach(function (c) { if (c && c.ref) why[c.ref] = str(c.why); });
+    var rows = [];
+    arr(sys.entry_points).concat(arr(sys.assets), arr(sys.dependencies)).forEach(function (c) {
+      var ts = arr(threatsByAffected.get(c.id)).filter(function (t) { return t.status === 'open'; }).sort(threatOrder);
+      var on = paths.filter(function (p) { return p.route.indexOf(c.id) >= 0 || p.threats.some(function (t) { return threatTargets(t).indexOf(c.id) >= 0; }); });
+      if (!ts.length && !on.length) return;
+      var crossing = arr(sys.flows).some(function (f) { return (f.target_ref === c.id || f.source_ref === c.id) && arr(f.boundary_refs).length; });
+      var best = Math.min.apply(null, ts.map(prioNum).filter(Boolean).concat([99]));
+      rows.push({ id: c.id, threats: ts, paths: on, entry: kindOf.get(c.id) === 'entry_points', crossing: crossing, best: best, why: why[c.id] || '' });
+    });
+    rows.sort(function (a, b) { return a.best - b.best || b.threats.length - a.threats.length || (b.entry ? 1 : 0) - (a.entry ? 1 : 0) || b.paths.length - a.paths.length || str(a.id).localeCompare(str(b.id), undefined, { numeric: true }); });
+    return rows;
+  }
+  function accessNote(id) {
+    var r = respOf(id);
+    if (r === 'vendor') return 'Third-party permission needed. Test only the client-side configuration and integration.';
+    if (r === 'shared') return 'Agree with the provider which parts may be tested.';
+    if (r === 'client') return 'Client-run; testable with the client’s authorisation.';
+    return 'Confirm who runs this component before testing.';
+  }
+  function testPlanRows(tp) {
+    var rows = [['Path', 'Priority', 'Attack path', 'Attacker objective', 'Starting position', 'Route', 'Threats exercised', 'Controls to challenge', 'Test case', 'What success looks like', 'Third-party permission needed for', 'Effort']];
+    tp.paths.forEach(function (p) {
+      var cases = p.cases.length ? p.cases : p.tests.map(function (v) { return v.id + ': ' + str(v.approach); });
+      if (!cases.length) cases = [''];
+      var success = p.success || p.tests.map(function (v) { return str(v.fail_criteria); }).filter(Boolean).join(' ');
+      cases.forEach(function (c) { rows.push([p.id, p.priority || (p.prio < 99 ? 'P' + p.prio : ''), p.title, p.objective, p.start, p.route.map(function (id) { return nameOf(id); }).join(' > '), p.threats.map(function (t) { return t.id; }).join(' '), p.controls.map(function (c2) { return c2.id; }).join(' '), c, success, p.vendor.map(function (id) { return nameOf(id); }).join('; '), p.effort]); });
+    });
+    return rows;
+  }
+  function testPlanButton(tp) {
+    var b = h('button', { type: 'button', class: 'btn noprint' }, 'Export test plan (CSV)');
+    b.addEventListener('click', function () {
+      var csv = '﻿' + testPlanRows(tp).map(function (r) { return r.map(csvCell).join(','); }).join('\r\n');
+      var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'penetration-test-plan.csv';
+      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    });
+    return b;
+  }
+  function pentestSection() {
+    var tp = testPaths(), paths = tp.paths, targets = testTargets(paths), out = [];
+    var lede = 'Where a penetration test should focus: the components that matter most, and the attack paths a tester should attempt.';
+    if (!openThreats.length) return section('pentest', '7', 'Penetration test plan', lede, [empty('No open threats were recorded, so no test plan is proposed.')]);
+    var nCases = paths.reduce(function (n, p) { return n + (p.cases.length || p.tests.length); }, 0);
+    out.push(paras(TP.objective).map(function (x) { return h('p', { class: 'lead' }, x); }),
+      h('p', { class: 'intro' }, 'This plan turns the threat model into a starting scope for a penetration test. It complements the verification plan: verification lists every check, including reviews and vendor assurance, while this section covers only what an attacker-style test can demonstrate, organised by attack path. It is a proposal for scoping, not an authorisation to test.'),
+      h('div', { class: 'nums' }, h('div', null, h('b', null, String(targets.length)), h('span', null, 'priority targets')), h('div', null, h('b', null, String(paths.length)), h('span', null, 'attack paths')), h('div', null, h('b', null, String(nCases)), h('span', null, 'test cases')),
+        h('div', null, h('b', null, String(paths.filter(function (p) { return p.vendor.length; }).length)), h('span', null, 'paths needing third-party permission'))));
+    var anyResp = targets.some(function (r) { return respOf(r.id); });
+    out.push(h('h3', { id: 'pt-targets' }, 'Priority targets'), h('p', { class: 'intro' }, 'Components ranked by the threats against them, then by exposure. Spend test effort from the top.'));
+    out.push(targets.length ? table([
+      { title: '#', width: '44px', sort: false, render: function (r) { return String(targets.indexOf(r) + 1); } },
+      { title: 'Target', width: '24%', sort: false, render: function (r) { return [titled(r.id), r.why ? h('span', { class: 'line note' }, r.why) : null]; } },
+      anyResp ? col('Run by', function (r) { return respTag(r.id) || h('span', { class: 'empty' }, 'Not recorded'); }) : null,
+      { title: 'Exposure', sort: false, render: function (r) { return r.entry ? 'Entry point' : (r.crossing ? 'Reached across a trust boundary' : 'Internal'); } },
+      { title: 'Open threats', sort: false, render: function (r) { return r.threats.length ? lines(r.threats, function (t) { return [ref(t.id), ' ', riskCell(t)]; }) : h('span', { class: 'empty' }, 'On an attack path'); } },
+      { title: 'Attack paths', sort: false, render: function (r) { return r.paths.length ? r.paths.map(function (p) { return h('a', { class: 'tid', href: '#pt-' + p.id }, p.id); }).reduce(function (acc, a) { if (acc.length) acc.push(' '); acc.push(a); return acc; }, []) : h('span', { class: 'empty' }, '—'); } },
+      anyResp ? { title: 'Testing access', width: '24%', sort: false, render: function (r) { return accessNote(r.id); } } : null].filter(Boolean), targets) : empty('No component has an open threat recorded against it.'));
+    out.push(h('h3', { id: 'pt-paths' }, 'Key attack paths'),
+      h('p', { class: 'intro' }, tp.derived ? 'One path per open threat, with the route worked out from the recorded data flows. Refine and combine these with the tester during scoping.' : 'The paths an attacker would most plausibly take to the outcomes that matter. Each lists the threats it exercises and the controls it should challenge.'));
+    if (paths.length) out.push(table([
+      { title: 'Path', width: '76px', sort: false, render: function (p) { return h('a', { class: 'tid', href: '#pt-' + p.id }, p.id); } },
+      { title: 'Priority', width: '80px', sort: false, render: pathPrioTag },
+      { title: 'Attack path', width: '30%', sort: false, render: function (p) { return h('b', null, p.title); } },
+      { title: 'Threats exercised', sort: false, render: function (p) { return lines(p.threats, function (t) { return [ref(t.id), ' ', riskCell(t)]; }); } },
+      { title: 'Controls to challenge', sort: false, render: function (p) { return p.controls.length ? refs(p.controls.map(function (c) { return c.id; })) : h('span', { class: 'tag bad' }, 'none recorded'); } },
+      { title: 'Test cases', width: '90px', sort: false, render: function (p) { return String(p.cases.length || p.tests.length) || '0'; } },
+      anyPathEffort(paths) ? col('Effort', function (p) { return tba(p.effort); }) : null].filter(Boolean), paths), h('p', null, testPlanButton(tp)));
+    paths.forEach(function (p) {
+      var cases = p.cases.length ? h('ol', { class: 'cases' }, p.cases.map(function (c) { return h('li', null, c); }))
+        : (p.tests.length ? h('ol', { class: 'cases' }, p.tests.map(function (v) { return h('li', null, ref(v.id), ' ', str(v.approach)); })) : h('span', { class: 'empty' }, 'No test case is defined yet; agree one with the tester.'));
+      var success = p.success ? p.success : (p.tests.length ? lines(p.tests, function (v) { return [ref(v.id), ' ', str(v.fail_criteria)]; }) : h('span', { class: 'empty' }, 'To be agreed'));
+      out.push(h('div', { class: 'card', id: 'pt-' + p.id }, h('div', { class: 'chead' }, h('span', { class: 'tid' }, p.id), pathPrioTag(p), p.vendor.length ? h('span', { class: 'tag warn' }, 'third-party permission needed') : null, p.derived ? h('span', { class: 'tag' }, 'derived from the model') : null, p.effort ? h('span', { class: 'tag' }, p.effort) : null),
+        h('p', { class: 'ctitle' }, p.title), routeStrip(p),
+        fields([p.objective ? ['Attacker objective', p.objective] : null, ['Starting position', p.start ? p.start : h('span', { class: 'empty' }, 'To be agreed')],
+          ['Threats exercised', lines(p.threats, function (t) { return [titled(t.id), ' ', riskCell(t), ' ', covTag(t)]; })],
+          ['Controls to challenge', p.controls.length ? lines(p.controls, function (c) { return [titled(c.id), ' ', tag(c.status === 'claimed' ? 'reported' : c.status)]; }) : 'No control is recorded on this path. The test should establish whether anything stops it.'],
+          ['Test cases', cases], ['What success looks like', success],
+          p.vendor.length ? ['Third-party permission', 'Needed before testing touches ' + joinList(p.vendor.map(function (id) { return nameOf(id); })) + '.'] : null,
+          p.reviews.length ? ['Covered by review, not testing', lines(p.reviews, function (v) { return [titled(v.id), ' ', h('span', { class: 'tag' }, VTYPE[vtype(v)])]; })] : null,
+          p.notes ? ['Notes', p.notes] : null])));
+    });
+    // What the tester needs
+    out.push(h('h3', { id: 'pt-prep' }, 'Before testing starts'));
+    var onPaths = uniq([].concat.apply([], paths.map(function (p) { return p.route; }))); var accounts = arr(sys.actors).filter(function (a) { return onPaths.indexOf(a.id) >= 0; }).map(function (a) { return nameOf(a.id); });
+    var vendorAll = uniq([].concat.apply([], paths.map(function (p) { return p.vendor; })));
+    var derivedPrep = [accounts.length ? 'Test accounts for each role on the attack paths: ' + joinList(accounts) + '.' : null,
+      'Written authorisation from the system owner, with the test window and emergency contacts.',
+      vendorAll.length ? 'Permission from each third party, or confirmation of its testing policy, for: ' + joinList(vendorAll.map(function (id) { return nameOf(id); })) + '.' : null,
+      'A non-production environment that matches production configuration, or agreed limits for testing in production.',
+      'This report and the architecture diagram, so the tester starts from the attack paths and not from discovery.'].filter(Boolean);
+    var prep = paras(TP.prerequisites), roe = paras(TP.rules_of_engagement);
+    var notTest = outstandingVerifs.filter(function (v) { return !PT_TESTABLE[vtype(v)]; });
+    out.push(fields([
+      str(TP.approach) ? ['Test approach', str(TP.approach)] : null,
+      str(TP.environment) ? ['Environment', str(TP.environment)] : null,
+      ['Prerequisites', list(prep.length ? prep : derivedPrep)],
+      ['Rules of engagement', roe.length ? list(roe) : h('span', { class: 'empty' }, 'To be agreed with the system owner before testing: permitted techniques, data handling, stop conditions and reporting of critical findings.')],
+      paras(TP.in_scope).length ? ['In scope', list(paras(TP.in_scope))] : null,
+      paras(TP.out_of_scope).length ? ['Out of scope', list(paras(TP.out_of_scope))] : null,
+      notTest.length ? ['Not suited to penetration testing', [h('span', { class: 'line' }, 'These checks are reviews or assurance requests. They stay in the verification plan.'), lines(notTest, function (v) { return [titled(v.id), ' ', h('span', { class: 'tag' }, VTYPE[vtype(v)])]; })]] : null]));
+    return section('pentest', '7', 'Penetration test plan', lede, out, [['pt-targets', 'Priority targets'], ['pt-paths', 'Key attack paths'], ['pt-prep', 'Before testing starts']]);
+  }
+  function anyPathEffort(paths) { return paths.some(function (p) { return p.effort; }); }
+
+  // ---------- 8 Scope and approach ----------
   var DEFAULT_TRIGGERS = ['A new entry point, integration or third party is added.', 'Authentication, authorisation or session handling changes.', 'A new type of sensitive data is stored or shared.',
     'An assumption listed in this section stops being true.', 'A recommendation is implemented, so the related threat can be retested and its rating updated.', 'A security incident or near miss involves this system.'];
   function scopeSection() {
@@ -1286,7 +1469,7 @@ svg .chip rect{stroke-width:1.3}
       ['Outstanding', 'A verification test that has been planned but not yet performed.']
     ].concat(anyRated ? [['Risk rating', 'Likelihood and consequence combined using the matrix in Appendix C. Where two ratings are shown, the second is the target once the recommendation is in place.']] : [], anyPrio ? [['Priority (P1, P2 \u2026)', 'Order of attention, taken from the risk rating of the threats an action addresses. P1 is the highest rating in this report.']] : [])));
     if (arr(M.changes).length) out.push(h('h3', null, 'Changes since the previous assessment'), table([idCol(), col('Change', function (r) { return tag(r.kind); }), refCol('Current', function (r) { return r.current_refs; }), col('Previous references', function (r) { return h('span', { class: 'mono' }, arr(r.previous_ids).join(', ') || '—'); }), col('Rationale', function (r) { return str(r.rationale); })], M.changes, { anchor: true }));
-    return section('scope', '7', 'Scope and approach', 'What this engagement covered and how it was delivered.', out, [['scope-scope', 'Scope'], ['scope-approach', 'Approach'], ['scope-coverage', 'What was reviewed'], ['scope-assumptions', 'Assumptions'], ['scope-gaps', 'Open questions']]);
+    return section('scope', '8', 'Scope and approach', 'What this engagement covered and how it was delivered.', out, [['scope-scope', 'Scope'], ['scope-approach', 'Approach'], ['scope-coverage', 'What was reviewed'], ['scope-assumptions', 'Assumptions'], ['scope-gaps', 'Open questions']]);
   }
 
   // ---------- Appendices ----------
@@ -1389,7 +1572,7 @@ svg .chip rect{stroke-width:1.3}
   append(page, isPack ? (function () { try { return packPage(); } catch (e) { return [h('p', { class: 'basis' }, 'The validation pack could not be displayed: ' + str(e && e.message))]; } })() : [cover(), documentControl(),
     data.status !== 'complete' ? h('p', { class: 'basis' }, h('b', null, 'Draft. '), 'The underlying assessment is marked incomplete, so parts of this report may be missing.') : null,
     safe(execSummary, 'exec', 'Executive summary'), safe(techSummary, 'tech', 'Technical summary'), safe(threatsSection, 'threats', 'Threats'), safe(controlsSection, 'controls', 'Controls'),
-    safe(recsSection, 'recs', 'Recommendations'), safe(verifSection, 'verif', 'Verification'), safe(scopeSection, 'scope', 'Scope and approach'),
+    safe(recsSection, 'recs', 'Recommendations'), safe(verifSection, 'verif', 'Verification'), obj(eng.options).test_plan === false ? null : safe(pentestSection, 'pentest', 'Penetration test plan'), safe(scopeSection, 'scope', 'Scope and approach'),
     safe(appendixA, 'app-a', 'Appendix A'), safe(appendixB, 'app-b', 'Appendix B'), safe(appendixC, 'app-c', 'Appendix C'),
     h('footer', { class: 'foot' }, h('span', null, str(branding.footer_text) || str(branding.organisation)), h('span', null, [eng.report_version ? 'Version ' + str(eng.report_version) : null, eng.report_date || eng.generated_at].filter(Boolean).join(' \u00b7 ')))]);
 

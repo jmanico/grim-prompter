@@ -23,8 +23,9 @@ The structure is fixed and the renderer builds it. The reader should finish with
 4. **Controls**: coverage by threat (no control, partly controlled, controlled but unverified, verified), then the control register.
 5. **Recommendations**: a prioritised plan with owner, target date and decision status, then details.
 6. **Verification required**: an ordered test plan with purpose, environment, owner and status, then pass, fail and inconclusive criteria.
-7. **Scope and approach**: scope, approach, what was reviewed, assumptions, limitations, open questions, when to revisit, and terms used.
-8. **Appendix A, Artefacts**; **Appendix B, Workshops**; **Appendix C, Risk matrix**.
+7. **Penetration test plan**: priority targets ranked from the model, the key attack paths to test, and what the tester needs before starting.
+8. **Scope and approach**: scope, approach, what was reviewed, assumptions, limitations, open questions, when to revisit, and terms used.
+9. **Appendix A, Artefacts**; **Appendix B, Workshops**; **Appendix C, Risk matrix**.
 
 ## Input
 
@@ -57,6 +58,13 @@ Within an [engagement workspace](../engagement/README.md), follow the [engagemen
    - **Code access** (`code_access`: `none`, `partial`, `full`): from the caller or the envelope's inspection coverage. When no code was reviewed, say so in the approach and limitations, and describe controls as reported by the client or vendor, never as implemented.
    - **Artefact register**: when the caller supplies `id`, `category`, `file` and `reviewed` for artefacts, keep them; the report uses them to show what each finding is based on.
    - **Validation** (`validation`): only a record of a client session the caller supplies. Never mark a record confirmed yourself.
+   - **Penetration test plan** (`test_plan`): three to seven attack paths a tester should attempt, most important first. Build each from the envelope only:
+     - Start from the outcome that matters (an open threat's objective on a critical component) and work back to where an attacker would begin. Chain threats into one path when one enables the next; do not write a path per threat when two share a route and a goal.
+     - `route`: the actor, entry point and component ids in order, following recorded flows. `threat_refs`: the threats the path exercises. `control_refs`: the controls a tester should try to defeat. `verification_refs`: recorded verification that is a test.
+     - `start`: the position and access the tester begins with, from the threats' prerequisites. `test_cases`: concrete steps a tester can attempt, each traceable to a threat's scenario or a verification approach; add no technique the envelope does not support. `success`: the observable result that would demonstrate the weakness.
+     - Leave out threats that only a review or a vendor assurance request can settle, and say so in `out_of_scope`. For components a third party runs, limit test cases to what the client configures and note the permission needed.
+     - `objective` (one or two sentences on what the test should show), `approach`, `in_scope` and `out_of_scope`: from the envelope's scope. `environment`, `rules_of_engagement`, `effort` and `prerequisites`: only from the caller.
+     - Never write that a test was run or what it found. If you write no paths, the report derives one per open threat and marks them as derived.
    - **Verdicts** (`executive_summary.verdicts`): leave empty so the report states the counts itself, unless the caller wants specific wording.
    - **Assumptions** (`assumptions`): each assumption from the envelope, the threats that rely on it (`refs`) and, where the envelope supports it, what changes if it is wrong.
    - **Document control** (`document_control`) and **review triggers** (`review_triggers`): from the caller only. Without triggers the report lists general ones.

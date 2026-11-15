@@ -30,6 +30,11 @@
     "show_excerpts": false,
     "include_data_download": false
   },
+  "test_plan": {
+    "objective": null,
+    "approach": null,
+    "paths": []
+  },
   "records": {},
   "assumptions": [],
   "document_control": {

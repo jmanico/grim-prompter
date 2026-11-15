@@ -577,7 +577,7 @@ def cmd_questions(argv):
 # ---------------------------------------------------------------- build
 
 NARRATIVE_KEYS = {"title", "subtitle", "report_version", "report_date", "report_status", "authors", "executive_summary",
-                  "scope_and_approach", "records", "assumptions", "document_control", "review_triggers", "options"}
+                  "scope_and_approach", "records", "assumptions", "document_control", "review_triggers", "test_plan", "options"}
 
 
 def names(people):
@@ -662,6 +662,8 @@ def cmd_build(argv):
     inside(ws, model)
     inside(ws, out)
     eng = report_inputs(ws, bool(opts.get("pack")))
+    if opts.get("pack"):
+        eng.pop("test_plan", None)
     if opts.get("pack") and isinstance(eng.get("records"), dict):
         # The pack describes the draft model, so drop annotations for records it does not hold.
         ids = model_ids(model)
