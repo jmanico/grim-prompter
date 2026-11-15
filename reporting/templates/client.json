@@ -1,0 +1,25 @@
+{
+  "report_config_version": "1.0",
+  "template": "client",
+  "title": "Threat model assessment",
+  "subtitle": "Findings, recommended treatments and verification approach",
+  "description": "Client deliverable. Full findings and treatments, evidence locators without code excerpts, and no raw JSON download.",
+  "options": { "interactive": true, "show_excerpts": false },
+  "sections": [
+    "cover",
+    "notice",
+    "inspection-coverage",
+    { "id": "executive-summary", "options": { "top_threats": 5 } },
+    "scope",
+    "diagram",
+    { "id": "threats", "title": "Findings" },
+    "controls",
+    { "id": "treatments", "title": "Recommended treatments" },
+    { "id": "verification", "title": "Verification approach" },
+    "decisions",
+    { "id": "gaps", "title": "Limitations and unknowns" },
+    "methods",
+    { "id": "evidence", "options": { "show_excerpts": false } },
+    { "id": "appendix", "options": { "include_raw_json": false } }
+  ]
+}

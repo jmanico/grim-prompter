@@ -1,0 +1,19 @@
+{
+  "report_config_version": "1.0",
+  "template": "executive",
+  "title": "Threat model: executive summary",
+  "subtitle": "Key threats, proposed responses and open unknowns",
+  "description": "Short report for leaders and decision makers. Leads with the summary and keeps detail compact.",
+  "options": { "interactive": true, "show_excerpts": false },
+  "sections": [
+    "cover",
+    "notice",
+    { "id": "inspection-coverage", "options": { "compact": true } },
+    { "id": "executive-summary", "options": { "top_threats": 5, "top_gaps": 5 } },
+    "diagram",
+    { "id": "threats", "title": "Open threats", "options": { "compact": true, "filter": { "status": ["open"] } } },
+    { "id": "treatments", "options": { "compact": true } },
+    "decisions",
+    { "id": "gaps", "title": "Open unknowns", "options": { "filter": { "status": ["open"] } } }
+  ]
+}

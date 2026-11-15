@@ -1,0 +1,1259 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "TM_REPORT",
+  "model_id": "example-invoice-api",
+  "revision": "q1",
+  "parent_revision": null,
+  "status": "complete",
+  "analysis_depth": "quick",
+  "architecture_ids": [
+    "api"
+  ],
+  "selected_methods": [],
+  "processed_inputs": [
+    {
+      "id": "I1",
+      "locator": "docs/architecture.md",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    },
+    {
+      "id": "I2",
+      "locator": "src/api/routes/invoices.ts",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    },
+    {
+      "id": "I3",
+      "locator": "src/api/routes/exports.ts",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    },
+    {
+      "id": "I4",
+      "locator": "src/workers/export-worker.ts",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    },
+    {
+      "id": "I5",
+      "locator": "src/webhooks/dispatcher.ts",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    },
+    {
+      "id": "I6",
+      "locator": "src/api/routes/payments.ts",
+      "access": "partial",
+      "coverage": "a1b2c3d; lines 1-140 of 310; this run",
+      "reason": "Remaining lines are reporting helpers outside the refund path."
+    },
+    {
+      "id": "I7",
+      "locator": "src/auth/middleware.ts",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    },
+    {
+      "id": "I8",
+      "locator": "infra/terraform/storage.tf",
+      "access": "read",
+      "coverage": "a1b2c3d; full read; this run",
+      "reason": null
+    }
+  ],
+  "unprocessed_inputs": [
+    {
+      "id": "U1",
+      "locator": "services/payments/settlement/",
+      "access": "skipped",
+      "coverage": "a1b2c3d",
+      "reason": "Not reached within the quick run's bounds."
+    },
+    {
+      "id": "U2",
+      "locator": "apps/admin-console/",
+      "access": "skipped",
+      "coverage": "a1b2c3d",
+      "reason": "Excluded by the caller: out of scope for the partner API decision."
+    }
+  ],
+  "attachments": [],
+  "continuation": null,
+  "model": {
+    "scope": {
+      "description": "Fictional example: an invoicing API that customers and partners use to read invoices, export CSVs, receive webhooks and request refunds.",
+      "in_scope": [
+        "Public REST API /v1",
+        "Export worker",
+        "Webhook dispatcher",
+        "Refund endpoint"
+      ],
+      "out_of_scope": [
+        "Admin console (excluded by caller)"
+      ],
+      "objectives": [
+        "Support the decision to open the partner API in Q1"
+      ],
+      "assumptions": [
+        "The API gateway enforces TLS for all public traffic"
+      ],
+      "limitations": [
+        "Quick analysis: no challenge stage ran.",
+        "Settlement client not read; payments analysis is partial.",
+        "No tests or code were executed."
+      ]
+    },
+    "evidence": [
+      {
+        "id": "E1",
+        "locator": "docs/architecture.md:1-48",
+        "source_kind": "document",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "Architecture document describes a public REST API, an export worker and a webhook dispatcher.",
+        "status": "claim",
+        "purpose": "description",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E2",
+        "locator": "src/api/routes/invoices.ts:12-58",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "GET /invoices/:id loads the invoice by ID and checks the caller's tenant, not the invoice owner.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": "const inv = await repo.findById(req.params.id);\nif (inv.tenantId !== req.user.tenantId) return res.status(404).end();",
+        "derived_from": []
+      },
+      {
+        "id": "E3",
+        "locator": "src/api/routes/exports.ts:20-77",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "POST /exports accepts a list of invoice IDs and enqueues a job without a per-object ownership check.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E4",
+        "locator": "src/workers/export-worker.ts:1-95",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "Export worker runs with a service role that can read all tenants' invoices and writes CSV files to object storage.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E5",
+        "locator": "src/webhooks/dispatcher.ts:30-110",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "Webhook dispatcher posts to a customer-registered URL and follows redirects; no destination allow-list is visible.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E6",
+        "locator": "src/api/routes/payments.ts:40-120",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "Refund endpoint checks an idempotency key stored in Redis with a 24-hour TTL.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E7",
+        "locator": "src/auth/middleware.ts:5-60",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "JWT middleware validates signature, issuer and expiry using a JWKS endpoint.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E8",
+        "locator": "infra/terraform/storage.tf:1-40",
+        "source_kind": "repository",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "Export bucket blocks public access; objects are read through 15-minute pre-signed URLs.",
+        "status": "observation",
+        "purpose": "implementation",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E9",
+        "locator": "caller:session-1",
+        "source_kind": "caller",
+        "source_revision": "a1b2c3d",
+        "date": null,
+        "statement": "Caller stated the review supports the decision to open the partner API in Q1.",
+        "status": "claim",
+        "purpose": "description",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      }
+    ],
+    "system": {
+      "actors": [
+        {
+          "id": "A1",
+          "kind": "external user",
+          "description": "Customer finance user (browser or partner integration)",
+          "basis": "observed",
+          "evidence_refs": [
+            "E1"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "A2",
+          "kind": "partner system",
+          "description": "Partner system calling the API with client credentials",
+          "basis": "claimed",
+          "evidence_refs": [
+            "E1",
+            "E9"
+          ],
+          "rationale": "Stated in design documentation.",
+          "related_refs": []
+        }
+      ],
+      "assets": [
+        {
+          "id": "S1",
+          "kind": "service",
+          "description": "Invoice API (Node.js)",
+          "basis": "observed",
+          "evidence_refs": [
+            "E2",
+            "E3"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "S2",
+          "kind": "worker",
+          "description": "Export worker",
+          "basis": "observed",
+          "evidence_refs": [
+            "E4"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "S3",
+          "kind": "worker",
+          "description": "Webhook dispatcher",
+          "basis": "observed",
+          "evidence_refs": [
+            "E5"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "S4",
+          "kind": "data store",
+          "description": "PostgreSQL invoice database",
+          "basis": "observed",
+          "evidence_refs": [
+            "E2"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "S5",
+          "kind": "object store",
+          "description": "Export bucket (CSV files)",
+          "basis": "observed",
+          "evidence_refs": [
+            "E8"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "S6",
+          "kind": "service",
+          "description": "Payments and refunds service",
+          "basis": "observed",
+          "evidence_refs": [
+            "E6"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "S7",
+          "kind": "external service",
+          "description": "Customer webhook endpoint",
+          "basis": "claimed",
+          "evidence_refs": [
+            "E5"
+          ],
+          "rationale": "Stated in design documentation.",
+          "related_refs": []
+        }
+      ],
+      "data": [
+        {
+          "id": "D1",
+          "kind": "financial record",
+          "description": "Invoices and line items, including customer contact details",
+          "basis": "observed",
+          "evidence_refs": [
+            "E2"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "D2",
+          "kind": "file",
+          "description": "Exported CSV of selected invoices",
+          "basis": "observed",
+          "evidence_refs": [
+            "E4"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "D3",
+          "kind": "event",
+          "description": "Webhook payload with invoice status",
+          "basis": "observed",
+          "evidence_refs": [
+            "E5"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        }
+      ],
+      "zones": [
+        {
+          "id": "Z1",
+          "kind": "internet",
+          "description": "Public internet",
+          "basis": "observed",
+          "evidence_refs": [
+            "E1"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "Z2",
+          "kind": "application",
+          "description": "Application VPC",
+          "basis": "observed",
+          "evidence_refs": [
+            "E1"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        },
+        {
+          "id": "Z3",
+          "kind": "customer",
+          "description": "Customer-controlled network",
+          "basis": "claimed",
+          "evidence_refs": [
+            "E5"
+          ],
+          "rationale": "Stated in design documentation.",
+          "related_refs": []
+        }
+      ],
+      "entry_points": [
+        {
+          "id": "EP1",
+          "kind": "http route",
+          "description": "Public REST API /v1",
+          "basis": "observed",
+          "evidence_refs": [
+            "E2",
+            "E3",
+            "E6"
+          ],
+          "rationale": "Observed in the cited source.",
+          "related_refs": []
+        }
+      ],
+      "states": [],
+      "boundaries": [
+        {
+          "id": "B1",
+          "kind": "network",
+          "description": "Internet to application VPC",
+          "basis": "observed",
+          "evidence_refs": [
+            "E1",
+            "E7"
+          ],
+          "rationale": "API gateway terminates TLS.",
+          "related_refs": [
+            "EP1"
+          ],
+          "side_refs": [
+            "Z1",
+            "Z2"
+          ],
+          "owner_architecture": "api",
+          "gap_refs": []
+        },
+        {
+          "id": "B2",
+          "kind": "network",
+          "description": "Application VPC to customer network (outbound webhooks)",
+          "basis": "observed",
+          "evidence_refs": [
+            "E5"
+          ],
+          "rationale": "Dispatcher makes outbound calls.",
+          "related_refs": [
+            "S3"
+          ],
+          "side_refs": [
+            "Z2",
+            "Z3"
+          ],
+          "owner_architecture": "api",
+          "gap_refs": []
+        }
+      ],
+      "flows": [
+        {
+          "id": "F1",
+          "description": "Invoice and export requests over HTTPS",
+          "basis": "observed",
+          "evidence_refs": [
+            "E2"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "A1",
+          "target_ref": "EP1",
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [
+            "B1"
+          ],
+          "gap_refs": []
+        },
+        {
+          "id": "F2",
+          "description": "Partner API calls with client credentials",
+          "basis": "claimed",
+          "evidence_refs": [
+            "E9"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "A2",
+          "target_ref": "EP1",
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [
+            "B1"
+          ],
+          "gap_refs": []
+        },
+        {
+          "id": "F3",
+          "description": "Routed API requests",
+          "basis": "observed",
+          "evidence_refs": [
+            "E1"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "EP1",
+          "target_ref": "S1",
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F4",
+          "description": "Invoice reads and writes",
+          "basis": "observed",
+          "evidence_refs": [
+            "E2"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S1",
+          "target_ref": "S4",
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F5",
+          "description": "Export job enqueue",
+          "basis": "observed",
+          "evidence_refs": [
+            "E3"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S1",
+          "target_ref": "S2",
+          "data_refs": [
+            "D2"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F6",
+          "description": "Bulk invoice read with service role",
+          "basis": "observed",
+          "evidence_refs": [
+            "E4"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S2",
+          "target_ref": "S4",
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F7",
+          "description": "CSV upload",
+          "basis": "observed",
+          "evidence_refs": [
+            "E4"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S2",
+          "target_ref": "S5",
+          "data_refs": [
+            "D2"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F8",
+          "description": "Status change events",
+          "basis": "observed",
+          "evidence_refs": [
+            "E1"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S1",
+          "target_ref": "S3",
+          "data_refs": [
+            "D3"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F9",
+          "description": "Webhook POST to registered URL",
+          "basis": "observed",
+          "evidence_refs": [
+            "E5"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S3",
+          "target_ref": "S7",
+          "data_refs": [
+            "D3"
+          ],
+          "boundary_refs": [
+            "B2"
+          ],
+          "gap_refs": []
+        },
+        {
+          "id": "F10",
+          "description": "Refund requests",
+          "basis": "observed",
+          "evidence_refs": [
+            "E6"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "EP1",
+          "target_ref": "S6",
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [],
+          "gap_refs": []
+        },
+        {
+          "id": "F11",
+          "description": "Settlement call to payment processor (endpoint not found)",
+          "basis": "claimed",
+          "evidence_refs": [
+            "E1"
+          ],
+          "rationale": "Traced in the cited code.",
+          "source_ref": "S6",
+          "target_ref": null,
+          "data_refs": [
+            "D1"
+          ],
+          "boundary_refs": [],
+          "gap_refs": [
+            "G2"
+          ]
+        }
+      ],
+      "dependencies": []
+    },
+    "methods": [],
+    "threats": [
+      {
+        "id": "T-001",
+        "scenario": "A caller supplies invoice IDs belonging to other users in the same tenant to POST /exports. The worker reads them with its all-tenant service role and writes them to a CSV the caller can download.",
+        "objective": "Export invoices the caller is not authorised to read",
+        "affected_refs": [
+          "S1",
+          "S2",
+          "D2"
+        ],
+        "prerequisites": [
+          "Valid session",
+          "Knowledge or enumeration of invoice IDs"
+        ],
+        "actor_assumptions": [
+          "Authenticated customer of another tenant or a compromised partner credential"
+        ],
+        "evidence_refs": [
+          "E3",
+          "E4"
+        ],
+        "method_refs": [],
+        "confidence": "high",
+        "confidence_rationale": "Based on the cited implementation.",
+        "finding_type": "evidenced_weakness",
+        "status": "open",
+        "gap_refs": [],
+        "related_threat_refs": [
+          "T-002"
+        ],
+        "resolution_evidence_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      },
+      {
+        "id": "T-002",
+        "scenario": "GET /invoices/:id checks tenant membership but not per-user ownership, so any user in a tenant can read every invoice in it.",
+        "objective": "Read another user's invoices within a tenant",
+        "affected_refs": [
+          "S1",
+          "D1"
+        ],
+        "prerequisites": [
+          "Valid session in the same tenant"
+        ],
+        "actor_assumptions": [
+          "Authenticated customer of another tenant or a compromised partner credential"
+        ],
+        "evidence_refs": [
+          "E2"
+        ],
+        "method_refs": [],
+        "confidence": "medium",
+        "confidence_rationale": "Based on the cited implementation.",
+        "finding_type": "evidenced_weakness",
+        "status": "open",
+        "gap_refs": [
+          "G3"
+        ],
+        "related_threat_refs": [],
+        "resolution_evidence_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      },
+      {
+        "id": "T-003",
+        "scenario": "A customer registers a webhook URL that redirects to an internal metadata or admin address. The dispatcher follows the redirect from inside the VPC.",
+        "objective": "Reach internal services through the webhook dispatcher (SSRF)",
+        "affected_refs": [
+          "S3",
+          "B2"
+        ],
+        "prerequisites": [
+          "Ability to register a webhook URL",
+          "Reachable internal service"
+        ],
+        "actor_assumptions": [
+          "Authenticated customer of another tenant or a compromised partner credential"
+        ],
+        "evidence_refs": [
+          "E5"
+        ],
+        "method_refs": [],
+        "confidence": "medium",
+        "confidence_rationale": "Based on the cited implementation.",
+        "finding_type": "evidenced_weakness",
+        "status": "open",
+        "gap_refs": [],
+        "related_threat_refs": [],
+        "resolution_evidence_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      },
+      {
+        "id": "T-004",
+        "scenario": "Concurrent refund requests with the same idempotency key arrive before the Redis entry is written, or are replayed after the 24-hour TTL expires, producing duplicate refunds.",
+        "objective": "Obtain duplicate refunds",
+        "affected_refs": [
+          "S6",
+          "D1"
+        ],
+        "prerequisites": [
+          "Ability to send concurrent requests",
+          "Refund-eligible payment"
+        ],
+        "actor_assumptions": [
+          "Authenticated customer of another tenant or a compromised partner credential"
+        ],
+        "evidence_refs": [
+          "E6"
+        ],
+        "method_refs": [],
+        "confidence": "low",
+        "confidence_rationale": "Design inference without a traced implementation.",
+        "finding_type": "design_hypothesis",
+        "status": "open",
+        "gap_refs": [
+          "G4"
+        ],
+        "related_threat_refs": [],
+        "resolution_evidence_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      },
+      {
+        "id": "T-005",
+        "scenario": "Partner client credentials are scoped to the whole tenant; a leaked partner secret grants read access to every invoice.",
+        "objective": "Abuse partner credentials for bulk data access",
+        "affected_refs": [
+          "A2",
+          "EP1"
+        ],
+        "prerequisites": [
+          "Leaked partner credential"
+        ],
+        "actor_assumptions": [
+          "Authenticated customer of another tenant or a compromised partner credential"
+        ],
+        "evidence_refs": [
+          "E9"
+        ],
+        "method_refs": [],
+        "confidence": "unknown",
+        "confidence_rationale": "Design inference without a traced implementation.",
+        "finding_type": "design_hypothesis",
+        "status": "open",
+        "gap_refs": [
+          "G1"
+        ],
+        "related_threat_refs": [],
+        "resolution_evidence_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      }
+    ],
+    "controls": [
+      {
+        "id": "C-001",
+        "description": "JWT validation of signature, issuer and expiry on every API route",
+        "affected_refs": [
+          "EP1"
+        ],
+        "threat_refs": [
+          "T-002",
+          "T-005"
+        ],
+        "status": "implemented",
+        "evidence_refs": [
+          "E7"
+        ],
+        "limitations": "Authenticates the caller; does not authorise access to individual objects.",
+        "verification_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      },
+      {
+        "id": "C-002",
+        "description": "Export bucket blocks public access and serves files only through 15-minute pre-signed URLs",
+        "affected_refs": [
+          "S5",
+          "D2"
+        ],
+        "threat_refs": [
+          "T-001"
+        ],
+        "status": "implemented",
+        "evidence_refs": [
+          "E8"
+        ],
+        "limitations": "Limits who can fetch a file, not what the file contains.",
+        "verification_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      },
+      {
+        "id": "C-003",
+        "description": "Idempotency keys for refunds held in Redis for 24 hours",
+        "affected_refs": [
+          "S6"
+        ],
+        "threat_refs": [
+          "T-004"
+        ],
+        "status": "implemented",
+        "evidence_refs": [
+          "E6"
+        ],
+        "limitations": "Atomicity of the check-and-set was not traced.",
+        "verification_refs": [],
+        "architecture_ids": [
+          "api"
+        ]
+      }
+    ],
+    "requirements": [],
+    "risks": [
+      {
+        "id": "R-001",
+        "threat_refs": [
+          "T-001"
+        ],
+        "status": "unrated",
+        "rubric": null,
+        "inputs": [],
+        "rating": null,
+        "original_values": [],
+        "rationale": "No rating rubric was supplied.",
+        "uncertainty": "Exploitability depends on invoice ID predictability (not assessed)."
+      }
+    ],
+    "attack_trees": [
+      {
+        "id": "AT-1",
+        "kind": "tree",
+        "semantics": "and_or",
+        "description": "Exfiltrate another user's invoices",
+        "threat_refs": [
+          "T-001",
+          "T-002"
+        ],
+        "root_refs": [
+          "N1"
+        ],
+        "nodes": [
+          {
+            "id": "N1",
+            "description": "Obtain invoices owned by another user",
+            "operator": "OR",
+            "children": [
+              "N2",
+              "N3"
+            ],
+            "system_refs": [
+              "D1"
+            ],
+            "evidence_refs": [],
+            "control_refs": [],
+            "assumptions": []
+          },
+          {
+            "id": "N2",
+            "description": "Bulk export path",
+            "operator": "AND",
+            "children": [
+              "N4",
+              "N5"
+            ],
+            "system_refs": [
+              "S2"
+            ],
+            "evidence_refs": [
+              "E3"
+            ],
+            "control_refs": [],
+            "assumptions": []
+          },
+          {
+            "id": "N3",
+            "description": "Read invoices one at a time by ID within the tenant",
+            "operator": "LEAF",
+            "children": [],
+            "system_refs": [
+              "S1"
+            ],
+            "evidence_refs": [
+              "E2"
+            ],
+            "control_refs": [
+              "C-001"
+            ],
+            "assumptions": []
+          },
+          {
+            "id": "N4",
+            "description": "Learn target invoice IDs",
+            "operator": "LEAF",
+            "children": [],
+            "system_refs": [],
+            "evidence_refs": [],
+            "control_refs": [],
+            "assumptions": [
+              "IDs are guessable or leaked"
+            ]
+          },
+          {
+            "id": "N5",
+            "description": "Submit export with foreign IDs and download the CSV",
+            "operator": "LEAF",
+            "children": [],
+            "system_refs": [
+              "S5"
+            ],
+            "evidence_refs": [
+              "E3",
+              "E8"
+            ],
+            "control_refs": [
+              "C-002"
+            ],
+            "assumptions": []
+          }
+        ],
+        "analysis_status": "partial",
+        "limitations": [
+          "ID predictability not assessed"
+        ]
+      }
+    ],
+    "attack_paths": [
+      {
+        "id": "AP-1",
+        "structure_ref": "AT-1",
+        "root_ref": "N1",
+        "kind": "satisfying_set",
+        "node_refs": [
+          "N3"
+        ],
+        "transition_refs": [],
+        "status": "supported",
+        "limitations": []
+      },
+      {
+        "id": "AP-2",
+        "structure_ref": "AT-1",
+        "root_ref": "N1",
+        "kind": "satisfying_set",
+        "node_refs": [
+          "N4",
+          "N5"
+        ],
+        "transition_refs": [],
+        "status": "conditional",
+        "limitations": [
+          "Relies on N4 assumption"
+        ]
+      }
+    ],
+    "visualizations": [],
+    "coverage": [
+      {
+        "id": "COV-1",
+        "target_ref": null,
+        "method_ref": null,
+        "lens": "inspection-coverage",
+        "status": "partial",
+        "reason": "Read the API routes, auth middleware, export worker, webhook dispatcher and storage Terraform in full at a1b2c3d. The payments service settlement client and the admin console were not read."
+      },
+      {
+        "id": "COV-2",
+        "target_ref": null,
+        "method_ref": null,
+        "lens": "run-configuration",
+        "status": "not_applicable",
+        "reason": "REVIEW_SCOPE security; METHODS []; PRIVACY_PROFILES []."
+      },
+      {
+        "id": "COV-3",
+        "target_ref": "S6",
+        "method_ref": null,
+        "lens": "security scenario analysis",
+        "status": "partial",
+        "reason": "Refund flow analysed; settlement flow not traced (G2)."
+      }
+    ],
+    "conflicts": [],
+    "gaps": [
+      {
+        "id": "G1",
+        "kind": "evidence",
+        "description": "Partner credential scopes and issuance were not found in the repository.",
+        "needed": "Partner onboarding design or identity provider configuration.",
+        "affected_refs": [
+          "A2",
+          "T-005"
+        ],
+        "status": "open",
+        "evidence_refs": [
+          "E9"
+        ]
+      },
+      {
+        "id": "G2",
+        "kind": "topology",
+        "description": "The settlement call from the payments service to the processor could not be traced to an endpoint.",
+        "needed": "Payments service outbound configuration.",
+        "affected_refs": [
+          "F11"
+        ],
+        "status": "open",
+        "evidence_refs": []
+      },
+      {
+        "id": "G3",
+        "kind": "evidence",
+        "description": "Intended sharing model for invoices within a tenant is undocumented.",
+        "needed": "Product decision on per-user versus tenant-wide visibility.",
+        "affected_refs": [
+          "T-002"
+        ],
+        "status": "open",
+        "evidence_refs": []
+      },
+      {
+        "id": "G4",
+        "kind": "evidence",
+        "description": "Atomicity of the Redis idempotency check was not traced.",
+        "needed": "Read of the Redis client wrapper and its transaction use.",
+        "affected_refs": [
+          "T-004",
+          "C-003"
+        ],
+        "status": "open",
+        "evidence_refs": []
+      }
+    ],
+    "treatments": [
+      {
+        "id": "TR-001",
+        "threat_refs": [
+          "T-001"
+        ],
+        "outcome": "Authorise every invoice ID at export creation and again in the worker, using the requesting principal's identity rather than the service role.",
+        "status": "proposed",
+        "alternatives": [
+          "Run the worker with a per-request scoped token",
+          "Restrict exports to server-side queries owned by the caller"
+        ],
+        "tradeoffs": [
+          "Extra database checks per exported row",
+          "Worker must carry the caller's identity"
+        ],
+        "dependency_refs": [],
+        "pack_dependencies": [],
+        "verification_refs": [
+          "V-001"
+        ],
+        "gap_refs": []
+      },
+      {
+        "id": "TR-002",
+        "threat_refs": [
+          "T-002"
+        ],
+        "outcome": "Bind invoice reads to the owning user or an explicit sharing grant, not tenant membership alone.",
+        "status": "proposed",
+        "alternatives": [
+          "Introduce tenant roles with documented read scopes"
+        ],
+        "tradeoffs": [
+          "May change behaviour customers rely on"
+        ],
+        "dependency_refs": [],
+        "pack_dependencies": [],
+        "verification_refs": [
+          "V-002"
+        ],
+        "gap_refs": [
+          "G3"
+        ]
+      },
+      {
+        "id": "TR-003",
+        "threat_refs": [
+          "T-003"
+        ],
+        "outcome": "Resolve and validate webhook destinations against a deny-list of private ranges at send time; disable redirect following or re-validate each hop; send from an isolated egress network.",
+        "status": "proposed",
+        "alternatives": [
+          "Allow-list customer domains at registration"
+        ],
+        "tradeoffs": [
+          "Customers on private networks need a relay"
+        ],
+        "dependency_refs": [],
+        "pack_dependencies": [],
+        "verification_refs": [
+          "V-003"
+        ],
+        "gap_refs": []
+      },
+      {
+        "id": "TR-004",
+        "threat_refs": [
+          "T-004"
+        ],
+        "outcome": "Make the idempotency check-and-set atomic and keep refund idempotency records for the life of the payment.",
+        "status": "proposed",
+        "alternatives": [
+          "Database unique constraint on (payment, idempotency key)"
+        ],
+        "tradeoffs": [
+          "Longer key retention"
+        ],
+        "dependency_refs": [],
+        "pack_dependencies": [],
+        "verification_refs": [
+          "V-004"
+        ],
+        "gap_refs": [
+          "G4"
+        ]
+      }
+    ],
+    "verification": [
+      {
+        "id": "V-001",
+        "threat_refs": [
+          "T-001"
+        ],
+        "control_refs": [],
+        "approach": "In an isolated test environment, create two users with known invoices and request an export containing the other user's invoice IDs.",
+        "expected_outcome": "The request is rejected or the export omits invoices the caller cannot read.",
+        "prerequisite_evidence_refs": [],
+        "pass_criteria": "Export contains only the caller's invoices.",
+        "fail_criteria": "Export contains any invoice owned by the other user.",
+        "inconclusive_criteria": "The export job fails for an unrelated reason or test ownership cannot be established.",
+        "status": "not_run",
+        "result_evidence_refs": []
+      },
+      {
+        "id": "V-002",
+        "threat_refs": [
+          "T-002"
+        ],
+        "control_refs": [],
+        "approach": "With two users in one tenant, request each other's invoices by ID.",
+        "expected_outcome": "Cross-user reads are denied unless a sharing grant exists.",
+        "prerequisite_evidence_refs": [],
+        "pass_criteria": "404 or 403 for unshared invoices.",
+        "fail_criteria": "Invoice body returned.",
+        "inconclusive_criteria": "Test data cannot be isolated.",
+        "status": "not_run",
+        "result_evidence_refs": []
+      },
+      {
+        "id": "V-003",
+        "threat_refs": [
+          "T-003"
+        ],
+        "control_refs": [],
+        "approach": "Register a webhook pointing at a test server that redirects to a private address in an isolated network.",
+        "expected_outcome": "The dispatcher refuses the redirect target.",
+        "prerequisite_evidence_refs": [],
+        "pass_criteria": "No request reaches the private address.",
+        "fail_criteria": "A request reaches the private address.",
+        "inconclusive_criteria": "Redirect handling cannot be observed.",
+        "status": "not_run",
+        "result_evidence_refs": []
+      },
+      {
+        "id": "V-004",
+        "threat_refs": [
+          "T-004"
+        ],
+        "control_refs": [],
+        "approach": "Send concurrent refund requests with the same key against a test payment.",
+        "expected_outcome": "Exactly one refund is created.",
+        "prerequisite_evidence_refs": [],
+        "pass_criteria": "One refund.",
+        "fail_criteria": "More than one refund.",
+        "inconclusive_criteria": "Concurrency cannot be reproduced.",
+        "status": "not_run",
+        "result_evidence_refs": []
+      }
+    ],
+    "decisions": [],
+    "changes": [],
+    "identity_map": []
+  }
+}

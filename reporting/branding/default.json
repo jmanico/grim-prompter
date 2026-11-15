@@ -1,0 +1,13 @@
+{
+  "branding_version": "1.0",
+  "name": "default",
+  "organisation": null,
+  "prepared_by": null,
+  "prepared_for": null,
+  "logo_file": null,
+  "classification": { "label": "CONFIDENTIAL: SECURITY REVIEW MATERIAL", "color": "#b4232a" },
+  "colors": { "primary": "#1f3a5f", "accent": "#b4232a" },
+  "font_family": "system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif",
+  "footer_text": null,
+  "disclaimer": null
+}

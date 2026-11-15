@@ -45,6 +45,7 @@ Open your project in your coding agent and ask:
 | A full privacy review | `/threat-model deep privacy` | `$threat-model deep privacy` |
 | One method on your code | `/threat-model STRIDE per element` | `$threat-model STRIDE per element` |
 | A review of how a branch changes an existing model | `/threat-model change main...feature` | `$threat-model change main...feature` |
+| An HTML report from a finished run | `/threat-model report executive` | `$threat-model report executive` |
 
 For a change review, name the earlier JSON report too: `using threat-model/2026-10-28-quick-api/quick-report.json as the baseline`. The agent needs both the code diff and the model you're updating. If you leave out the model, it asks.
 
@@ -65,6 +66,19 @@ Keep reports out of version control until you've reviewed them for sensitive det
 For more detail, see [running on your project](start-here.md#run-it-on-your-project).
 
 For MCP servers and agent tools, the review maps tools to backend credentials and effective permissions where evidence supports them, and records unknown grants or credential access as gaps. It examines shared-token blast radius and read/write separation, and examines whether tool descriptions and their post-approval updates can steer other trusted tools. See [Tool and Shared Credential Boundaries](reference/tool-credential-boundaries.md); conclusions still depend on the inspected evidence.
+
+## HTML reports
+
+Turn a finished run into a self-contained HTML report with filters, a data-flow diagram, linked evidence and print-to-PDF:
+
+```text
+/threat-model report executive
+/threat-model report client with branding ~/branding/acme.json
+/threat-model report technical, only threats, treatments and gaps, open threats only
+/threat-model quick api with html report
+```
+
+Choose the `executive`, `technical` or `client` template, rename, reorder or filter sections, and apply your own logo, colours and classification banner. The report shows the model's records as recorded and loads nothing from the network. It embeds the full model, so review it before sharing. See the [reporting guide](reporting/README.md).
 
 ## Review the results
 
@@ -180,6 +194,7 @@ Choose a method for a specific question, such as authorization threats, privacy 
 | [Method selector](helpers/method-selector.md) | Choose the smallest useful set of methods for your decision and evidence |
 | [Model challenger](helpers/model-challenger.md) | Challenge an existing threat model's assumptions, look for counterexamples and name the evidence needed to strengthen its conclusions |
 | [Change reviewer](helpers/change-reviewer.md) | Review a proposed system change against an existing threat model, keeping its identities and history |
+| [Report builder](helpers/report-builder.md) | Build a self-contained, branded HTML report from a finished run |
 
 See the [catalog](catalog.md) for every prompt and the [artifact contract](reference/artifact-contract.md) for the JSON format.
 

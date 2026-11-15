@@ -1,0 +1,13 @@
+{
+  "branding_version": "1.0",
+  "name": "example-consultancy",
+  "organisation": "Example Security Consulting",
+  "prepared_by": "Product Security team",
+  "prepared_for": "Example Client Pty Ltd",
+  "logo_file": "example-logo.svg",
+  "classification": { "label": "COMMERCIAL IN CONFIDENCE", "color": "#5a2a82" },
+  "colors": { "primary": "#2d1b4e", "accent": "#e0662b", "surface": "#f6f3fa" },
+  "font_family": "Georgia, 'Times New Roman', serif",
+  "footer_text": "Example Security Consulting. Prepared for the named client only.",
+  "disclaimer": "This assessment reflects the evidence available at the time of review and is provided for the client's internal use."
+}
