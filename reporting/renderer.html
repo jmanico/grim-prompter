@@ -5,7 +5,6 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="Grim Prompter report builder">
 <title>Threat model report</title>
 <style>
 /*TM_FONTS*/
@@ -290,7 +289,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   if (!data || typeof data !== 'object' || !data.model) {
     document.body.style.display = 'block';
     append(document.body, [h('p', { class: 'basis' }, h('b', null, 'No threat model data is embedded in this file. '),
-      'This is the unfilled renderer template or the embedded JSON is invalid. Build a report with the Grim Prompter report builder.')]);
+      'This is the unfilled renderer template or the embedded JSON is invalid. Rebuild the report.')]);
     return;
   }
 
@@ -333,7 +332,9 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
     resolved: 'ok', closed: 'ok', passed: 'ok', tested: 'ok', implemented: 'ok', read: 'ok', assessed: 'ok', observed: 'ok', accepted: 'ok', completed: 'ok', supported: 'ok', verified: 'ok',
     not_run: 'warn', proposed: 'warn', partial: 'warn', inconclusive: 'warn', unrated: 'warn', deferred: 'warn', conditional: 'warn', unverified: 'warn',
     design_hypothesis: 'info', designed: 'info', proposed_design: 'info', high: 'info' };
-  function tag(v, prefix) { if (v === null || v === undefined || v === '') return null; return h('span', { class: 'tag ' + (TAGCLASS[str(v)] || '') }, (prefix ? prefix + ' ' : '') + str(v).replace(/_/g, ' ')); }
+  var NICE = { evidenced_weakness: 'observed in code', design_hypothesis: 'design concern', not_run: 'outstanding', proposed_design: 'proposed design' };
+  function nice(v) { return NICE[str(v)] || str(v).replace(/_/g, ' '); }
+  function tag(v, prefix) { if (v === null || v === undefined || v === '') return null; return h('span', { class: 'tag ' + (TAGCLASS[str(v)] || '') }, (prefix ? prefix + ' ' : '') + nice(v)); }
   function list(items) { items = arr(items); if (!items.length) return h('span', { class: 'empty' }, '—'); return h('ul', { class: 'plain' }, items.map(function (t) { return h('li', null, str(t)); })); }
   function fields(pairs) {
     var dl = h('dl', { class: 'fields' });
@@ -350,7 +351,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   function countBy(rows, f) { var m = {}; rows.forEach(function (r) { var k = str(typeof f === 'function' ? f(r) : r[f]) || 'unknown'; m[k] = (m[k] || 0) + 1; }); return m; }
   function breakdown(counts, order) {
     var keys = Object.keys(counts); if (order) keys.sort(function (a, b) { var x = order.indexOf(a), y = order.indexOf(b); return (x < 0 ? 99 : x) - (y < 0 ? 99 : y); });
-    return keys.map(function (k) { return counts[k] + ' ' + k.replace(/_/g, ' '); }).join(', ') || '—';
+    return keys.map(function (k) { return counts[k] + ' ' + nice(k); }).join(', ') || '—';
   }
 
   // ---------- Risk matrix and ratings ----------
@@ -374,7 +375,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
     var ca = CONF[a.confidence] === undefined ? 4 : CONF[a.confidence], cb = CONF[b.confidence] === undefined ? 4 : CONF[b.confidence]; if (ca !== cb) return ca - cb;
     return str(a.id).localeCompare(str(b.id), undefined, { numeric: true });
   }
-  var ORDER_NOTE = anyRated ? 'Ordered by risk rating, then finding type and confidence.' : 'Ordered by finding type (evidenced weaknesses first), then confidence. No risk ratings are recorded, so this is not a severity ranking.';
+  var ORDER_NOTE = anyRated ? 'Ordered by risk rating, then finding type and confidence.' : 'Issues observed in code come first, then design concerns, each by confidence. No risk ratings are recorded, so this is not a severity ranking.';
   var sortedThreats = threats.slice().sort(threatOrder);
   var openThreats = sortedThreats.filter(function (t) { return t.status === 'open'; });
 
@@ -438,7 +439,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
       count.textContent = n + ' of ' + wrap._trs.length + ' ' + noun;
     }), count), wrap);
   }
-  function selectOf(labelText, values) { return h('select', { 'aria-label': labelText }, h('option', { value: '' }, labelText), values.map(function (v) { return h('option', { value: v }, v.replace(/_/g, ' ')); })); }
+  function selectOf(labelText, values) { return h('select', { 'aria-label': labelText }, h('option', { value: '' }, labelText), values.map(function (v) { return h('option', { value: v }, nice(v)); })); }
   function fold(title, count, content, id) { return h('details', { class: 'fold', id: id || null }, h('summary', null, title, count !== null ? h('small', null, String(count)) : null), content); }
   function lines(items, f) { items = arr(items); if (!items.length) return h('span', { class: 'empty' }, 'None recorded'); return items.map(function (x) { return h('span', { class: 'line' }, f(x)); }); }
 
@@ -460,7 +461,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   function go(id) { tipEl.classList.add('hidden'); if (location.hash === '#' + anchor(id)) openTarget(); else location.hash = anchor(id); }
   function recordTip(id, extra) {
     var r = byId.get(id), k = kindOf.get(id);
-    var status = r && (k === 'threats' ? [r.finding_type, r.status].join(' · ').replace(/_/g, ' ') : str(r.status).replace(/_/g, ' '));
+    var status = r && (k === 'threats' ? nice(r.finding_type) + ' \u00b7 ' + nice(r.status) : nice(r.status));
     return [h('small', null, (KIND_WORD[k] || 'Record') + ' ' + id + (status ? ' · ' + status : '')), h('b', null, trunc(r && (r.objective || r.description || r.outcome || r.approach) || id, 160)),
       r && r.scenario ? trunc(r.scenario, 260) : (r && r.expected_outcome ? 'Expected: ' + trunc(r.expected_outcome, 200) : (r && r.limitations ? 'Limitations: ' + trunc(r.limitations, 200) : null)), h('em', null, extra || 'Select to open the full entry')];
   }
@@ -479,8 +480,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   document.title = title + (branding.organisation ? ' — ' + branding.organisation : '');
   function cover() {
     var meta = [['Client', eng.client || branding.prepared_for], ['Project', eng.project], ['Prepared by', arr(eng.authors).join(', ') || branding.prepared_by], ['Organisation', branding.organisation],
-      ['Report version', eng.report_version], ['Report date', eng.report_date || eng.generated_at], ['Analysis depth', data.analysis_depth], ['Model status', data.status],
-      ['Model', str(data.model_id) + ' rev ' + str(data.revision)], ['Architectures', arr(data.architecture_ids).join(', ')]].filter(function (p) { return p[1]; });
+      ['Report version', eng.report_version], ['Report date', eng.report_date || eng.generated_at], ['Status', eng.report_status]].filter(function (p) { return p[1]; });
     return h('header', { class: 'cover', id: 'top' }, h('p', { class: 'kick' }, 'Threat model report'), h('h1', null, title), eng.subtitle ? h('p', { class: 'lede' }, str(eng.subtitle)) : null,
       h('dl', null, meta.map(function (p) { return h('div', null, h('dt', null, p[0]), h('dd', null, str(p[1]))); })));
   }
@@ -489,11 +489,21 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   var inspection = arr(M.coverage).filter(function (c) { return c.lens === 'inspection-coverage' && c.target_ref === null; });
   var processed = arr(data.processed_inputs), unprocessed = arr(data.unprocessed_inputs);
   var openGaps = gaps.filter(function (g) { return g.status === 'open'; });
+  function repoRevisions() { return uniq(arr(M.evidence).filter(function (e) { return e.source_kind === 'repository' && e.source_revision; }).map(function (e) { return str(e.source_revision); })); }
+  function docSources() { return uniq(arr(M.evidence).filter(function (e) { return e.source_kind === 'document' || e.source_kind === 'diagram'; }).map(function (e) { return str(e.locator).replace(/:\d+(-\d+)?$/, ''); })); }
+  function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
+  function reviewedLine() {
+    var revs = repoRevisions(), parts = [plural(processed.length, 'source and configuration file') + (revs.length ? ' at revision ' + revs.join(', ') : '')];
+    if (docSources().length) parts.push(plural(docSources().length, 'design document'));
+    if (arr(eng.workshops).length) parts.push(plural(arr(eng.workshops).length, 'workshop'));
+    return parts.join(', ') + (unprocessed.length ? '; ' + plural(unprocessed.length, 'area') + (unprocessed.length === 1 ? ' was' : ' were') + ' not reviewed' : '');
+  }
+  function limitations() { var own = paras(obj(eng.scope_and_approach).limitations); return own.length ? own : arr(M.scope && M.scope.limitations).map(str); }
   function execSummary() {
     var es = obj(eng.executive_summary), out = [];
     var overview = paras(es.system_overview), authored = overview.length > 0;
     (authored ? overview : paras(M.scope && M.scope.description)).forEach(function (p) { out.push(h('p', { class: 'lead' }, p)); });
-    if (!authored) out.push(h('p', { class: 'note' }, 'No summary narrative was supplied for this report; the text above is the scope description recorded in the model.'));
+    if (!authored) out.push(h('p', { class: 'note' }, 'No summary narrative was supplied for this report; the text above is the recorded scope description.'));
 
     // key components
     var comps = arr(es.key_components).filter(function (c) { return c && (c.name || c.ref); }), derivedC = !comps.length;
@@ -520,7 +530,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
     var ratingCounts = countBy(threats.filter(function (t) { return t.status === 'open'; }), function (t) { var r = ratedRisk(t); return r ? str(r.rating) : 'unrated'; });
     var rows = [
       ['Threats', threats.length, breakdown(countBy(threats, 'status')) + '; ' + breakdown(countBy(threats, 'finding_type')), '#threats'],
-      ['Open threats by risk rating', openThreats.length, anyRated ? breakdown(ratingCounts, ratingDefs.map(function (d) { return str(d.label); }).concat(['unrated'])) : 'Not rated: no risk matrix was applied in the model', '#app-c'],
+      ['Open threats by risk rating', openThreats.length, anyRated ? breakdown(ratingCounts, ratingDefs.map(function (d) { return str(d.label); }).concat(['unrated'])) : 'Not rated: no risk matrix was applied', '#app-c'],
       ['Controls in place', controls.length, breakdown(countBy(controls, 'status')), '#controls'],
       ['Recommendations', treatments.length, treatments.length ? 'All proposed; none implemented or approved unless a decision is recorded' : '—', '#recs'],
       ['Verification required', verifs.length, breakdown(countBy(verifs, 'status')), '#verif'],
@@ -530,14 +540,11 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
     ];
     out.push(table([col('Area', function (r) { return h('a', { href: r[3] }, r[0]); }, '280px'), { title: 'Count', width: '90px', value: function (r) { return r[1]; }, render: function (r) { return h('b', null, String(r[1])); } }, col('Breakdown', function (r) { return r[2]; })], rows));
 
-    var lim = arr(M.scope && M.scope.limitations);
-    out.push(h('div', { class: 'basis' }, h('h4', null, 'Basis and limits of this report'), h('ul', null,
-      h('li', null, 'Analysis depth: ', h('b', null, str(data.analysis_depth)), '; model status: ', h('b', null, str(data.status)), '. Inputs: ' + processed.filter(function (p) { return p.access === 'read'; }).length + ' read in full, ' +
-        processed.filter(function (p) { return p.access === 'partial'; }).length + ' partly read, ' + unprocessed.length + ' not inspected.'),
-      inspection.length ? h('li', null, 'Inspection coverage (', str(inspection[0].status).replace(/_/g, ' '), '): ', str(inspection[0].reason)) : h('li', null, 'The model has no inspection-coverage record, so the extent of inspection is unknown.'),
-      lim.slice(0, 3).map(function (l) { return h('li', null, l); }),
-      h('li', null, 'Threats are design hypotheses or weaknesses evidenced by reading code; neither is proof of runtime behaviour. Recommendations are proposals and verification tests are planned, not run, unless stated. This report does not certify security or compliance. ',
-        h('a', { href: '#scope' }, 'Scope, approach and all limitations'), '.')),
+    out.push(h('div', { class: 'basis' }, h('h4', null, 'Basis of this assessment'), h('ul', null,
+      h('li', null, 'Reviewed: ' + reviewedLine() + '.'),
+      limitations().slice(0, 3).map(function (l) { return h('li', null, l); }),
+      h('li', null, 'A threat model identifies what could go wrong from the design and code as reviewed; it is not a penetration test. Verification activities are outstanding unless marked otherwise, and recommendations are proposals for the system owner to decide on. ',
+        h('a', { href: '#scope' }, 'Scope, approach and limitations'), '.')),
       branding.disclaimer ? h('p', { class: 'note' }, str(branding.disclaimer)) : null));
     return section('exec', '1', 'Executive summary', null, out);
   }
@@ -545,11 +552,11 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   // ---------- 2 Technical summary ----------
   function diagram() {
     var flows = arr(sys.flows);
-    if (!flows.length) return empty('The model contains no flows, so no architecture diagram can be drawn.');
+    if (!flows.length) return empty('No data flows were recorded, so no architecture diagram can be drawn.');
     var nodes = new Map();
     function addNode(id) { if (!id) id = '__unknown__'; if (!nodes.has(id)) nodes.set(id, { id: id, kind: id === '__unknown__' ? 'unknown' : (kindOf.get(id) || 'unknown'), out: [], inn: [] }); return nodes.get(id); }
     flows.forEach(function (f) { var a = addNode(f.source_ref), b = addNode(f.target_ref); a.out.push(f); b.inn.push(f); });
-    if (nodes.size > 80) return h('p', { class: 'basis' }, 'The model has ' + nodes.size + ' flow endpoints, too many to draw legibly. Use the component and flow inventory below.');
+    if (nodes.size > 80) return h('p', { class: 'basis' }, 'The system has ' + nodes.size + ' flow endpoints, too many to draw legibly. Use the component and flow inventory below.');
     // overlay chips per node
     var W = 236, GX = 124, GY = 30, PAD = 24, CH = 17;
     nodes.forEach(function (n) {
@@ -658,7 +665,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   }
 
   function overview() {
-    if (!threats.length && !controls.length) return empty('The model contains no threats or controls.');
+    if (!threats.length && !controls.length) return empty('No threats or controls were recorded.');
     var rows = sortedThreats.map(function (t) { return { id: t.id, t: t, cs: arr(controlsByThreat.get(t.id)), trs: arr(treatmentsByThreat.get(t.id)), vs: arr(verifsByThreat.get(t.id)) }; });
     var linkedC = {}, linkedTr = {}, linkedV = {}; rows.forEach(function (r) { r.cs.forEach(function (c) { linkedC[c.id] = 1; }); r.trs.forEach(function (x) { linkedTr[x.id] = 1; }); r.vs.forEach(function (v) { linkedV[v.id] = 1; }); });
     var orphan = { id: '', t: null, cs: controls.filter(function (c) { return !linkedC[c.id]; }), trs: treatments.filter(function (x) { return !linkedTr[x.id]; }), vs: verifs.filter(function (v) { return !linkedV[v.id]; }) };
@@ -690,18 +697,18 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
     if (arr(sys.flows).length) out.push(fold('Data flows', sys.flows.length, table([idCol(), { title: 'From → to', sort: false, render: function (r) { return h('span', null, r.source_ref ? ref(r.source_ref) : h('span', { class: 'empty' }, 'unknown'), ' → ', r.target_ref ? ref(r.target_ref) : h('span', { class: 'empty' }, 'unknown')); } },
       col('Description', function (r) { return str(r.description); }), refCol('Data', function (r) { return r.data_refs; }), refCol('Crosses', function (r) { return r.boundary_refs; }), col('Basis', function (r) { return tag(r.basis); })], sys.flows, { anchor: true })));
     if (arr(sys.dependencies).length) out.push(fold('Dependencies', sys.dependencies.length, table([idCol(), { title: 'From → to', sort: false, render: function (r) { return h('span', null, r.source_ref ? ref(r.source_ref) : '?', ' → ', r.target_ref ? ref(r.target_ref) : '?'); } }, col('Description', function (r) { return str(r.description); })], sys.dependencies, { anchor: true })));
-    return out.length ? out : empty('The model contains no system records.');
+    return out.length ? out : empty('No components were recorded.');
   }
   function techSummary() {
     return section('tech', '2', 'Technical summary', 'The system as modelled, with every threat, control and verification test placed on the component it concerns.', [
       h('h3', { id: 'tech-diagram' }, 'Architecture and threats'),
-      h('p', { class: 'intro' }, 'Drawn from the flows recorded in the model and arranged in flow order from the actors on the left. It shows logical data flow, not network placement.'),
+      h('p', { class: 'intro' }, 'Arranged in flow order from the actors on the left. It shows logical data flow, not network placement.'),
       diagram(),
       h('h3', { id: 'tech-overview' }, 'Overview of threats, controls, recommendations and verification'),
       h('p', { class: 'intro' }, 'One row per threat. ' + ORDER_NOTE + ' Select any reference to open the full entry.'),
       overview(),
       h('h3', { id: 'tech-inventory' }, 'Component and flow inventory'),
-      h('p', { class: 'intro' }, 'Every element in the model. Open a group to see its records.'),
+      h('p', { class: 'intro' }, 'Every actor, component, data type and flow in scope. Open a group to see its entries.'),
       inventory()
     ], [['tech-diagram', 'Architecture and threats'], ['tech-overview', 'Overview table'], ['tech-inventory', 'Component inventory']]);
   }
@@ -721,10 +728,10 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
       out.push(h('p', { class: 'intro' }, 'How each threat maps to the frameworks applied in this engagement. A dash means the framework recorded no mapping for that threat. Dashed entries are unverified mappings.'));
       out.push(table([{ title: 'Threat', width: '26%', value: function (t) { return t.id; }, render: function (t) { return h('span', null, ref(t.id), h('span', { class: 'line' }, str(t.objective) || trunc(t.scenario, 100))); } }]
         .concat(fwOrder.map(function (mid) { return { title: fwName(mid), sort: false, render: function (t) { return fwCell(mid, t.id); } }; })), sortedThreats));
-    } else out.push(h('p', { class: 'basis' }, 'No framework mappings are recorded in this model. To add them, run the review with methods, for example "with STRIDE per element, ATT&CK and CAPEC".' + (arr(data.selected_methods).length ? ' Methods selected: ' + data.selected_methods.join(', ') + '.' : '')));
+    } else out.push(h('p', { class: 'basis' }, 'No framework mappings were recorded for this assessment.'));
 
     out.push(h('h3', { id: 'threats-detail' }, 'Threat details'));
-    if (!threats.length) { out.push(empty('The model contains no threats.')); return section('threats', '3', 'Threats', null, out); }
+    if (!threats.length) { out.push(empty('No threats were recorded.')); return section('threats', '3', 'Threats', null, out); }
     var items = sortedThreats.map(function (t) {
       var r = ratedRisk(t), rr = arr(risksByThreat.get(t.id))[0], fw = []; fwOrder.forEach(function (mid) { arr(fwMap[mid][t.id]).forEach(function (f) { fw.push(h('span', null, h('span', { class: 'note' }, fwName(mid) + ' '), fwChip(f), ' ')); }); });
       var det = h('details', { class: 'threat', id: anchor(t.id) },
@@ -756,7 +763,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
       });
       if (arr(M.attack_paths).length) out.push(table([idCol('Path'), col('Structure', function (p) { return str(p.structure_ref); }), col('Status', function (p) { return tag(p.status); }),
         col('Steps', function (p) { return h('span', { class: 'mono' }, arr(p.node_refs).join(' → ')); }), col('Limitations', function (p) { return list(p.limitations); })], M.attack_paths),
-        h('p', { class: 'note' }, 'Path status describes the model’s logic. It does not mean anyone executed the path.'));
+        h('p', { class: 'note' }, 'Path status describes the logic of the attack path. It does not mean anyone carried it out.'));
     }
     if (arr(M.conflicts).length) {
       out.push(h('h3', null, 'Conflicting evidence'));
@@ -797,8 +804,8 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
 
   // ---------- 6 Verification ----------
   function verifSection() {
-    var out = [h('div', { class: 'nums' }, ['not_run', 'passed', 'failed', 'inconclusive'].map(function (k) { return h('div', null, h('b', null, String(verifs.filter(function (v) { return v.status === k; }).length)), h('span', null, k.replace('_', ' '))); })),
-      h('p', { class: 'intro' }, 'Tests that would confirm or refute each threat and show whether a fix works. A test marked not run is a plan only; running it needs separate authorisation and an isolated environment.')];
+    var out = [h('div', { class: 'nums' }, ['not_run', 'passed', 'failed', 'inconclusive'].map(function (k) { return h('div', null, h('b', null, String(verifs.filter(function (v) { return v.status === k; }).length)), h('span', null, nice(k))); })),
+      h('p', { class: 'intro' }, 'Tests that would confirm or refute each threat and show whether a fix works. An outstanding test has not been performed yet; it needs authorisation and an isolated environment.')];
     if (!verifs.length) out.push(empty('No verification was recorded.'));
     verifs.forEach(function (v) {
       out.push(h('div', { class: 'card', id: anchor(v.id) }, h('div', { class: 'chead' }, h('span', { class: 'tid' }, v.id), tag(v.status), h('span', { class: 'note' }, 'for'), refs(arr(v.threat_refs).concat(arr(v.control_refs)))),
@@ -815,24 +822,24 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
       h('div', { class: 'two' }, h('div', null, h('h4', null, 'In scope'), list(sc.in_scope), h('h4', null, 'Objectives'), list(sc.objectives)), h('div', null, h('h4', null, 'Out of scope'), list(sc.out_of_scope), h('h4', null, 'Assumptions'), list(sc.assumptions))));
     out.push(h('h3', { id: 'scope-approach' }, 'Approach'));
     var ap = paras(sa.approach);
-    if (ap.length) ap.forEach(function (p) { out.push(h('p', null, p)); }); else out.push(h('p', { class: 'note' }, 'No approach narrative was supplied for this report. The facts below come from the model.'));
+    if (ap.length) ap.forEach(function (p) { out.push(h('p', null, p)); }); else out.push(h('p', { class: 'note' }, 'No approach narrative was supplied for this report.'));
     if (arr(sa.activities).length) out.push(table([col('Phase', function (a) { return h('b', null, str(a.phase)); }, '260px'), col('What we did', function (a) { return str(a.description); })], sa.activities));
-    out.push(fields([['Analysis depth', str(data.analysis_depth)], ['Architecture lenses', arr(data.architecture_ids).join(', ') || null], ['Methods selected', arr(data.selected_methods).join(', ') || 'None']]));
-    if (arr(M.methods).length) out.push(h('h4', null, 'Methods and frameworks applied'), table([idCol(), col('Method', function (m) { return h('b', null, fwName(m.method_id)); }), col('Version', function (m) { return str(m.source_revision) || '—'; }), col('Status', function (m) { return tag(m.status); }),
-      col('What was applied', function (m) { return list(m.applied); }), col('Not covered', function (m) { return list(m.omissions); })], M.methods, { anchor: true }), h('p', { class: 'note' }, 'Selecting a method does not prove it ran; this table shows what actually executed.'));
+    if (arr(M.methods).length) out.push(h('h4', null, 'Frameworks applied'), table([col('Framework', function (m) { return h('b', null, fwName(m.method_id)); }), col('Version', function (m) { return str(m.source_revision) || '\u2014'; }), col('Coverage', function (m) { return tag(m.status); }),
+      col('How it was applied', function (m) { return list(m.applied); }), col('Not covered', function (m) { return list(m.omissions); })], M.methods, { anchor: true }));
 
-    out.push(h('h3', { id: 'scope-coverage' }, 'Inspection coverage'));
-    out.push(h('div', { class: 'nums' }, [[processed.filter(function (p) { return p.access === 'read'; }).length, 'inputs read in full'], [processed.filter(function (p) { return p.access === 'partial'; }).length, 'inputs partly read'], [unprocessed.length, 'inputs not inspected'],
-      [gaps.filter(function (g) { return g.kind === 'topology' && g.status === 'open'; }).length, 'unmapped trust boundaries']].map(function (p) { return h('div', null, h('b', null, String(p[0])), h('span', null, p[1])); })));
-    if (inspection.length) inspection.forEach(function (c) { out.push(h('p', null, tag(c.status), ' ', str(c.reason))); }); else out.push(h('p', { class: 'basis' }, 'The model has no inspection-coverage record, so the extent of inspection is unknown.'));
-    if (unprocessed.length) out.push(h('h4', null, 'Not inspected'), table([col('Location', function (r) { return h('code', null, str(r.locator)); }), col('Status', function (r) { return tag(r.access); }), col('Reason', function (r) { return str(r.reason); })], unprocessed));
-    out.push(h('p', { class: 'note' }, 'The full list of inspected files is in ', h('a', { href: '#app-a' }, 'Appendix A'), '.'));
+    out.push(h('h3', { id: 'scope-coverage' }, 'What was reviewed'), h('p', null, 'This assessment reviewed ' + reviewedLine() + '.'));
+    out.push(h('div', { class: 'nums' }, [[processed.filter(function (p) { return p.access === 'read'; }).length, 'files reviewed in full'], [processed.filter(function (p) { return p.access === 'partial'; }).length, 'files partly reviewed'], [docSources().length, 'design documents'],
+      [arr(eng.workshops).length, 'workshops'], [unprocessed.length, 'areas not reviewed']].map(function (p) { return h('div', null, h('b', null, String(p[0])), h('span', null, p[1])); })));
+    var cov = paras(sa.review_coverage); if (!cov.length) cov = inspection.map(function (c) { return str(c.reason); });
+    cov.forEach(function (c) { out.push(h('p', null, c)); });
+    if (unprocessed.length) out.push(h('h4', null, 'Not reviewed'), table([col('Location', function (r) { return h('code', null, str(r.locator)); }), col('Reason', function (r) { return str(r.reason); })], unprocessed));
+    out.push(h('p', { class: 'note' }, 'The full list of reviewed files and documents is in ', h('a', { href: '#app-a' }, 'Appendix A'), '.'));
 
-    out.push(h('h3', { id: 'scope-limits' }, 'Limitations'), arr(sc.limitations).length ? list(sc.limitations) : empty('The model records no limitations.'));
+    out.push(h('h3', { id: 'scope-limits' }, 'Limitations'), limitations().length ? list(limitations()) : empty('No limitations were recorded.'));
     out.push(h('h3', { id: 'scope-gaps' }, 'Open unknowns'), h('p', { class: 'intro' }, 'Things the evidence did not show, and what would settle each one.'));
     out.push(gaps.length ? searchable(table([idCol(), col('Kind', function (g) { return tag(g.kind); }), col('Status', function (g) { return tag(g.status); }), col('What is unknown', function (g) { return str(g.description); }), col('What would settle it', function (g) { return str(g.needed); }), refCol('Affects', function (g) { return g.affected_refs; })], gaps, { anchor: true }), 'unknowns') : empty('No gaps were recorded.'));
     if (arr(M.changes).length) out.push(h('h3', null, 'Changes since the baseline'), table([idCol(), col('Change', function (r) { return tag(r.kind); }), refCol('Current', function (r) { return r.current_refs; }), col('Previous IDs', function (r) { return h('span', { class: 'mono' }, arr(r.previous_ids).join(', ') || '—'); }), col('Rationale', function (r) { return str(r.rationale); })], M.changes, { anchor: true }));
-    return section('scope', '7', 'Scope and approach', 'What this engagement covered and how it was delivered.', out, [['scope-scope', 'Scope'], ['scope-approach', 'Approach'], ['scope-coverage', 'Inspection coverage'], ['scope-gaps', 'Open unknowns']]);
+    return section('scope', '7', 'Scope and approach', 'What this engagement covered and how it was delivered.', out, [['scope-scope', 'Scope'], ['scope-approach', 'Approach'], ['scope-coverage', 'What was reviewed'], ['scope-gaps', 'Open unknowns']]);
   }
 
   // ---------- Appendices ----------
@@ -847,23 +854,23 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
     });
     out.push(h('h3', null, 'Artefacts supplied for the engagement'));
     out.push(supplied.length ? table([col('Artefact', function (a) { return h('b', null, str(a.name)); }), col('Type', function (a) { return str(a.type); }), col('Version', function (a) { return h('span', { class: 'mono' }, str(a.version) || '—'); }), col('Date', function (a) { return str(a.date) || '—'; }), col('Source', function (a) { return str(a.source) || '—'; }), col('Notes', function (a) { return str(a.notes); })], supplied)
-      : h('p', { class: 'note' }, 'No artefact register was supplied for this report. The sources below were identified from the evidence in the model.'));
+      : h('p', { class: 'note' }, 'No artefact register was supplied for this report. The sources below are those cited by the evidence.'));
     out.push(h('h3', null, 'Sources referenced by the evidence'));
     out.push(derived.length ? table([col('Source', function (a) { return h('b', null, a.name); }), col('Type', function (a) { return a.type; }), col('Version', function (a) { return h('span', { class: 'mono' }, a.version); }), { title: 'Evidence items', value: function (a) { return a.n; }, render: function (a) { return String(a.n); } }], derived) : empty('No repository or document evidence is recorded.'));
     out.push(h('h3', null, 'Detail'));
-    out.push(fold('Files inspected', processed.length, processed.length ? searchable(table([col('Location', function (r) { return h('code', null, str(r.locator)); }), col('Read', function (r) { return tag(r.access); }), col('Version and extent', function (r) { return str(r.coverage); }), col('Note', function (r) { return str(r.reason); })], processed), 'files') : empty('None recorded.')));
-    out.push(fold('Evidence ledger', arr(M.evidence).length, arr(M.evidence).length ? searchable(table([idCol(), col('Location', function (r) { return h('code', null, str(r.locator)); }),
+    out.push(fold('Files reviewed', processed.length, processed.length ? searchable(table([col('Location', function (r) { return h('code', null, str(r.locator)); }), col('Extent', function (r) { return r.access === 'read' ? 'Full' : 'Partial'; }), col('Version and detail', function (r) { return str(r.coverage); }), col('Note', function (r) { return str(r.reason); })], processed), 'files') : empty('None recorded.')));
+    out.push(fold('Evidence references', arr(M.evidence).length, arr(M.evidence).length ? searchable(table([idCol(), col('Location', function (r) { return h('code', null, str(r.locator)); }),
       { title: 'What it shows', width: '40%', render: function (r) { return h('span', null, str(r.statement), showExcerpts && r.excerpt ? h('pre', null, str(r.excerpt)) : null, r.limitations ? h('span', { class: 'line note' }, 'Limitations: ' + str(r.limitations)) : null); } },
-      col('Source', function (r) { return str(r.source_kind).replace('_', ' '); }), col('Version', function (r) { return h('span', { class: 'mono' }, str(r.source_revision) || '—'); }), col('Status', function (r) { return [tag(r.status), tag(r.purpose)]; })], M.evidence, { anchor: true }), 'evidence items') : empty('None recorded.'), 'app-a-evidence'));
-    if (arr(data.attachments).length) out.push(fold('Attachments carried in the model', data.attachments.length, table([idCol(), col('Kind', function (a) { return str(a.kind); }), col('Origin', function (a) { return str(a.origin); }), col('Access', function (a) { return str(a.access); })], data.attachments)));
-    var btn = h('button', { type: 'button', class: 'btn noprint' }, 'Download the model JSON');
-    btn.addEventListener('click', function () {
-      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), a = document.createElement('a');
-      a.href = URL.createObjectURL(blob); a.download = (str(data.model_id) || 'threat-model').replace(/[^A-Za-z0-9._-]/g, '_') + '-' + str(data.revision).replace(/[^A-Za-z0-9._-]/g, '_') + '.json';
-      document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
-    });
-    out.push(fold('Threat model data file', null, [fields([['Model', str(data.model_id) + ' revision ' + str(data.revision)], ['Type', str(data.artifact_type) + ', schema ' + str(data.schema_version)], ['Source file', str(eng.source_file)]]),
-      h('p', { class: 'note' }, 'This report embeds the complete model it was built from.'), obj(eng.options).hide_json_download === true ? null : btn]));
+      col('Source', function (r) { return str(r.source_kind).replace('_', ' '); }), col('Version', function (r) { return h('span', { class: 'mono' }, str(r.source_revision) || '\u2014'); })], M.evidence, { anchor: true }), 'evidence items') : empty('None recorded.'), 'app-a-evidence'));
+    if (obj(eng.options).include_data_download === true) {
+      var btn = h('button', { type: 'button', class: 'btn noprint' }, 'Download the underlying data');
+      btn.addEventListener('click', function () {
+        var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = 'threat-model-data.json';
+        document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+      });
+      out.push(h('p', null, btn));
+    }
     return section('app-a', 'Appendix A', 'Artefacts', 'The design documentation, code and other material this engagement relied on, with versions.', out);
   }
   function appendixB() {
@@ -894,15 +901,15 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
         }))]);
       });
       out.push(h('div', { class: 'tw' }, t));
-      if (Object.keys(placed).length) out.push(h('p', { class: 'note' }, 'Threat references show where each rated threat sits, from the likelihood and consequence recorded in the model.'));
+      if (Object.keys(placed).length) out.push(h('p', { class: 'note' }, 'Threat references show where each rated threat sits, from its agreed likelihood and consequence.'));
       if (ratingDefs.length) out.push(h('h3', null, 'Rating definitions'), table([{ title: 'Rating', width: '160px', sort: false, render: function (d) { var el = h('span', { class: 'tag rating' }, str(d.label)); el.style.background = ratingColor(d.label) || '#460073'; return el; } }, col('Meaning', function (d) { return str(d.description); })], ratingDefs));
-    } else out.push(h('p', { class: 'basis' }, 'No risk matrix was supplied for this report.' + (rated.length ? ' The rated risks below cite the rubric named in the model.' : ' Risks stay unrated until a risk matrix is supplied and applied during the analysis.')));
+    } else out.push(h('p', { class: 'basis' }, 'No risk matrix was supplied for this report.' + (rated.length ? ' The rated risks below cite the matrix named against each.' : ' Risks are unrated.')));
     out.push(h('h3', null, 'Risk register'));
     out.push(risks.length ? table([idCol(), refCol('Threat', function (r) { return r.threat_refs; }), { title: 'Rating', value: function (r) { return r.status === 'rated' ? ratingRank(r.rating) : 99; }, render: function (r) { if (r.status !== 'rated') return h('span', { class: 'tag warn' }, 'unrated'); var el = h('span', { class: 'tag rating' }, str(r.rating)); el.style.background = ratingColor(r.rating) || '#460073'; return el; } },
       col('Inputs', function (r) { return list(arr(r.inputs).map(function (i) { return str(i.name) + ': ' + str(i.value); })); }), col('Rubric', function (r) { return r.rubric ? str(r.rubric.name) + (r.rubric.version ? ' ' + r.rubric.version : '') : '—'; }),
       { title: 'Rationale and uncertainty', width: '34%', sort: false, render: function (r) { return h('span', null, str(r.rationale), r.uncertainty ? h('span', { class: 'line note' }, 'Uncertainty: ' + str(r.uncertainty)) : null); } }], risks, { anchor: true })
-      : empty('The model contains no risk records.'));
-    if (rm && rated.length && rated.some(function (r) { return r.rubric && norm(r.rubric.name) !== norm(rm.name); })) out.push(h('p', { class: 'basis' }, 'Some ratings in the model cite a rubric with a different name from the matrix shown here. Check that they are the same matrix.'));
+      : empty('No risks were recorded.'));
+    if (rm && rated.length && rated.some(function (r) { return r.rubric && norm(r.rubric.name) !== norm(rm.name); })) out.push(h('p', { class: 'basis' }, 'Some ratings cite a matrix with a different name from the matrix shown here. Check that they are the same matrix.'));
     return section('app-c', 'Appendix C', 'Risk matrix', 'The matrix used to rate risk in this engagement.', out);
   }
 
@@ -912,11 +919,11 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   var page = h('div', { id: 'page' });
   function safe(fn, id, name) { try { return fn(); } catch (e) { return h('section', { class: 'sec', id: id }, h('p', { class: 'basis' }, name + ' could not be displayed: ' + str(e && e.message))); } }
   append(page, [cover(),
-    data.status !== 'complete' ? h('p', { class: 'basis' }, h('b', null, 'Partial model. '), 'The source model reports status "' + str(data.status) + '", so parts of this report may be incomplete.') : null,
+    data.status !== 'complete' ? h('p', { class: 'basis' }, h('b', null, 'Draft. '), 'The underlying assessment is marked incomplete, so parts of this report may be missing.') : null,
     safe(execSummary, 'exec', 'Executive summary'), safe(techSummary, 'tech', 'Technical summary'), safe(threatsSection, 'threats', 'Threats'), safe(controlsSection, 'controls', 'Controls'),
     safe(recsSection, 'recs', 'Recommendations'), safe(verifSection, 'verif', 'Verification'), safe(scopeSection, 'scope', 'Scope and approach'),
     safe(appendixA, 'app-a', 'Appendix A'), safe(appendixB, 'app-b', 'Appendix B'), safe(appendixC, 'app-c', 'Appendix C'),
-    h('footer', { class: 'foot' }, h('span', null, str(branding.footer_text) || str(branding.organisation)), h('span', null, 'Model ' + str(data.model_id) + ' rev ' + str(data.revision) + (eng.generated_at ? ' · built ' + eng.generated_at : '') + ' · Grim Prompter'))]);
+    h('footer', { class: 'foot' }, h('span', null, str(branding.footer_text) || str(branding.organisation)), h('span', null, [eng.report_version ? 'Version ' + str(eng.report_version) : null, eng.report_date || eng.generated_at].filter(Boolean).join(' \u00b7 ')))]);
 
   var nav = h('nav', { id: 'sidenav', 'aria-label': 'Contents' });
   var navLinks = {};
@@ -938,7 +945,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
   function fixRefs(scope) {
     Array.prototype.forEach.call(scope.querySelectorAll('a.ref'), function (a) {
       var id = a.getAttribute('data-ref');
-      if (!document.getElementById(anchor(id))) a.replaceWith(h('span', { class: 'ref' + (byId.has(id) ? '' : ' dangling'), title: byId.has(id) ? label(id) : 'Reference not found in the model' }, id));
+      if (!document.getElementById(anchor(id))) a.replaceWith(h('span', { class: 'ref' + (byId.has(id) ? '' : ' dangling'), title: byId.has(id) ? label(id) : 'Reference not found' }, id));
     });
   }
   fixRefs(document.body);

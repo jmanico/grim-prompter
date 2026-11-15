@@ -13,9 +13,16 @@
   },
   "scope_and_approach": {
     "approach": [],
-    "activities": []
+    "activities": [],
+    "review_coverage": [],
+    "limitations": []
   },
   "artefacts": [],
   "workshops": [],
-  "risk_matrix": null
+  "risk_matrix": null,
+  "report_status": null,
+  "options": {
+    "show_excerpts": false,
+    "include_data_download": false
+  }
 }

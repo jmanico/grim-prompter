@@ -41,24 +41,27 @@ Engagement details come only from the caller: their words in the request, or fil
    - **Executive summary narrative** (`system_overview`, one to three short paragraphs): what the system is and does, then what the review found. Use only the envelope's scope, system records, threats and gaps. Write for a senior reader who has not seen the system.
    - **Key components** (three to six): the components that matter most to the open threats. Give each its record id in `ref` and one sentence on why it matters, drawn from the threats and evidence that cite it.
    - **Key next steps** (three to six): each restates one or more recorded treatments, gaps or verification plans, and lists their ids in `refs`. Order them as the renderer orders threats: risk rating when rated, otherwise evidenced weaknesses first, then confidence.
-   - **Approach** (`scope_and_approach.approach`): how the review was done, from the envelope's depth, architectures, methods and inspection coverage, plus what the caller says about how the engagement ran. `activities` lists engagement phases only if the caller describes them.
+   - **Approach** (`scope_and_approach.approach`): how the review was done, in the delivery team's voice: the code and design documentation reviewed, the workshops held, and the frameworks applied. `activities` lists engagement phases only if the caller describes them.
+   - **What was reviewed** (`scope_and_approach.review_coverage`): one short paragraph naming the areas of code and documentation reviewed in full, partly, and not at all, from the envelope's inspection coverage.
+   - **Limitations** (`scope_and_approach.limitations`): restate the envelope's limitations in client wording. Keep every real limit (what was not reviewed, that nothing was tested against a running system, what the findings depend on); drop only the process vocabulary.
    - **Artefacts, workshops and risk matrix**: copy only what the caller supplied. Never invent a workshop, attendee, date, document version or matrix. If the caller did not supply one, leave it empty; the report then says it was not supplied. Ask once, in a single question, for whichever of these three is missing when the caller is present; when unattended, leave them empty and say so in the summary.
-   - **Title, client, project, report version, authors**: from the caller. Default the title to "Threat model report".
-3. **Keep the narrative honest.**
+   - **Title, client, project, report version, report status, authors**: from the caller. Default the title to "Threat model report" and the status to "Draft for review".
+3. **Write a client document.** A person reviews the report before it is issued, and it goes out under the delivery team's name. Nothing you write may mention this library, an AI or coding agent, prompts, runs, modes, stages, envelopes, file names such as `quick-report.json`, or checks the tooling performed. Describe what was reviewed: the code (repository and revision), the design documentation and the workshops. `fill.py` warns when such wording appears in the engagement file or in the envelope's own text; reword the engagement file, and tell the caller which envelope records need rewording, since you must not change the envelope.
+4. **Keep the narrative honest.**
    - Every claim must trace to a record. Add no finding, component, control or recommendation that the envelope lacks.
    - Use severity words (critical, high and so on) only for threats with a rated risk, and only the rating recorded. For unrated threats describe the finding type: an evidenced weakness or a design hypothesis.
    - Recommendations are proposals and verification is planned, not run, unless the envelope cites execution evidence. Do not write that anything was fixed, tested, approved or confirmed.
    - Do not claim security, compliance or production readiness.
-4. **Choose branding.** Use the branding file the caller names, else `reporting/branding/default.json`.
-5. **Name the output** `report`, or a short name the caller gives (letters, digits and hyphens). If `report-<name>.html` or its engagement file exists, add a numeric suffix such as `-2`.
-6. **Fill the template** with a trusted interpreter in isolated mode, outside the project:
+5. **Choose branding.** Use the branding file the caller names, else `reporting/branding/default.json`.
+6. **Name the output** `report`, or a short name the caller gives (letters, digits and hyphens). If `report-<name>.html` or its engagement file exists, add a numeric suffix such as `-2`.
+7. **Fill the template** with a trusted interpreter in isolated mode, outside the project:
 
    ```text
    python3 -I -S -B "LIBRARY_ROOT/reporting/fill.py" "<envelope>" "RUN_DIR/report-<name>.engagement.json" "<branding file>" "RUN_DIR/report-<name>.html"
    ```
 
    This is a library tool, not project code, so the runbook's ban on project-provided scripts does not apply to it. It validates all three inputs, escapes the embedded JSON, embeds the fonts and any logo, refuses symlinks and never overwrites. If it reports an error, fix the engagement file you wrote (never the envelope) and run it again. If no trusted Python 3 is available, stop and tell the caller. Do not hand-assemble the HTML.
-7. **Report back**, relaying the helper's notes about anything not supplied, unrated risks or a partial model.
+8. **Report back**, relaying the helper's notes about anything not supplied, unrated risks, tool or process wording to fix, or a partial model.
 
 ## Risk ratings and framework mappings
 
@@ -70,7 +73,7 @@ The report shows what the envelope holds. It cannot add ratings or mappings afte
 ## Rules
 
 - **Self-contained and offline.** The HTML loads nothing from the network. Its Content-Security-Policy blocks external requests, and all model and engagement text is inserted as text, never as markup. Do not put HTML, links or scripts in the engagement file.
-- **Private by default.** The report embeds the whole model, including attack paths and evidence locators. Treat it as review material under the runbook: do not commit, upload or share it as part of this workflow. Say this in the summary.
+- **Private by default.** The report embeds the assessment data, including attack paths and evidence locators, and that data is readable in the file's source. Treat it as review material under the runbook: do not commit, upload or share it as part of this workflow. Say this in the summary.
 - **Changing the renderer** (`reporting/renderer.html`) is library maintenance, not part of a report run. Never edit it during a run.
 
 ## Output

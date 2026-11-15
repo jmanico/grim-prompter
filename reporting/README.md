@@ -37,16 +37,18 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 
 | Field | Purpose |
 | --- | --- |
-| `title`, `subtitle`, `client`, `project`, `report_version`, `report_date`, `authors` | Cover details |
+| `title`, `subtitle`, `client`, `project`, `report_version`, `report_date`, `report_status`, `authors` | Cover details |
 | `executive_summary.system_overview` | One to three paragraphs: what the system is and does, and what the review found |
 | `executive_summary.key_components` | `{ "ref": "<record id>", "name": "...", "why": "..." }` |
 | `executive_summary.next_steps` | `{ "step": "...", "refs": ["<record ids>"] }` |
 | `scope_and_approach.approach` | Paragraphs on how the engagement was delivered |
 | `scope_and_approach.activities` | `{ "phase": "...", "description": "..." }` |
+| `scope_and_approach.review_coverage` | Paragraph on which code and documentation was reviewed in full, partly or not at all |
+| `scope_and_approach.limitations` | Limitations in client wording; replaces the limitations text recorded in the model |
 | `artefacts` | `{ "name", "type", "version", "date", "source", "notes" }` |
 | `workshops` | `{ "date", "title", "attendees": [], "purpose", "outcomes": [] }` |
 | `risk_matrix` | `name`, `version`, `source`, `likelihood` and `consequence` levels (`label`, `description`), `cells` (one row per likelihood level, one rating label per consequence level) and `ratings` (`label`, `color`, `description`, highest first) |
-| `options` | `show_excerpts` (code excerpts in the evidence ledger, default off) and `hide_json_download` |
+| `options` | `show_excerpts` (code excerpts in the evidence references, default off) and `include_data_download` (a button to download the underlying data, default off) |
 
 The agent drafts the summary narrative from the model and cites record ids, so you can check each statement. Workshops, artefact versions and the risk matrix are never invented: supply them in the request or in files you name.
 
@@ -59,6 +61,12 @@ Threats are rated only when the model itself holds rated risks. Name your matrix
 ### Framework mappings
 
 The mapping table has one column per method that recorded findings against threats, such as STRIDE, MITRE ATT&CK, CAPEC, ATLAS, LINDDUN or CVSS. Request the methods when you run the review (`with STRIDE per element and ATT&CK`). Without them, the report says no mappings are recorded.
+
+## A client document
+
+The report is written to be issued under your name after a person has reviewed it. It names the code, design documentation and workshops the assessment relied on. It does not name this library, describe an AI agent, or show run modes, stages or file names. Labels use plain terms: "observed in code" and "design concern" for finding types, and "outstanding" for verification not yet performed.
+
+`fill.py` prints a warning listing any model record or engagement field that still uses tool or process wording, such as a limitation written as "quick analysis". Reword those before issuing. The underlying data is embedded in the file and readable in its source, with field names from the model format.
 
 ## Branding
 

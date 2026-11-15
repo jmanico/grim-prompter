@@ -33,9 +33,11 @@ REPORTABLE = {
     "THREAT_MODEL_REPORT", "THREAT_MODEL_VISUAL", "THREAT_MODEL_DIAGRAM", "UNIFIED_THREAT_MODEL",
     "THREAT_MODEL_FRAGMENT",
 }
-ENGAGEMENT_KEYS = {"engagement_version", "title", "subtitle", "client", "project", "report_version", "report_date", "authors",
+ENGAGEMENT_KEYS = {"engagement_version", "title", "subtitle", "client", "project", "report_version", "report_date", "report_status", "authors",
                    "executive_summary", "scope_and_approach", "artefacts", "workshops", "risk_matrix", "options"}
-ENGAGEMENT_OPTIONS = {"show_excerpts", "hide_json_download"}
+ENGAGEMENT_OPTIONS = {"show_excerpts", "include_data_download"}
+# Wording that names the tooling or its process. The report is a client document, so fill.py warns when it appears.
+TOOL_TERMS = re.compile(r"grim[\s_-]?prompter|SYSTEM_UNDER_REVIEW|runbook|quick[- ]report\.json|\b0[0-5]-[a-z-]+\.json|coding agent|\bAI agent\b|\bLLM\b|deep stage|quick (run|mode|analysis)|challenge stage|TM_[A-Z_]+", re.I)
 BRANDING_KEYS = {"branding_version", "name", "organisation", "prepared_by", "prepared_for", "logo_file",
                  "logo_data_uri", "classification", "colors", "font_family", "heading_font_family", "footer_text", "disclaimer"}
 COLOR_KEYS = {"primary", "accent", "band"}
@@ -143,7 +145,7 @@ def check_engagement(eng):
         raise InputError(f"engagement: unknown keys {sorted(unknown)}")
     if eng.get("engagement_version") != "1.0":
         raise InputError("engagement: engagement_version must be \"1.0\"")
-    for key in ("title", "subtitle", "client", "project", "report_version", "report_date"):
+    for key in ("title", "subtitle", "client", "project", "report_version", "report_date", "report_status"):
         _text(eng.get(key), key, 300)
     _text_list(eng.get("authors"), "authors", 200, 50)
     summary = eng.get("executive_summary") or {}
@@ -153,8 +155,10 @@ def check_engagement(eng):
     _rows(summary.get("key_components"), "executive_summary.key_components", ("ref", "name", "why"), count=20)
     _rows(summary.get("next_steps"), "executive_summary.next_steps", ("step",), ("refs",), count=20)
     approach = eng.get("scope_and_approach") or {}
-    if not isinstance(approach, dict) or set(approach) - {"approach", "activities"}:
-        raise InputError("engagement: scope_and_approach may use only approach and activities")
+    if not isinstance(approach, dict) or set(approach) - {"approach", "activities", "review_coverage", "limitations"}:
+        raise InputError("engagement: scope_and_approach may use only approach, activities, review_coverage and limitations")
+    _text_list(approach.get("review_coverage"), "scope_and_approach.review_coverage", 4000, 10)
+    _text_list(approach.get("limitations"), "scope_and_approach.limitations", 1000, 30)
     _text_list(approach.get("approach"), "scope_and_approach.approach", 4000, 20)
     _rows(approach.get("activities"), "scope_and_approach.activities", ("phase", "description"), count=50)
     _rows(eng.get("artefacts"), "artefacts", ("name", "type", "version", "date", "source", "notes"))
@@ -183,6 +187,31 @@ def check_engagement(eng):
     labels = {str(r.get("label", "")).strip().lower() for r in matrix.get("ratings") or []}
     if labels and any(c.strip().lower() not in labels for r in cells for c in r):
         raise InputError("engagement: every risk_matrix cell must use a label defined in risk_matrix.ratings")
+
+
+def tool_mentions(value, path="", found=None):
+    """Return the paths of text values that name the tooling or its process."""
+    found = [] if found is None else found
+    if isinstance(value, dict):
+        for key, item in value.items():
+            tool_mentions(item, f"{path}.{key}" if path else key, found)
+    elif isinstance(value, list):
+        for i, item in enumerate(value):
+            label = item.get("id") if isinstance(item, dict) and isinstance(item.get("id"), str) else i
+            tool_mentions(item, f"{path}[{label}]", found)
+    elif isinstance(value, str) and TOOL_TERMS.search(value):
+        found.append(path)
+    return found
+
+
+def client_copy(model):
+    """Drop run bookkeeping the report never shows, so it is not embedded in a client file."""
+    out = dict(model)
+    out["attachments"] = []
+    inner = dict(out["model"])
+    inner["coverage"] = [c for c in inner.get("coverage", []) if not (isinstance(c, dict) and c.get("lens") == "run-configuration")]
+    out["model"] = inner
+    return out
 
 
 def font_css():
@@ -272,7 +301,8 @@ def main(argv):
             pieces.append(head)
         eng = dict(eng)
         eng["generated_at"] = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-        eng["source_file"] = os.path.basename(model_path)
+        model = client_copy(model)
+        mentions = tool_mentions(model["model"], "model") + tool_mentions(eng, "engagement")
         html = (pieces[0] + font_css() + pieces[1] + embed(model) + pieces[2] + embed(eng)
                 + pieces[3] + embed(brand) + rest)
         with open(out_path, "x", encoding="utf-8") as fh:
@@ -292,12 +322,16 @@ def main(argv):
     missing = [name for name, present in (
         ("executive summary narrative", summary.get("system_overview")), ("key components", summary.get("key_components")),
         ("next steps", summary.get("next_steps")), ("approach narrative", (eng.get("scope_and_approach") or {}).get("approach")),
+        ("limitations in client wording", (eng.get("scope_and_approach") or {}).get("limitations")),
         ("artefact register (Appendix A)", eng.get("artefacts")), ("workshops (Appendix B)", eng.get("workshops")),
         ("risk matrix (Appendix C)", eng.get("risk_matrix"))) if not present]
     if missing:
         print("not supplied, shown as such in the report: " + "; ".join(missing))
     if not any(r.get("status") == "rated" for r in m.get("risks", []) if isinstance(r, dict)):
         print("note: the model has no rated risks, so threats appear as unrated")
+    if mentions:
+        print("warning: tool or process wording found; reword before issuing: " + ", ".join(mentions[:12])
+              + (f" and {len(mentions) - 12} more" if len(mentions) > 12 else ""))
     for w in warnings:
         print(f"warning: {w}")
     return 0

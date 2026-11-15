@@ -19,56 +19,56 @@
       "id": "I1",
       "locator": "docs/architecture.md",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     },
     {
       "id": "I2",
       "locator": "src/api/routes/invoices.ts",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     },
     {
       "id": "I3",
       "locator": "src/api/routes/exports.ts",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     },
     {
       "id": "I4",
       "locator": "src/workers/export-worker.ts",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     },
     {
       "id": "I5",
       "locator": "src/webhooks/dispatcher.ts",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     },
     {
       "id": "I6",
       "locator": "src/api/routes/payments.ts",
       "access": "partial",
-      "coverage": "a1b2c3d; lines 1-140 of 310; this run",
+      "coverage": "a1b2c3d; lines 1-140 of 310",
       "reason": "Remaining lines are reporting helpers outside the refund path."
     },
     {
       "id": "I7",
       "locator": "src/auth/middleware.ts",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     },
     {
       "id": "I8",
       "locator": "infra/terraform/storage.tf",
       "access": "read",
-      "coverage": "a1b2c3d; full read; this run",
+      "coverage": "a1b2c3d; full read",
       "reason": null
     }
   ],
@@ -78,7 +78,7 @@
       "locator": "services/payments/settlement/",
       "access": "skipped",
       "coverage": "a1b2c3d",
-      "reason": "Not reached within the quick run's bounds."
+      "reason": "Not reached within the time available."
     },
     {
       "id": "U2",
@@ -109,9 +109,8 @@
         "The API gateway enforces TLS for all public traffic"
       ],
       "limitations": [
-        "Quick analysis: no challenge stage ran.",
-        "Settlement client not read; payments analysis is partial.",
-        "No tests or code were executed."
+        "Time-boxed review of design and code; no testing against a running system.",
+        "Settlement client not reviewed; payments assessment is partial."
       ]
     },
     "evidence": [

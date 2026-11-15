@@ -77,8 +77,8 @@
   },
   "scope_and_approach": {
     "approach": [
-      "The engagement used the Grim Prompter quick API workflow. An AI coding agent inspected the repository read-only, recorded evidence with file and line references, modelled the system and its trust boundaries, and developed threats from that evidence.",
-      "Threats were classified with STRIDE per element and mapped to MITRE ATT&CK and CAPEC where the behaviour was specific enough. Risks were rated in a workshop with the client using the matrix in Appendix C."
+      "We reviewed the invoice platform's source code and infrastructure definitions alongside its architecture documentation, and confirmed our understanding of the components, data flows and trust boundaries with the client's engineers in workshops.",
+      "From that we identified what could go wrong at each component and flow, recorded the controls already in place, and proposed recommendations and verification tests. Threats were classified with STRIDE and mapped to MITRE ATT&CK and CAPEC where the behaviour was specific enough. Risks were rated with the client using the matrix in Appendix C."
     ],
     "activities": [
       {
@@ -86,8 +86,8 @@
         "description": "Agreed the decision the review supports, the in-scope components and exclusions."
       },
       {
-        "phase": "Evidence gathering",
-        "description": "Read-only inspection of code, infrastructure definitions and design documentation."
+        "phase": "Code and design review",
+        "description": "Review of source code, infrastructure definitions and design documentation."
       },
       {
         "phase": "Modelling and analysis",
@@ -101,6 +101,14 @@
         "phase": "Reporting",
         "description": "Recommendations, verification plans and this report."
       }
+    ],
+    "review_coverage": [
+      "The API routes, authentication middleware, export worker, webhook dispatcher and storage definitions were reviewed in full. The payments settlement client and the admin console were not reviewed."
+    ],
+    "limitations": [
+      "This was a time-boxed review of the design and code; no testing was performed against a running system.",
+      "The payments settlement integration was not reviewed, so the assessment of the payments service is partial.",
+      "Findings reflect the code at the reviewed revision and the documentation supplied."
     ]
   },
   "artefacts": [
@@ -279,5 +287,6 @@
         "description": "Manage through routine procedures"
       }
     ]
-  }
+  },
+  "report_status": "Draft for review"
 }
