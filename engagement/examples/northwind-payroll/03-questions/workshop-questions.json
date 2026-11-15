@@ -1,0 +1,109 @@
+{
+  "summary": "Questions for the architecture walkthrough, drawn from what the registered material leaves open. Prepared after the consultant's review of the initial understanding.",
+  "questions": [
+    {
+      "id": "Q-001",
+      "session": "Access and identity",
+      "audience": "Payroll systems lead",
+      "priority": "must",
+      "question": "Does the PayStream tenant have local administrator accounts in use? Who holds them, and do they have multi-factor authentication?",
+      "why": "The vendor says local accounts exist and multi-factor authentication is optional. A local account would bypass single sign-on.",
+      "listen_for": "Shared accounts, accounts left from implementation, break-glass arrangements.",
+      "refs": [
+        "M-003"
+      ],
+      "status": "answered",
+      "answer": "Two shared local administrator accounts exist without multi-factor authentication.",
+      "answered_in": "W-01"
+    },
+    {
+      "id": "Q-002",
+      "session": "Access and identity",
+      "audience": "Payroll systems lead",
+      "priority": "must",
+      "question": "How are PayStream accounts removed or changed when someone leaves or changes role?",
+      "why": "The design records the joiner, mover and leaver process as not yet designed.",
+      "listen_for": "Manual steps, reliance on single sign-on alone, periodic reconciliation.",
+      "refs": [
+        "M-001"
+      ],
+      "status": "answered",
+      "answer": "Accounts are not removed; single sign-on stops working but the account stays active.",
+      "answered_in": "W-02"
+    },
+    {
+      "id": "Q-003",
+      "session": "Integration",
+      "audience": "Integration engineer",
+      "priority": "must",
+      "question": "What happens to the nightly extract on the integration host after transfer, and where is the SFTP key stored and rotated?",
+      "why": "The extract holds every employee's bank account and tax file number.",
+      "listen_for": "Retention period, who can sign in to the host, key in a file or a vault.",
+      "refs": [
+        "M-001"
+      ],
+      "status": "answered",
+      "answer": "Key in the service account's home folder, never rotated. Extract is archived for thirty days (corrected in W-02).",
+      "answered_in": "W-01, W-02"
+    },
+    {
+      "id": "Q-004",
+      "session": "Integration",
+      "audience": "Integration engineer",
+      "priority": "must",
+      "question": "Is the journal webhook into the general ledger authenticated? Is signing enabled, and does the ledger check it?",
+      "why": "The design lists webhook authentication as open, and the vendor says signing is optional.",
+      "listen_for": "Address filtering only, shared secret, replay protection.",
+      "refs": [
+        "M-001",
+        "M-003"
+      ],
+      "status": "partly",
+      "answer": "Address filtering only is known; signing status to be checked with the vendor.",
+      "answered_in": "W-01"
+    },
+    {
+      "id": "Q-005",
+      "session": "Payments",
+      "audience": "Payroll systems lead",
+      "priority": "should",
+      "question": "Walk us through how the payment file gets from PayStream to the bank. Who can change it on the way, and what does the bank approver see?",
+      "why": "A changed payment file redirects salaries.",
+      "listen_for": "Downloads to a laptop, email, shared drives, what dual approval actually checks.",
+      "refs": [
+        "M-001"
+      ],
+      "status": "answered",
+      "answer": "Downloaded to a laptop and uploaded by hand; a second approver releases it in the bank portal.",
+      "answered_in": "W-01"
+    },
+    {
+      "id": "Q-006",
+      "session": "Vendor",
+      "audience": "Payroll systems lead, vendor manager",
+      "priority": "should",
+      "question": "Can Northwind see when PayStream support accesses the tenant? Has the SOC 2 report been obtained and read?",
+      "why": "Vendor staff can reach payroll data; the client relies on the vendor's controls.",
+      "listen_for": "Whether the access log has ever been requested; contract terms.",
+      "refs": [
+        "M-003"
+      ],
+      "status": "answered",
+      "answer": "Northwind does not see support access and has not requested the log. SOC 2 report not yet obtained.",
+      "answered_in": "W-01"
+    },
+    {
+      "id": "Q-007",
+      "session": "Vendor",
+      "audience": "Vendor manager",
+      "priority": "could",
+      "question": "Does PayStream encrypt tax file numbers separately from other data, and who holds the keys?",
+      "why": "Tax file numbers carry specific handling obligations.",
+      "listen_for": "Field-level encryption, customer-managed keys.",
+      "refs": [
+        "M-003"
+      ],
+      "status": "open"
+    }
+  ]
+}

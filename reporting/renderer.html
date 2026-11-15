@@ -251,6 +251,7 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
 .vbig span{font-size:14.5px;line-height:1.3;color:var(--muted)}
 .vcard p{font-size:15.5px;line-height:1.5;margin:0 0 12px}
 .vcard a{margin-top:auto;font-size:14px}
+.tick{white-space:pre;color:var(--muted);font-size:13px}
 .do{display:inline-block;min-width:54px;font-family:var(--f-display);font-weight:600;font-size:12.5px;color:var(--sub)}
 .riskcell{white-space:nowrap}.riskcell .arrow{color:var(--muted)}
 .tag.rating{color:#fff}
@@ -275,6 +276,8 @@ table.rm .axis{background:var(--bandbg);color:#fff;font-family:var(--f-display)}
 .dialegend i.zn{width:22px;height:13px;border:1.5px dashed var(--sub);border-radius:3px}
 .dialegend i.ln{width:24px;border-top:2px solid var(--guard)}
 .dialegend i.lx{width:24px;border-top:2px dashed var(--find)}
+.dialegend i.vd{width:22px;height:12px;background:var(--src);border:1px solid var(--srcline)}
+svg .node .nk.vend{fill:var(--sub);font-weight:600}
 .dialegend i.st{width:22px;height:12px;border-top:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);background:var(--box)}
 .diahead label{display:inline-flex;gap:5px;align-items:center;cursor:pointer}
 svg .zone rect{fill:color-mix(in srgb,var(--panel2) 45%,transparent);stroke:var(--sub);stroke-width:1.4;stroke-dasharray:7 5}
@@ -412,7 +415,7 @@ svg .chip rect{stroke-width:1.3}
     resolved: 'ok', closed: 'ok', passed: 'ok', tested: 'ok', implemented: 'ok', read: 'ok', assessed: 'ok', observed: 'ok', accepted: 'ok', completed: 'ok', supported: 'ok', verified: 'ok',
     not_run: 'warn', proposed: 'warn', partial: 'warn', inconclusive: 'warn', unrated: 'warn', deferred: 'warn', conditional: 'warn', unverified: 'warn',
     design_hypothesis: 'info', designed: 'info', proposed_design: 'info', high: 'info' };
-  var NICE = { evidenced_weakness: 'observed in code', design_hypothesis: 'design concern', not_run: 'outstanding', proposed_design: 'proposed design' };
+  var NICE = { evidenced_weakness: 'observed', design_hypothesis: 'design concern', not_run: 'outstanding', proposed_design: 'proposed design', claimed: 'reported' };
   function nice(v) { return NICE[str(v)] || str(v).replace(/_/g, ' '); }
   function tag(v, prefix) { if (v === null || v === undefined || v === '') return null; return h('span', { class: 'tag ' + (TAGCLASS[str(v)] || '') }, (prefix ? prefix + ' ' : '') + nice(v)); }
   function list(items) { items = arr(items); if (!items.length) return h('span', { class: 'empty' }, '—'); return h('ul', { class: 'plain' }, items.map(function (t) { return h('li', null, str(t)); })); }
@@ -555,6 +558,27 @@ svg .chip rect{stroke-width:1.3}
   // Engagement annotations and derived views
   // ====================================================================
   var REC = obj(eng.records);
+  var CODE_ACCESS = str(eng.code_access) || (arr(M.evidence).some(function (e) { return e.source_kind === 'repository'; }) ? 'full' : 'none');
+  var ARTS = arr(eng.artefacts).filter(function (a) { return a && a.name; }), catalogued = ARTS.some(function (a) { return a.category; });
+  var CATWORD = { code: 'source code', configuration: 'configuration', design: 'design documentation', diagram: 'architecture diagram', vendor: 'vendor documentation', workshop: 'workshop', client: 'client statement', test: 'test result', other: 'other material' };
+  function artefactFor(e) {
+    var loc = str(e && e.locator), best = null;
+    ARTS.forEach(function (a) { [a.file, a.text_file].forEach(function (f) { f = str(f); if (f && (loc === f || loc.indexOf(f + ':') === 0 || loc.indexOf(f + '/') === 0 || loc.indexOf(f + '#') === 0) && (!best || f.length > best.len)) best = { a: a, len: f.length }; }); });
+    return best ? best.a : null;
+  }
+  function evCat(e) { var a = artefactFor(e); if (a && a.category) return str(a.category); return ({ repository: 'code', document: 'design', diagram: 'diagram', test_result: 'test', caller: 'client' })[e && e.source_kind] || 'other'; }
+  function basisOf(rec) { return uniq(arr(rec && rec.evidence_refs).map(function (id) { return byId.get(id); }).filter(Boolean).map(evCat)); }
+  function basisChips(rec) { var b = basisOf(rec); return b.length ? b.map(function (c) { return h('span', { class: 'fw' }, CATWORD[c] || c); }) : h('span', { class: 'empty' }, 'No direct evidence; inferred from the design'); }
+  var VAL = {}; arr(obj(eng.validation).items).forEach(function (i) { if (i && i.ref) VAL[i.ref] = i; });
+  var VALWORD = { confirmed: ['confirmed with client', 'ok'], corrected: ['corrected by client', 'info'], rejected: ['rejected by client', 'bad'], added: ['raised by client', 'info'], deferred: ['client to confirm', 'warn'], not_discussed: ['not discussed', ''] };
+  function valTag(id) { var v = VAL[id] && VALWORD[str(VAL[id].outcome)]; return v ? h('span', { class: 'tag ' + v[1], title: str(VAL[id].note) || null }, v[0]) : null; }
+  var RESPWORD = { client: 'client-run', vendor: 'vendor-run', shared: 'shared responsibility', unknown: 'responsibility unknown' };
+  function respOf(id) { var r = str(meta(id).responsibility); return RESPWORD[r] ? r : ''; }
+  function respTag(id) { var r = respOf(id); return r ? h('span', { class: 'tag ' + (r === 'vendor' ? 'info' : (r === 'unknown' ? 'warn' : '')) }, RESPWORD[r]) : null; }
+  function findingTag(t) {
+    if (t.finding_type !== 'evidenced_weakness') return h('span', { class: 'tag info' }, 'design concern');
+    var b = basisOf(t); return h('span', { class: 'tag warn' }, b.indexOf('code') >= 0 ? 'observed in code' : (b.indexOf('configuration') >= 0 ? 'observed in configuration' : 'observed'));
+  }
   function meta(id) { return obj(REC[id]); }
   function nameOf(id) { var m = meta(id); return str(m.title) || trunc(text(byId.get(id)) || id, 96); }
   function titled(id) { return h('span', { class: 'tl' }, ref(id), ' ', nameOf(id)); }
@@ -576,13 +600,13 @@ svg .chip rect{stroke-width:1.3}
   function unratedReason(t) { var rr = arr(risksByThreat.get(t.id))[0]; return rr && rr.status !== 'rated' ? str(rr.rationale) : ''; }
 
   // Control coverage: derived from the controls recorded against each threat, unless the reviewer sets it.
-  var COV = { none: ['No control in place', 'bad'], partial: ['Partly controlled', 'warn'], controlled: ['Controlled, not yet verified', 'info'], verified: ['Controlled and verified', 'ok'], closed: ['Closed', 'ok'] };
-  var COV_ORDER = ['none', 'partial', 'controlled', 'verified', 'closed'];
+  var COV = { none: ['No control in place', 'bad'], partial: ['Partly controlled', 'warn'], reported: ['Control reported, not verified', 'warn'], controlled: ['Controlled, not yet verified', 'info'], verified: ['Controlled and verified', 'ok'], closed: ['Closed', 'ok'] };
+  var COV_ORDER = ['none', 'partial', 'reported', 'controlled', 'verified', 'closed'];
   function coverage(t) {
     if (t.status !== 'open') return 'closed';
     var set = str(meta(t.id).coverage); if (COV[set] && set !== 'closed') return set;
     var real = arr(controlsByThreat.get(t.id)).filter(function (c) { return c.status === 'implemented' || c.status === 'tested'; });
-    if (!real.length) return 'none';
+    if (!real.length) return arr(controlsByThreat.get(t.id)).some(function (c) { return c.status === 'claimed'; }) ? 'reported' : 'none';
     if (t.finding_type === 'evidenced_weakness') return 'partial';
     // 'Verified' needs a passed test of a control that was run against this threat, not just any tested control.
     var proven = arr(verifsByThreat.get(t.id)).some(function (v) { return v.status === 'passed' && arr(v.control_refs).length; });
@@ -592,7 +616,8 @@ svg .chip rect{stroke-width:1.3}
   function covNote(t) {
     var own = str(meta(t.id).coverage_note); if (own) return own;
     var k = coverage(t), cs = arr(controlsByThreat.get(t.id));
-    if (k === 'none') return cs.length ? 'A control is claimed or designed, but it was not observed in the code or configuration reviewed.' : 'No existing control addresses this threat.';
+    if (k === 'none') return cs.length ? 'A control is designed but is not yet in place.' : 'No existing control addresses this threat.';
+    if (k === 'reported') { var rc = cs.filter(function (c) { return c.status === 'claimed'; }); return 'Relies on ' + joinList(rc.map(function (c) { return str(meta(c.id).title) || trunc(c.description, 70); })) + ', which ' + (rc.length === 1 ? 'was' : 'were') + ' described by the client or vendor but not observed or tested.'; }
     if (k === 'partial') return 'A control is in place, but the weakness was observed despite it.';
     if (k === 'controlled') return 'A control is in place. Whether it fully addresses this threat has not been tested.';
     if (k === 'verified') return 'A control is in place and has passed testing.';
@@ -607,10 +632,14 @@ svg .chip rect{stroke-width:1.3}
   }
   function responseTag(t) { var r = responseOf(t); return h('span', { class: 'tag ' + (r.key === 'undecided' ? 'warn' : (r.proposed ? 'info' : 'ok')) }, RESP[r.key] + (r.proposed ? ' (proposed)' : '')); }
 
-  var VTYPE = { confirm_weakness: 'Confirm the weakness', retest_fix: 'Confirm, then retest after the fix', test_control: 'Test an existing control' };
+  var VTYPE = { confirm_weakness: 'Confirm the weakness', retest_fix: 'Confirm, then retest after the fix', test_control: 'Test an existing control', review_configuration: 'Review the configuration', vendor_assurance: 'Obtain vendor assurance', design_review: 'Review the design' };
   function vtype(v) {
     var set = str(meta(v.id).type); if (VTYPE[set]) return set;
     var ts = arr(v.threat_refs).map(function (id) { return byId.get(id); }).filter(Boolean);
+    var comps = []; ts.forEach(function (t) { arr(t.affected_refs).forEach(function (c) { comps.push(c); }); });
+    arr(v.control_refs).forEach(function (cid) { arr(byId.get(cid) && byId.get(cid).affected_refs).forEach(function (c) { comps.push(c); }); });
+    var owned = comps.map(respOf).filter(Boolean);
+    if (owned.length && owned.every(function (r) { return r === 'vendor'; })) return 'vendor_assurance';
     if (!ts.length) return 'test_control';
     return ts.some(function (t) { return t.finding_type === 'evidenced_weakness'; }) ? 'retest_fix' : 'confirm_weakness';
   }
@@ -663,11 +692,27 @@ svg .chip rect{stroke-width:1.3}
   function repoRevisions() { return uniq(arr(M.evidence).filter(function (e) { return e.source_kind === 'repository' && e.source_revision; }).map(function (e) { return str(e.source_revision); })); }
   function docSources() { return uniq(arr(M.evidence).filter(function (e) { return e.source_kind === 'document' || e.source_kind === 'diagram'; }).map(function (e) { return str(e.locator).replace(/:\d+(-\d+)?$/, ''); })); }
   function plural(n, word, pluralWord) { return n + ' ' + (n === 1 ? word : (pluralWord || word + 's')); }
+  function artCount(cat) { return ARTS.filter(function (a) { return a.category === cat && str(a.reviewed) !== 'not_read'; }).length; }
+  function reviewedParts() {
+    if (!catalogued) return null;
+    var parts = [];
+    [['design', 'design document'], ['diagram', 'architecture diagram'], ['vendor', 'vendor document'], ['configuration', 'configuration export'], ['workshop', 'workshop record']].forEach(function (c) { if (artCount(c[0])) parts.push([artCount(c[0]), c[1]]); });
+    var repos = ARTS.filter(function (a) { return a.category === 'code' && str(a.reviewed) !== 'not_read'; });
+    if (repos.length) parts.push([repos.length, 'code repository', 'code repositories']);
+    return parts;
+  }
+  function joinList(xs) { return xs.length > 1 ? xs.slice(0, -1).join(', ') + ' and ' + xs[xs.length - 1] : xs.join(''); }
   function reviewedLine() {
-    var revs = repoRevisions(), parts = [plural(processed.length, 'source and configuration file') + (revs.length ? ' at revision ' + revs.join(', ') : '')];
-    if (docSources().length) parts.push(plural(docSources().length, 'design document'));
-    if (arr(eng.workshops).length) parts.push(plural(arr(eng.workshops).length, 'workshop'));
-    return parts.join(', ') + (unprocessed.length ? '; ' + plural(unprocessed.length, 'area') + (unprocessed.length === 1 ? ' was' : ' were') + ' not reviewed' : '');
+    var parts = reviewedParts();
+    if (parts) {
+      var text = parts.length ? joinList(parts.map(function (p) { return plural(p[0], p[1], p[2]); })) : 'no registered material';
+      if (artCount('code') || CODE_ACCESS !== 'none') { var revs0 = repoRevisions(); text += (processed.length ? ' (' + plural(processed.length, 'file') + ' read' + (revs0.length ? ', revision ' + revs0.join(', ') : '') + ')' : ''); }
+      return text + (CODE_ACCESS === 'none' ? '. No source code was available' : '') + (unprocessed.length ? '. ' + plural(unprocessed.length, 'requested item') + (unprocessed.length === 1 ? ' was' : ' were') + ' not available or not reviewed' : '');
+    }
+    var revs = repoRevisions(), old = [plural(processed.length, 'source and configuration file') + (revs.length ? ' at revision ' + revs.join(', ') : '')];
+    if (docSources().length) old.push(plural(docSources().length, 'design document'));
+    if (arr(eng.workshops).length) old.push(plural(arr(eng.workshops).length, 'workshop'));
+    return old.join(', ') + (unprocessed.length ? '; ' + plural(unprocessed.length, 'area') + (unprocessed.length === 1 ? ' was' : ' were') + ' not reviewed' : '');
   }
   function limitations() { var own = paras(obj(eng.scope_and_approach).limitations); return own.length ? own : arr(M.scope && M.scope.limitations).map(str); }
   function assumptions() {
@@ -692,8 +737,8 @@ svg .chip rect{stroke-width:1.3}
   document.title = reportTitle + (branding.organisation ? ' — ' + branding.organisation : '');
   function cover() {
     var pairs = [['Client', eng.client || branding.prepared_for], ['Project', eng.project], ['Prepared by', arr(eng.authors).join(', ') || branding.prepared_by], ['Organisation', branding.organisation],
-      ['Report version', eng.report_version], ['Report date', eng.report_date || eng.generated_at], ['Status', reportStatus]].filter(function (p) { return p[1]; });
-    return h('header', { class: 'cover', id: 'top' }, h('p', { class: 'kick' }, 'Threat model report', isFinal ? null : h('span', { class: 'draft' }, reportStatus)), h('h1', null, reportTitle), eng.subtitle ? h('p', { class: 'lede' }, str(eng.subtitle)) : null,
+      ['Report version', eng.report_version], ['Report date', eng.report_date || eng.generated_at], ['Status', obj(eng.options).pack === 'validation' ? 'Draft for validation' : reportStatus]].filter(function (p) { return p[1]; });
+    return h('header', { class: 'cover', id: 'top' }, h('p', { class: 'kick' }, obj(eng.options).pack === 'validation' ? 'Threat model: validation pack' : 'Threat model report', isFinal ? null : h('span', { class: 'draft' }, obj(eng.options).pack === 'validation' ? 'Draft for validation' : reportStatus)), h('h1', null, reportTitle), eng.subtitle ? h('p', { class: 'lede' }, str(eng.subtitle)) : null,
       h('dl', null, pairs.map(function (p) { return h('div', null, h('dt', null, p[0]), h('dd', null, str(p[1]))); })));
   }
   function documentControl() {
@@ -717,14 +762,19 @@ svg .chip rect{stroke-width:1.3}
 
     var nOpen = openThreats.length, observed = openThreats.filter(function (t) { return t.finding_type === 'evidenced_weakness'; }).length, unrated = openThreats.filter(function (t) { return !ratedRisk(t); }).length;
     var ratingBits = anyRated ? breakdown(countBy(openThreats.filter(ratedRisk), function (t) { return str(ratedRisk(t).rating); }), ratingDefs.map(function (d) { return str(d.label); })) : '';
-    var threatsText = str(verdicts.threats) || ((anyRated ? 'Rated ' + ratingBits + (unrated ? ', with ' + unrated + ' not yet rated' : '') + '. ' : '') + observed + ' of ' + nOpen + ' ' + (observed === 1 ? 'was' : 'were') + ' observed in the code reviewed; the rest are design concerns to confirm.');
-    var weak = (covCounts.none || 0) + (covCounts.partial || 0), tested = controls.filter(function (c) { return c.status === 'tested'; }).length;
-    var controlsText = str(verdicts.controls) || (plural(controls.length, 'control') + ' ' + (controls.length === 1 ? 'is' : 'are') + ' in place, ' + tested + ' of them tested. ' + (covCounts.none || 0) + ' ' + ((covCounts.none || 0) === 1 ? 'threat has' : 'threats have') + ' no control and ' + (covCounts.partial || 0) + ' ' + ((covCounts.partial || 0) === 1 ? 'is' : 'are') + ' only partly controlled.');
+    var validated = openThreats.filter(function (t) { return VAL[t.id] && (VAL[t.id].outcome === 'confirmed' || VAL[t.id].outcome === 'corrected'); }).length;
+    var threatsText = str(verdicts.threats) || ((anyRated ? 'Rated ' + ratingBits + (unrated ? ', with ' + unrated + ' not yet rated' : '') + '. ' : '') +
+      (observed ? observed + ' of ' + nOpen + ' ' + (observed === 1 ? 'was' : 'were') + ' observed in the ' + (CODE_ACCESS === 'none' ? 'configuration' : 'code') + ' reviewed; the rest are design concerns to confirm.' : (nOpen ? 'All are design concerns drawn from the documentation and workshops; none has been tested.' : '')) +
+      (validated ? ' ' + validated + ' ' + (validated === 1 ? 'was' : 'were') + ' confirmed with the client.' : ''));
+    var weak = (covCounts.none || 0) + (covCounts.partial || 0) + (covCounts.reported || 0), tested = controls.filter(function (c) { return c.status === 'tested'; }).length;
+    var nRep = covCounts.reported || 0, inPlace = controls.filter(function (c) { return c.status === 'implemented' || c.status === 'tested'; }).length, reportedC = controls.filter(function (c) { return c.status === 'claimed'; }).length;
+    var controlsText = str(verdicts.controls) || (plural(controls.length, 'control') + ' identified' + (inPlace ? ': ' + inPlace + ' observed in place (' + tested + ' tested)' + (reportedC ? ', ' + reportedC + ' reported by the client or vendor but not verified' : '') : (reportedC ? ', all reported by the client or vendor; none was observed or tested' : '')) + '. ' +
+      (covCounts.none || 0) + ' ' + ((covCounts.none || 0) === 1 ? 'threat has' : 'threats have') + ' no control, ' + (covCounts.partial || 0) + ' ' + ((covCounts.partial || 0) === 1 ? 'is' : 'are') + ' only partly controlled' + (nRep ? ' and ' + nRep + ' ' + (nRep === 1 ? 'relies' : 'rely') + ' on a control that is reported but unverified' : '') + '.');
     var nActions = treatments.length + outstandingVerifs.length + openGaps.length;
     var actionsText = str(verdicts.actions) || ('Decide on ' + plural(treatments.length, 'recommendation') + ', run ' + plural(outstandingVerifs.length, 'verification test') + ' and answer ' + plural(openGaps.length, 'open question') + '.');
     out.push(h('div', { class: 'verdicts' },
       verdictCard('Current threats', nOpen, 'open ' + (nOpen === 1 ? 'threat' : 'threats'), threatsText, '#threats', 'See the threats'),
-      verdictCard('Controls in place', weak + ' of ' + nOpen, 'open threats lack an effective control', controlsText, '#controls', 'See control coverage'),
+      verdictCard('Controls in place', weak + ' of ' + nOpen, 'open threats lack a control we could confirm', controlsText, '#controls', 'See control coverage'),
       verdictCard('What you need to do', nActions, nActions === 1 ? 'action' : 'actions', actionsText, '#recs', 'See the recommendations')));
 
     out.push(h('h3', { id: 'exec-glance' }, 'Threats at a glance'));
@@ -761,7 +811,7 @@ svg .chip rect{stroke-width:1.3}
     out.push(h('div', { class: 'basis' }, h('h4', null, 'Basis of this assessment'), h('ul', null,
       h('li', null, 'Reviewed: ' + reviewedLine() + '.'),
       limitations().slice(0, 3).map(function (l) { return h('li', null, l); }),
-      h('li', null, 'A threat model identifies what could go wrong from the design and code as reviewed; it is not a penetration test. Verification tests are outstanding unless marked otherwise, and recommendations are proposals for the system owner to decide on. ',
+      h('li', null, (CODE_ACCESS === 'none' ? 'No source code or running system was examined, so controls are as described by the client or vendor unless marked as observed. ' : 'A threat model identifies what could go wrong from the design and code as reviewed; it is not a penetration test. ') + 'Verification activities are outstanding unless marked otherwise, and recommendations are proposals for the system owner to decide on. ',
         h('a', { href: '#scope' }, 'Scope, approach and limitations'), '.')),
       branding.disclaimer ? h('p', { class: 'note' }, str(branding.disclaimer)) : null));
     return section('exec', '1', 'Executive summary', null, out, [['exec-glance', 'Threats at a glance']]);
@@ -783,7 +833,7 @@ svg .chip rect{stroke-width:1.3}
     function addNode(id) { if (!id) id = '__unknown__'; if (!nodes.has(id)) nodes.set(id, { id: id, kind: id === '__unknown__' ? 'unknown' : (kindOf.get(id) || 'unknown'), out: [], inn: [] }); return nodes.get(id); }
     flows.forEach(function (f) { var a = addNode(f.source_ref), b = addNode(f.target_ref); a.out.push(f); b.inn.push(f); });
     if (nodes.size > 80) return h('p', { class: 'basis' }, 'The system has ' + nodes.size + ' flow endpoints, too many to draw legibly. Use the component and flow inventory below.');
-    var W = 224, GX = 80, GY = 26, PAD = 18, CH = 17, RP = 14, RH = 26, GR = 104;
+    var W = 224, GX = 76, GY = 24, PAD = 18, CH = 17, RP = 14, RH = 26, GR = 96;
     function chipW(id) { return 24 + Math.min(str(id).length, 12) * 6.6; }
     nodes.forEach(function (n) {
       var mk = nodeMarkers(n.id);
@@ -824,25 +874,47 @@ svg .chip rect{stroke-width:1.3}
     var regions = new Map();
     nodes.forEach(function (n) { var r = find(n.id), key = regionZone.get(r) ? 'z:' + regionZone.get(r) : 'r:' + r; if (!regions.has(key)) regions.set(key, { key: key, zone: regionZone.get(r) || null, nodes: [] }); regions.get(key).nodes.push(n); n.region = regions.get(key); });
     var regionList = Array.from(regions.values());
+    // Inside a zone, columns follow the flows that stay within it; long columns wrap.
+    var MAXROWS = 4;
     regionList.forEach(function (r) {
-      r.minD = Math.min.apply(null, r.nodes.map(function (n) { return depth.get(n.id); }));
-      var cols = {}; r.nodes.forEach(function (n) { var dd = depth.get(n.id); (cols[dd] = cols[dd] || []).push(n); });
-      r.cols = Object.keys(cols).map(Number).sort(function (a, b) { return a - b; }).map(function (k) { return cols[k].sort(function (a, b) { return str(a.id).localeCompare(str(b.id), undefined, { numeric: true }); }); });
+      var mine = {}; r.nodes.forEach(function (n) { mine[n.id] = 1; });
+      var local = new Map(), q = [];
+      r.nodes.forEach(function (n) { var hasIn = n.inn.some(function (f) { return mine[f.source_ref || '__unknown__'] && (f.source_ref || '__unknown__') !== n.id; }); if (!hasIn) { local.set(n.id, 0); q.push(n.id); } });
+      if (!q.length) { local.set(r.nodes[0].id, 0); q.push(r.nodes[0].id); }
+      while (q.length) { var id = q.shift(), dd = local.get(id); nodes.get(id).out.forEach(function (f) { var tg = f.target_ref || '__unknown__'; if (mine[tg] && !local.has(tg) && dd < 12) { local.set(tg, dd + 1); q.push(tg); } }); }
+      var byCol = {}; r.nodes.forEach(function (n) { var c = local.has(n.id) ? local.get(n.id) : 0; (byCol[c] = byCol[c] || []).push(n); });
+      r.cols = [];
+      Object.keys(byCol).map(Number).sort(function (x, y) { return x - y; }).forEach(function (k) {
+        var col = byCol[k].sort(function (x, y) { return (x.kind === 'actors' ? 0 : 1) - (y.kind === 'actors' ? 0 : 1) || str(x.id).localeCompare(str(y.id), undefined, { numeric: true }); });
+        for (var i = 0; i < col.length; i += MAXROWS) r.cols.push(col.slice(i, i + MAXROWS));
+      });
       r.colH = r.cols.map(function (c) { return c.reduce(function (sum, n) { return sum + n.h; }, 0) + (c.length - 1) * GY; });
       r.w = r.cols.length * W + (r.cols.length - 1) * GX + RP * 2; r.h = Math.max.apply(null, r.colH) + RP * 2 + RH;
+      r.avgD = r.nodes.reduce(function (sum, n) { return sum + depth.get(n.id); }, 0) / r.nodes.length;
+      r.hasActor = r.nodes.some(function (n) { return n.kind === 'actors'; });
     });
-    var slots = {}; regionList.forEach(function (r) { (slots[r.minD] = slots[r.minD] || []).push(r); });
-    var slotKeys = Object.keys(slots).map(Number).sort(function (a, b) { return a - b; });
-    var slotH = slotKeys.map(function (k) { return slots[k].reduce(function (sum, r) { return sum + r.h; }, 0) + (slots[k].length - 1) * 30; }), maxH = Math.max.apply(null, slotH);
-    var x0 = PAD;
-    slotKeys.forEach(function (k, si) {
-      var y = PAD + (maxH - slotH[si]) / 2, sw = Math.max.apply(null, slots[k].map(function (r) { return r.w; }));
-      slots[k].forEach(function (r) {
-        r.x = x0 + (sw - r.w) / 2; r.y = y; var innerH = r.h - RP * 2 - RH;
-        r.cols.forEach(function (c, ci) { var ny = r.y + RH + RP + (innerH - r.colH[ci]) / 2; c.forEach(function (n) { n.x = r.x + RP + ci * (W + GX); n.y = ny; ny += n.h + GY; }); });
-        y += r.h + 30;
-      });
-      x0 += sw + GR;
+    // Order the zones left to right so that flows between zones are short and mostly run forwards.
+    var links = {}; flows.forEach(function (f) { var ra = nodes.get(f.source_ref || '__unknown__').region, rb = nodes.get(f.target_ref || '__unknown__').region; if (ra !== rb) { var k = regionList.indexOf(ra) + '>' + regionList.indexOf(rb); links[k] = (links[k] || 0) + 1; } });
+    var order = regionList.map(function (r, i) { return i; }).sort(function (x, y) { return regionList[x].avgD - regionList[y].avgD; });
+    if (regionList.length > 1 && regionList.length <= 7) {
+      var best = null, bestCost = Infinity;
+      (function permute(rest, acc) {
+        if (!rest.length) {
+          var pos = {}; acc.forEach(function (ri, i) { pos[ri] = i; });
+          var cost = 0; Object.keys(links).forEach(function (k) { var ab = k.split('>'), d = pos[ab[1]] - pos[ab[0]]; cost += links[k] * (d > 0 ? d : -d * 1.5); });
+          acc.forEach(function (ri, i) { if (regionList[ri].hasActor) cost += i * 0.01; cost += i * regionList[ri].avgD * -0.001; });
+          if (cost < bestCost - 1e-9) { bestCost = cost; best = acc.slice(); }
+          return;
+        }
+        rest.forEach(function (ri, i) { permute(rest.slice(0, i).concat(rest.slice(i + 1)), acc.concat([ri])); });
+      })(order, []);
+      if (best) order = best;
+    }
+    var maxH = Math.max.apply(null, regionList.map(function (r) { return r.h; })), x0 = PAD;
+    order.forEach(function (ri) {
+      var r = regionList[ri]; r.x = x0; r.y = PAD + (maxH - r.h) / 2; var innerH = r.h - RP * 2 - RH;
+      r.cols.forEach(function (c, ci) { var ny = r.y + RH + RP + (innerH - r.colH[ci]) / 2; c.forEach(function (n) { n.x = r.x + RP + ci * (W + GX); n.y = ny; ny += n.h + GY; }); });
+      x0 += r.w + GR;
     });
     var width = x0 - GR + PAD + 50, height = PAD * 2 + maxH + 50;
     var svg = s('svg', { xmlns: SVGNS, width: width, height: height, viewBox: '0 0 ' + width + ' ' + height, role: 'img', 'aria-label': 'Architecture diagram with trust zones, threats, controls and verification' });
@@ -877,7 +949,7 @@ svg .chip rect{stroke-width:1.3}
       if (a === b) { x1 = a.x + W - 30; y1 = a.y; dpath = 'M' + x1 + ',' + y1 + ' C' + (x1 + 20) + ',' + (y1 - 46) + ' ' + (x1 + 70) + ',' + (y1 - 10) + ' ' + (a.x + W) + ',' + (a.y + 20); lx = x1 + 40; ly = y1 - 26; }
       else if (b.x > a.x + 1) { x1 = a.x + W; y1 = a.y + Math.min(a.h / 2, 40) + bend; x2 = b.x; y2 = b.y + Math.min(b.h / 2, 40) + bend; var mx = (x1 + x2) / 2; dpath = 'M' + x1 + ',' + y1 + ' C' + mx + ',' + y1 + ' ' + mx + ',' + y2 + ' ' + x2 + ',' + y2; lx = x1 + (x2 - x1) * 0.5; ly = y1 + (y2 - y1) * 0.5; }
       else if (Math.abs(b.x - a.x) <= 1) { x1 = a.x + W; y1 = a.y + a.h / 2; x2 = b.x + W; y2 = b.y + b.h / 2; var bulge = x1 + 40 + Math.abs(y2 - y1) / 7 + bend; dpath = 'M' + x1 + ',' + y1 + ' C' + bulge + ',' + y1 + ' ' + bulge + ',' + y2 + ' ' + x2 + ',' + y2; lx = x1 + 32 + Math.abs(y2 - y1) / 9 + bend; ly = (y1 + y2) / 2; }
-      else { x1 = a.x + W / 2 + bend; y1 = a.y + a.h; x2 = b.x + W / 2 + bend; y2 = b.y + b.h; var dip = bottom + 24 + bend; dpath = 'M' + x1 + ',' + y1 + ' C' + x1 + ',' + dip + ' ' + x2 + ',' + dip + ' ' + x2 + ',' + y2; lx = (x1 + x2) / 2; ly = dip - 8; }
+      else { x1 = a.x; y1 = a.y + Math.min(a.h / 2, 40) + 12 + bend; x2 = b.x + W; y2 = b.y + Math.min(b.h / 2, 40) + 12 + bend; var mx2 = (x1 + x2) / 2; dpath = 'M' + x1 + ',' + y1 + ' C' + mx2 + ',' + y1 + ' ' + mx2 + ',' + y2 + ' ' + x2 + ',' + y2; lx = x1 + (x2 - x1) * 0.5; ly = y1 + (y2 - y1) * 0.5; }
       for (var tries = 0, hit = true; hit && tries < 10; tries++) { hit = false; labels.forEach(function (p) { if (Math.abs(p[0] - lx) < 84 && Math.abs(p[1] - ly) < 23) { ly = p[1] + 24; hit = true; } }); } labels.push([lx, ly]);
       var crosses = arr(f.boundary_refs), txt = trunc(f.id, 10), tw = 14 + txt.length * 6.1;
       var fts = uniq(ids(threatsByAffected.get(f.id)).concat.apply(ids(threatsByAffected.get(f.id)), crosses.map(function (bid) { return ids(threatsByAffected.get(bid)); })));
@@ -898,13 +970,13 @@ svg .chip rect{stroke-width:1.3}
     info.textContent = HINT;
     nodes.forEach(function (n) {
       var rec = byId.get(n.id), unknown = n.kind === 'unknown', name = unknown ? 'Destination not traced' : str(rec && rec.description) || n.id;
-      var store = rec && STORE_RE.test(str(rec.kind)), ext = rec && EXT_RE.test(str(rec.kind)) && n.kind === 'assets', wc = worstCov(n.id), actor = n.kind === 'actors';
+      var store = rec && STORE_RE.test(str(rec.kind)), ext = rec && n.kind === 'assets' && (respOf(n.id) === 'vendor' || (!respOf(n.id) && EXT_RE.test(str(rec.kind)))), wc = worstCov(n.id), actor = n.kind === 'actors';
       var g = s('g', { class: 'node n-' + (ext ? 'ext' : n.kind) + (store ? ' n-store' : '') + (wc ? ' cov-' + wc : ''), transform: 'translate(' + n.x + ',' + n.y + ')', tabindex: '0', 'aria-label': name },
         s('rect', { class: 'b', width: W, height: n.h, rx: actor ? 24 : 2 }),
         store ? [s('line', { class: 'sl', x1: 0, y1: 0.5, x2: W, y2: 0.5 }), s('line', { class: 'sl', x1: 0, y1: n.h - 0.5, x2: W, y2: n.h - 0.5 })] : null,
         actor || unknown || store ? null : s('rect', { class: 'bar', width: W, height: 4 }),
         s('text', { class: 'nid', x: actor ? 18 : 10, y: 20 }, unknown ? '?' : trunc(n.id, 18)),
-        s('text', { class: 'nk', x: W - (actor ? 18 : 10), y: 20, 'text-anchor': 'end' }, unknown ? 'open question' : trunc(str(rec && rec.kind), 22)),
+        s('text', { class: 'nk' + (respOf(n.id) === 'vendor' ? ' vend' : ''), x: W - (actor ? 18 : 10), y: 20, 'text-anchor': 'end' }, unknown ? 'open question' : (respOf(n.id) && respOf(n.id) !== 'client' ? trunc(RESPWORD[respOf(n.id)], 22) : trunc(str(rec && rec.kind), 22))),
         s('text', { class: 'nn', x: actor ? 18 : 10, y: 39 }, trunc(name, 31)),
         n.chips.map(function (c) { return chip(c, c[2], 48 + c[3] * (CH + 5)); }));
       tip(g.querySelector('rect.b'), function () { var mk = nodeMarkers(n.id); return [h('small', null, unknown ? 'A data flow whose destination could not be traced' : (KIND_WORD[n.kind] || 'Element') + ' ' + n.id + ' · ' + str(rec && rec.kind)), h('b', null, name),
@@ -927,14 +999,14 @@ svg .chip rect{stroke-width:1.3}
     function fit() { var avail = scroller.clientWidth - 16; return avail > 0 ? avail / width : 1; }
     function zbtn(textValue, name, fn) { var b = h('button', { class: 'btn', type: 'button', 'aria-label': name, title: name }, textValue); b.addEventListener('click', fn); return b; }
     var zooms = h('span', { class: 'noprint zooms' }, zbtn('−', 'Zoom out', function () { setZoom(zoom / 1.2); }), zbtn('+', 'Zoom in', function () { setZoom(zoom * 1.2); }), zbtn('Fit', 'Fit to width', function () { setZoom(fit()); }));
-    setTimeout(function () { setZoom(Math.max(0.66, Math.min(1.5, fit()))); }, 0);
+    setTimeout(function () { setZoom(Math.max(0.6, Math.min(1.5, fit()))); }, 0);
     function lg(cls, textValue, color) { var i = h('i', { class: 'lg ' + cls }); if (color) { i.style.background = color; } return h('span', { class: 'k' }, i, textValue); }
     var legend = h('div', { class: 'dialegend' },
       h('span', { class: 'k' }, h('b', null, '▲'), 'Threat' + (anyRated ? ', coloured by risk rating:' : '')),
       anyRated ? (ratingDefs.length ? ratingDefs.map(function (d) { return str(d.label); }) : uniq(threats.filter(ratedRisk).sort(threatOrder).map(function (t) { return str(ratedRisk(t).rating); }))).map(function (l) { return lg('sq', l, ratingColor(l) || '#460073'); }).concat([lg('sq', 'not yet rated', '#4a4852')]) : null,
       h('span', { class: 'k' }, h('b', { class: 'cgreen' }, '■'), 'Control in place (dashed outline: not confirmed)'),
       h('span', { class: 'k' }, h('b', { class: 'camber' }, '●'), 'Verification test outstanding (green: passed, red: failed)'),
-      multiZone ? lg('zn', 'Trust zone') : null, lg('ln', 'Data flow'), lg('lx', 'Flow crossing a trust boundary'), lg('st', 'Data store'),
+      multiZone ? lg('zn', 'Trust zone') : null, lg('ln', 'Data flow'), lg('lx', 'Flow crossing a trust boundary'), lg('st', 'Data store'), Object.keys(REC).some(function (k) { return REC[k] && REC[k].responsibility === 'vendor'; }) ? lg('vd', 'Grey: run by a vendor or third party') : null,
       h('span', { class: 'k' }, 'Bar above a component: red no control, amber partly controlled, purple controlled, green verified'));
     // A written key, so the diagram still reads in print where hover is unavailable.
     var keyRows = Array.from(nodes.values()).filter(function (n) { return n.chips.length; }).sort(function (a, b) { return COV_ORDER.indexOf(worstCov(a.id) || 'closed') - COV_ORDER.indexOf(worstCov(b.id) || 'closed'); });
@@ -955,7 +1027,7 @@ svg .chip rect{stroke-width:1.3}
     var wrap = table([
       { title: 'Threat', width: '21%', value: function (r) { return r.id || 'zzz'; }, render: function (r) { return r.t ? h('span', null, ref(r.t.id), ' ', r.t.status !== 'open' ? tag(r.t.status) : null, h('span', { class: 'line' }, h('b', null, nameOf(r.t.id)))) : h('span', { class: 'empty' }, 'Not linked to a threat'); } },
       { title: 'Risk', width: '11%', value: function (r) { var k = r.t && ratedRisk(r.t); return k ? ratingRank(k.rating) : 99; }, render: function (r) { return r.t ? riskCell(r.t) : null; } },
-      { title: 'Finding', width: '10%', value: function (r) { return r.t ? r.t.finding_type : ''; }, render: function (r) { return r.t ? tag(r.t.finding_type) : null; } },
+      { title: 'Finding', width: '10%', value: function (r) { return r.t ? r.t.finding_type : ''; }, render: function (r) { return r.t ? [findingTag(r.t), valTag(r.t.id)] : null; } },
       { title: 'Components', width: '8%', sort: false, render: function (r) { return r.t ? refs(r.t.affected_refs) : null; } },
       { title: 'Controls in place', width: '18%', value: function (r) { return r.t ? COV_ORDER.indexOf(coverage(r.t)) : 9; }, render: function (r) { return [r.t ? h('span', { class: 'line' }, covTag(r.t)) : null, r.cs.map(function (c) { return h('span', { class: 'line' }, titled(c.id), ' ', tag(c.status)); })]; } },
       { title: 'Recommendations', width: '17%', sort: false, render: function (r) { return lines(r.trs, function (x) { return titled(x.id); }); } },
@@ -969,8 +1041,9 @@ svg .chip rect{stroke-width:1.3}
   }
 
   function elementTable(rows) {
-    return table([idCol(), col('Kind', function (r) { return str(r.kind); }), col('Description', function (r) { return str(r.description); }), col('Basis', function (r) { return tag(r.basis); }),
-      refCol('Threats', function (r) { return ids(threatsByAffected.get(r.id)); }), refCol('Controls', function (r) { return ids(controlsByAffected.get(r.id)); }), refCol('Evidence', function (r) { return r.evidence_refs; })], rows, { anchor: true });
+    var anyResp = rows.some(function (r) { return respOf(r.id); });
+    return table([idCol(), col('Kind', function (r) { return str(r.kind); }), col('Description', function (r) { return [str(r.description), ' ', valTag(r.id)]; })].concat(anyResp ? [col('Run by', function (r) { return respTag(r.id) || h('span', { class: 'empty' }, '\u2014'); })] : [], [{ title: 'Based on', sort: false, render: function (r) { return basisChips(r); } },
+      refCol('Threats', function (r) { return ids(threatsByAffected.get(r.id)); }), refCol('Controls', function (r) { return ids(controlsByAffected.get(r.id)); }), refCol('Evidence', function (r) { return r.evidence_refs; })]), rows, { anchor: true });
   }
   function inventory() {
     var out = [];
@@ -1014,14 +1087,16 @@ svg .chip rect{stroke-width:1.3}
           h('div', null, h('b', null, 'What could happen'), h('p', null, str(t.scenario))),
           h('div', { class: 'imp' }, h('b', null, 'Why it matters'), h('p', null, str(m.impact) ? str(m.impact) : h('span', { class: 'empty' }, 'Business impact not yet described.')))),
         fields([['Who and what it needs', h('span', null, arr(t.actor_assumptions).concat(arr(t.prerequisites)).length ? list(arr(t.actor_assumptions).concat(arr(t.prerequisites))) : h('span', { class: 'empty' }, '—'))],
-          ['Affected components', lines(t.affected_refs, function (id) { return [ref(id), ' ', label(id)]; })],
-          ['Finding', h('span', null, tag(t.finding_type), ' ', tag(t.confidence, 'confidence'), ' ', str(t.confidence_rationale))],
+          ['Affected components', lines(t.affected_refs, function (id) { return [ref(id), ' ', label(id), ' ', respTag(id)]; })],
+          ['Finding', h('span', null, findingTag(t), ' ', tag(t.confidence, 'confidence'), ' ', str(t.confidence_rationale))],
+          ['Based on', basisChips(t)],
+          VAL[t.id] ? ['Client validation', h('span', null, valTag(t.id), ' ', str(VAL[t.id].note))] : null,
           ['Risk', h('span', null, riskCell(t), ' ', r ? arr(r.inputs).map(function (i) { return str(i.name) + ': ' + str(i.value); }).join(', ') + (str(m.target_rating) ? '. Target after treatment: ' + str(m.target_rating) + '.' : '') : unratedReason(t), r ? [' ', ref(r.id)] : null)],
           ['Response', h('span', null, responseTag(t), ' ', str(m.response_note) || (resp.proposed ? 'Proposed in this report; to be confirmed by the system owner.' : (resp.key === 'undecided' ? 'No response has been agreed.' : '')))],
           fw.length ? ['Frameworks', fw] : null]),
         h('div', { class: 'three' },
           h('div', null, h('h4', null, 'Controls in place today'), h('p', null, covTag(t), ' ', covNote(t)),
-            cs.length ? h('ul', { class: 'plain' }, cs.map(function (c) { return h('li', null, ref(c.id), ' ', tag(c.status), ' ', str(c.description), c.limitations ? h('span', { class: 'line note' }, 'Limit: ' + str(c.limitations)) : null); })) : null),
+            cs.length ? h('ul', { class: 'plain' }, cs.map(function (c) { return h('li', null, ref(c.id), ' ', tag(c.status), valTag(c.id), ' ', str(c.description), c.limitations ? h('span', { class: 'line note' }, 'Limit: ' + str(c.limitations)) : null); })) : null),
           h('div', null, h('h4', null, 'What we recommend'), trs.length ? h('ul', { class: 'plain' }, trs.map(function (x) { return h('li', null, anyPrio ? [prioTag(x.id), ' '] : null, ref(x.id), ' ', str(x.outcome)); })) : h('p', { class: 'empty' }, 'No recommendation recorded.')),
           h('div', null, h('h4', null, 'How to verify'), vs.length ? h('ul', { class: 'plain' }, vs.map(function (v) { return h('li', null, ref(v.id), ' ', tag(v.status), ' ', nameOf(v.id), h('span', { class: 'line note' }, VTYPE[vtype(v)] + '. Pass: ' + str(v.pass_criteria))); })) : h('p', { class: 'empty' }, 'No verification recorded.'))),
         fields([['Evidence', refs(t.evidence_refs)], as.length ? ['Relies on', list(as.map(function (a) { return str(a.statement); }))] : null, arr(t.related_threat_refs).length ? ['Related threats', refs(t.related_threat_refs)] : null,
@@ -1078,7 +1153,7 @@ svg .chip rect{stroke-width:1.3}
   function controlsSection() {
     var out = [h('h3', { id: 'controls-coverage' }, 'Coverage by threat'),
       h('p', { class: 'intro' }, 'Whether the controls in place today are enough for each open threat. "Partly controlled" means a control exists but the weakness was observed despite it, or the control addresses only part of the threat.'),
-      h('div', { class: 'nums' }, ['none', 'partial', 'controlled', 'verified'].map(function (k) { return h('div', { class: 'cov-' + k }, h('b', null, String(covCounts[k] || 0)), h('span', null, COV[k][0].charAt(0).toLowerCase() + COV[k][0].slice(1))); }))];
+      h('div', { class: 'nums' }, ['none', 'partial', 'reported', 'controlled', 'verified'].filter(function (k) { return k !== 'reported' || covCounts.reported; }).map(function (k) { return h('div', { class: 'cov-' + k }, h('b', null, String(covCounts[k] || 0)), h('span', null, COV[k][0].charAt(0).toLowerCase() + COV[k][0].slice(1))); }))];
     out.push(openThreats.length ? table([
       { title: 'Threat', width: '24%', value: function (t) { return t.id; }, render: function (t) { return h('span', null, ref(t.id), h('span', { class: 'line' }, h('b', null, nameOf(t.id)))); } },
       { title: 'Risk', width: '10%', value: function (t) { var k = ratedRisk(t); return k ? ratingRank(k.rating) : 99; }, render: function (t) { return riskNow(t); } },
@@ -1086,9 +1161,9 @@ svg .chip rect{stroke-width:1.3}
       { title: 'Controls in place', width: '25%', sort: false, render: function (t) { return lines(arr(controlsByThreat.get(t.id)), function (c) { return [titled(c.id), ' ', tag(c.status)]; }); } },
       { title: 'What is missing', width: '25%', sort: false, render: function (t) { return covNote(t); } }], openThreats.slice().sort(function (a, b) { return COV_ORDER.indexOf(coverage(a)) - COV_ORDER.indexOf(coverage(b)) || threatOrder(a, b); })) : empty('No open threats.'));
     out.push(h('h3', { id: 'controls-register' }, 'Control register'),
-      h('p', { class: 'intro' }, '"Implemented" means the control was observed in code or configuration. "Tested" means there is also evidence that it works. "Claimed" and "designed" controls were described but not observed.'));
+      h('p', { class: 'intro' }, '"Implemented" means the control was observed in code or configuration. "Tested" means there is also evidence that it works. "Reported" means the control was described in documentation or by the client or vendor but not observed. "Designed" means it is planned but not yet in place.'));
     out.push(controls.length ? searchable(table([idCol(), { title: 'Control', width: '34%', render: function (c) { return h('span', null, str(meta(c.id).title) ? h('b', { class: 'line' }, str(meta(c.id).title)) : null, str(c.description), c.limitations ? h('span', { class: 'line note' }, 'Limit: ' + str(c.limitations)) : null); } },
-      col('Status', function (c) { return tag(c.status); }),
+      col('Status', function (c) { return [tag(c.status), valTag(c.id)]; }), { title: 'Based on', sort: false, render: function (c) { return basisChips(c); } },
       { title: 'Tested by', sort: false, render: function (c) { var vs = uniq(arr(c.verification_refs).concat(ids(verifsByControl.get(c.id)))); return vs.length ? lines(vs, function (id) { var v = byId.get(id); return [ref(id), ' ', v ? tag(v.status) : null]; }) : h('span', { class: 'empty' }, 'Not tested'); } },
       { title: 'Threats addressed', sort: false, render: function (c) { return lines(c.threat_refs, titled); } }, refCol('Components', function (c) { return c.affected_refs; }), refCol('Evidence', function (c) { return c.evidence_refs; })], controls, { anchor: true }), 'controls') : empty('No existing controls were recorded.'));
     return section('controls', '4', 'Controls', 'The protections in place today, and whether they are enough for each threat.', out, [['controls-coverage', 'Coverage by threat'], ['controls-register', 'Control register']]);
@@ -1173,8 +1248,10 @@ svg .chip rect{stroke-width:1.3}
       col('How it was applied', function (m) { return list(m.applied); }), col('Not covered', function (m) { return list(m.omissions); })], M.methods, { anchor: true }));
 
     out.push(h('h3', { id: 'scope-coverage' }, 'What was reviewed'), h('p', null, 'This assessment reviewed ' + reviewedLine() + '.'));
-    out.push(h('div', { class: 'nums' }, [[processed.filter(function (p) { return p.access === 'read'; }).length, 'files reviewed in full'], [processed.filter(function (p) { return p.access === 'partial'; }).length, 'files partly reviewed'], [docSources().length, 'design documents'],
-      [arr(eng.workshops).length, 'workshops'], [unprocessed.length, 'areas not reviewed']].map(function (p) { return h('div', null, h('b', null, String(p[0])), h('span', null, p[1])); })));
+    var tiles = reviewedParts() ? reviewedParts().map(function (p) { return [p[0], p[0] === 1 ? p[1] : (p[2] || p[1] + 's')]; }).concat(processed.length && CODE_ACCESS !== 'none' ? [[processed.length, 'source files read']] : [], [[unprocessed.length, 'items not available or not reviewed']])
+      : [[processed.filter(function (p) { return p.access === 'read'; }).length, 'files reviewed in full'], [processed.filter(function (p) { return p.access === 'partial'; }).length, 'files partly reviewed'], [docSources().length, 'design documents'], [arr(eng.workshops).length, 'workshops'], [unprocessed.length, 'areas not reviewed']];
+    out.push(h('div', { class: 'nums' }, tiles.map(function (p) { return h('div', null, h('b', null, String(p[0])), h('span', null, p[1])); })));
+    if (CODE_ACCESS === 'none') out.push(h('p', { class: 'basis' }, 'No source code was available for this assessment. Findings are based on the design documentation, diagrams and workshops listed in the appendices, and controls are as described by the client or vendor unless marked as observed.'));
     var cov = paras(sa.review_coverage); if (!cov.length) cov = inspection.map(function (c) { return str(c.reason); });
     cov.forEach(function (c) { out.push(h('p', null, c)); });
     if (unprocessed.length) out.push(h('h4', null, 'Not reviewed'), table([col('Location', function (r) { return h('code', null, str(r.locator)); }), col('Reason', function (r) { return str(r.reason); })], unprocessed));
@@ -1183,6 +1260,14 @@ svg .chip rect{stroke-width:1.3}
     out.push(h('h3', { id: 'scope-assumptions' }, 'Assumptions'), h('p', { class: 'intro' }, 'The findings depend on these assumptions. If one turns out to be wrong, revisit the threats that rely on it.'));
     var as = assumptions();
     out.push(as.length ? table([col('Assumption', function (a) { return str(a.statement); }, '44%'), { title: 'Relied on by', sort: false, render: function (a) { return arr(a.refs).length ? refs(a.refs) : h('span', { class: 'empty' }, 'The assessment as a whole'); } }, col('If it is wrong', function (a) { return tba(a.if_wrong, '—'); })], as) : empty('No assumptions were recorded.'));
+    var val = obj(eng.validation), vItems = arr(val.items).filter(function (i) { return i && i.ref; });
+    if (arr(val.sessions).length || vItems.length) {
+      var vc = countBy(vItems, 'outcome'), changed = vItems.filter(function (i) { return i.outcome !== 'confirmed' && i.outcome !== 'not_discussed'; });
+      out.push(h('h3', { id: 'scope-validation' }, 'Validation with the client'), h('p', { class: 'intro' }, 'The draft threat model was walked through with the client before this report was written. ' +
+        (vItems.length ? plural(vc.confirmed || 0, 'item') + ' ' + ((vc.confirmed || 0) === 1 ? 'was' : 'were') + ' confirmed as drafted; the items below were corrected, added, rejected or left for the client to confirm.' : '')));
+      if (arr(val.sessions).length) out.push(table([col('Date', function (v) { return h('span', { class: 'mono' }, str(v.date)); }, '130px'), col('Session', function (v) { return h('b', null, str(v.title)); }), col('Attendees', function (v) { return list(v.attendees); })], val.sessions));
+      if (changed.length) out.push(table([{ title: 'Item', width: '34%', sort: false, render: function (i) { return byId.has(i.ref) ? titled(i.ref) : h('span', { class: 'mono' }, str(i.ref)); } }, col('Outcome', function (i) { var w = VALWORD[str(i.outcome)]; return h('span', { class: 'tag ' + (w ? w[1] : '') }, w ? w[0] : str(i.outcome)); }), col('What changed', function (i) { return str(i.note); })], changed));
+    }
     out.push(h('h3', { id: 'scope-limits' }, 'Limitations'), limitations().length ? list(limitations()) : empty('No limitations were recorded.'));
     out.push(h('h3', { id: 'scope-gaps' }, 'Open questions'), h('p', { class: 'intro' }, 'What the evidence did not show, and what would settle each one. Answering these may change the threats they affect.'));
     out.push(gaps.length ? searchable(table([idCol(), col('Status', function (g) { return tag(g.status); }), col('What is unknown', function (g) { return str(g.description); }), col('What would settle it', function (g) { return str(g.needed); }),
@@ -1190,8 +1275,10 @@ svg .chip rect{stroke-width:1.3}
     out.push(h('h3', { id: 'scope-current' }, 'Keeping this assessment current'), h('p', null, 'A threat model describes the system at a point in time. Revisit it when any of the following happens:'),
       list(paras(eng.review_triggers).length ? paras(eng.review_triggers) : DEFAULT_TRIGGERS));
     out.push(h('h3', { id: 'scope-terms' }, 'Terms used in this report'), table([col('Term', function (r) { return h('b', null, r[0]); }, '260px'), col('Meaning', function (r) { return r[1]; })], [
-      ['Observed in code', 'The weakness was seen in the source code or configuration reviewed. It has not been demonstrated against a running system.'],
-      ['Design concern', 'A plausible threat based on the design. The code that would confirm or rule it out was not seen, so it needs verification.'],
+      ['Observed', 'The weakness was seen in the source code or configuration reviewed. It has not been demonstrated against a running system.'],
+      ['Design concern', 'A plausible threat based on the design, documentation or what the client told us. It has not been observed directly, so it needs verification.'],
+      ['Reported control', 'A control described in documentation or by the client or vendor that this review did not observe or test.'],
+      ['Control reported, not verified', 'The only controls for the threat are reported ones.'],
       ['No control in place', 'Nothing observed in the system today addresses the threat.'],
       ['Partly controlled', 'A control exists, but the weakness was observed despite it or it covers only part of the threat.'],
       ['Controlled, not yet verified', 'A control that addresses the threat is in place; its effectiveness has not been tested.'],
@@ -1213,10 +1300,11 @@ svg .chip rect{stroke-width:1.3}
       else if (e.source_kind === 'document' || e.source_kind === 'diagram' || e.source_kind === 'test_result') { var path = str(e.locator).replace(/:\d+(-\d+)?$/, ''), k2 = e.source_kind + '|' + path; if (!seen[k2]) { seen[k2] = { name: path, type: e.source_kind === 'document' ? 'Document' : e.source_kind.replace('_', ' '), version: str(e.source_revision) || 'not recorded', n: 0 }; derived.push(seen[k2]); } seen[k2].n++; }
     });
     out.push(h('h3', null, 'Artefacts supplied for the engagement'));
-    out.push(supplied.length ? table([col('Artefact', function (a) { return h('b', null, str(a.name)); }), col('Type', function (a) { return str(a.type); }), col('Version', function (a) { return h('span', { class: 'mono' }, str(a.version) || '—'); }), col('Date', function (a) { return str(a.date) || '—'; }), col('Source', function (a) { return str(a.source) || '—'; }), col('Notes', function (a) { return str(a.notes); })], supplied)
+    var cites = {}; arr(M.evidence).forEach(function (e) { var a = artefactFor(e); if (a) cites[a.id || a.name] = (cites[a.id || a.name] || 0) + 1; });
+    out.push(supplied.length ? table((catalogued ? [col('ID', function (a) { return h('span', { class: 'tid' }, str(a.id)); }, '80px')] : []).concat([col('Artefact', function (a) { return h('b', null, str(a.name)); }), col('Type', function (a) { return str(a.type); }), col('Version', function (a) { return h('span', { class: 'mono' }, str(a.version) || '—'); }), col('Date', function (a) { return str(a.date) || '—'; }), col('Source', function (a) { return str(a.source) || '—'; })], catalogued ? [col('Reviewed', function (a) { return ({ full: 'In full', partial: 'In part', not_read: 'Not reviewed' })[str(a.reviewed)] || '—'; }), { title: 'Evidence items', value: function (a) { return cites[a.id || a.name] || 0; }, render: function (a) { return String(cites[a.id || a.name] || 0); } }] : [], [col('Notes', function (a) { return str(a.notes); })]), supplied)
       : h('p', { class: 'note' }, 'No artefact register was supplied for this report. The sources below are those cited by the evidence.'));
-    out.push(h('h3', null, 'Sources referenced by the evidence'));
-    out.push(derived.length ? table([col('Source', function (a) { return h('b', null, a.name); }), col('Type', function (a) { return a.type; }), col('Version', function (a) { return h('span', { class: 'mono' }, a.version); }), { title: 'Evidence items', value: function (a) { return a.n; }, render: function (a) { return String(a.n); } }], derived) : empty('No repository or document evidence is recorded.'));
+    if (!catalogued) out.push(h('h3', null, 'Sources referenced by the evidence'));
+    if (!catalogued) out.push(derived.length ? table([col('Source', function (a) { return h('b', null, a.name); }), col('Type', function (a) { return a.type; }), col('Version', function (a) { return h('span', { class: 'mono' }, a.version); }), { title: 'Evidence items', value: function (a) { return a.n; }, render: function (a) { return String(a.n); } }], derived) : empty('No repository or document evidence is recorded.'));
     out.push(h('h3', null, 'Detail'));
     out.push(fold('Files reviewed', processed.length, processed.length ? searchable(table([col('Location', function (r) { return h('code', null, str(r.locator)); }), col('Extent', function (r) { return r.access === 'read' ? 'Full' : 'Partial'; }), col('Version and detail', function (r) { return str(r.coverage); }), col('Note', function (r) { return str(r.reason); })], processed), 'files') : empty('None recorded.')));
     out.push(fold('Evidence references', arr(M.evidence).length, arr(M.evidence).length ? searchable(table([idCol(), col('Location', function (r) { return h('code', null, str(r.locator)); }),
@@ -1278,7 +1366,27 @@ svg .chip rect{stroke-width:1.3}
   // ====================================================================
   var page = h('div', { id: 'page' });
   function safe(fn, id, name) { try { return fn(); } catch (e) { return h('section', { class: 'sec', id: id }, h('p', { class: 'basis' }, name + ' could not be displayed: ' + str(e && e.message))); } }
-  append(page, [cover(), documentControl(),
+  // A shorter pack for the client validation call: what we understood, for them to confirm or correct.
+  function tick(words) { return { title: words, width: '120px', sort: false, render: function () { return h('span', { class: 'tick' }, '\u2610 Yes   \u2610 No'); } }; }
+  function packPage() {
+    var es = obj(eng.executive_summary), overview = paras(es.system_overview).length ? paras(es.system_overview) : paras(M.scope && M.scope.description);
+    var comps = arr(sys.actors).concat(arr(sys.entry_points), arr(sys.assets));
+    return [cover(),
+      h('div', { class: 'basis' }, h('h4', null, 'Purpose of this pack'), h('p', null, 'This is a draft for discussion. It sets out our understanding of the system, the controls we believe are in place and the threats identified so far. Please tell us what is wrong, missing or out of date. Nothing here is final, and no risk ratings have been agreed.')),
+      section('pack-system', '1', 'The system as we understand it', null, [overview.map(function (p) { return h('p', { class: 'lead' }, p); }), h('h3', null, 'Architecture'), diagram()]),
+      section('pack-components', '2', 'Components and who runs them', 'Please correct any component, description or owner that is wrong.', comps.length ? table([idCol(), col('Component', function (r) { return h('b', null, str(r.description)); }), col('Kind', function (r) { return str(r.kind); }),
+        col('Run by', function (r) { return respTag(r.id) || h('span', { class: 'empty' }, 'To confirm'); }), { title: 'Based on', sort: false, render: function (r) { return basisChips(r); } }, tick('Correct?')], comps) : empty('No components recorded.')),
+      section('pack-assumptions', '3', 'Assumptions to confirm', 'Our findings depend on these. Please tell us if any is not true.', assumptions().length ? table([col('Assumption', function (a) { return str(a.statement); }, '50%'), { title: 'Relied on by', sort: false, render: function (a) { return arr(a.refs).length ? refs(a.refs) : h('span', { class: 'empty' }, 'The assessment as a whole'); } }, tick('True?')], assumptions()) : empty('No assumptions recorded.')),
+      section('pack-controls', '4', 'Controls we believe are in place', 'Please confirm that each control exists and works as described.', controls.length ? table([idCol(), { title: 'Control', width: '38%', sort: false, render: function (c) { return h('span', null, str(meta(c.id).title) ? h('b', { class: 'line' }, str(meta(c.id).title)) : null, str(c.description), c.limitations ? h('span', { class: 'line note' }, 'Limit: ' + str(c.limitations)) : null); } },
+        col('Status', function (c) { return tag(c.status); }), { title: 'Based on', sort: false, render: function (c) { return basisChips(c); } }, { title: 'Addresses', sort: false, render: function (c) { return refs(c.threat_refs); } }, tick('Confirmed?')], controls) : empty('No controls recorded.')),
+      section('pack-threats', '5', 'Draft threats', 'Do these look right for your system? Is anything missing?', sortedThreats.length ? table([idCol(), { title: 'Threat', width: '36%', sort: false, render: function (t) { return h('span', null, h('b', { class: 'line' }, nameOf(t.id)), str(t.scenario)); } },
+        col('Why it matters', function (t) { return tba(meta(t.id).impact, 'To discuss'); }), { title: 'Control today', sort: false, render: function (t) { return h('span', null, covTag(t), h('span', { class: 'line' }, covNote(t))); } }, tick('Agree?')], sortedThreats) : empty('No threats recorded yet.')),
+      section('pack-questions', '6', 'Open questions', 'What we could not establish from the material. Answers here may change the threats above.', openGaps.length ? table([idCol(), col('What we do not know', function (g) { return str(g.description); }), col('What would settle it', function (g) { return str(g.needed); }), { title: 'Affects', sort: false, render: function (g) { return refs(g.affected_refs); } }], openGaps) : empty('No open questions.')),
+      h('footer', { class: 'foot' }, h('span', null, str(branding.footer_text) || str(branding.organisation)), h('span', null, 'Draft for validation \u00b7 ' + str(eng.report_date || eng.generated_at)))];
+  }
+  var isPack = obj(eng.options).pack === 'validation';
+  if (isPack) { reportStatus = 'Draft for validation'; isFinal = false; }
+  append(page, isPack ? (function () { try { return packPage(); } catch (e) { return [h('p', { class: 'basis' }, 'The validation pack could not be displayed: ' + str(e && e.message))]; } })() : [cover(), documentControl(),
     data.status !== 'complete' ? h('p', { class: 'basis' }, h('b', null, 'Draft. '), 'The underlying assessment is marked incomplete, so parts of this report may be missing.') : null,
     safe(execSummary, 'exec', 'Executive summary'), safe(techSummary, 'tech', 'Technical summary'), safe(threatsSection, 'threats', 'Threats'), safe(controlsSection, 'controls', 'Controls'),
     safe(recsSection, 'recs', 'Recommendations'), safe(verifSection, 'verif', 'Verification'), safe(scopeSection, 'scope', 'Scope and approach'),

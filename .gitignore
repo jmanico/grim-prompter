@@ -5,3 +5,7 @@
 .env
 .env.*
 .DS_Store
+
+# Built example reports are regenerated with engage.py build.
+/engagement/examples/**/*.html
+/engagement/examples/**/*.engagement.json

@@ -1,0 +1,78 @@
+{
+  "sessions": [
+    {
+      "date": "2026-11-13",
+      "title": "Threat model validation and risk rating",
+      "material": "M-005",
+      "attendees": [
+        {
+          "name": "Dana Okafor",
+          "role": "Lead consultant",
+          "organisation": "Product Security"
+        },
+        {
+          "name": "Marcus Lee",
+          "role": "Payroll systems lead",
+          "organisation": "Northwind Health"
+        },
+        {
+          "name": "Priya Raman",
+          "role": "Integration engineer",
+          "organisation": "Northwind Health"
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "ref": "F2",
+      "outcome": "confirmed",
+      "note": "Administration console is reached from the corporate network only."
+    },
+    {
+      "ref": "T-001",
+      "outcome": "confirmed",
+      "note": "Agreed as the top priority; Northwind will treat it."
+    },
+    {
+      "ref": "C-001",
+      "outcome": "confirmed",
+      "note": "Single sign-on with multi-factor authentication is in daily use."
+    },
+    {
+      "ref": "T-002",
+      "outcome": "corrected",
+      "note": "The extract is retained for thirty days, which widens the exposure."
+    },
+    {
+      "ref": "C-003",
+      "outcome": "corrected",
+      "note": "The file is archived for thirty days, not deleted."
+    },
+    {
+      "ref": "T-003",
+      "outcome": "confirmed",
+      "note": null
+    },
+    {
+      "ref": "C-004",
+      "outcome": "confirmed",
+      "note": "A second approver releases payments."
+    },
+    {
+      "ref": "T-004",
+      "outcome": "deferred",
+      "note": "Webhook signing still to be checked with the vendor."
+    },
+    {
+      "ref": "T-005",
+      "outcome": "confirmed",
+      "note": null
+    },
+    {
+      "ref": "T-006",
+      "outcome": "added",
+      "note": "Raised by the client: leaver accounts stay active in PayStream."
+    }
+  ]
+}

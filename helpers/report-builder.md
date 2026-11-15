@@ -36,6 +36,8 @@ Engagement details come only from the caller: their words in the request, or fil
 
 ## Work
 
+Within an [engagement workspace](../engagement/README.md), follow the [engagement final report](../engagement/final-report.md) instead: it builds the engagement file from the workspace records.
+
 1. **Resolve and read the envelope.** Confirm it parses with the runbook's isolated parser form and has a reportable artifact type. Read it completely; the narrative below must come from it.
 2. **Write the engagement file** `RUN_DIR/report-<name>.engagement.json`, starting from [`reporting/engagement-template.json`](../reporting/engagement-template.json) and the field guide in [the reporting guide](../reporting/README.md#engagement-file).
    - **Executive summary narrative** (`system_overview`, one to three short paragraphs): what the system is and does, then what the review found. Use only the envelope's scope, system records, threats and gaps. Write for a senior reader who has not seen the system.
@@ -50,7 +52,11 @@ Engagement details come only from the caller: their words in the request, or fil
      - `impact` for every threat: one or two sentences on what it would cost the business or its customers, drawn from the data and assets the threat affects. Do not use severity words unless the threat is rated.
      - `coverage` and `coverage_note` for a threat only when the derived status would mislead, for example when the only linked control's recorded limitation shows it does not address the threat. Cite that limitation in the note. The renderer derives coverage otherwise: no implemented control means none; a weakness observed despite a control means partial; verified requires a passed test of a control against that threat.
      - `response` (`mitigate`, `eliminate`, `transfer`, `accept`, `undecided`), `response_note`, `target_rating`, `owner`, `target_date`, `effort`, `environment` and `priority`: only what the caller supplied or a recorded decision states. Leave them out otherwise; the report shows "to be agreed" and marks a response as proposed where a recommendation exists.
-     - `type` for a verification (`confirm_weakness`, `retest_fix`, `test_control`) only to correct the derived purpose.
+     - `type` for a verification (`confirm_weakness`, `retest_fix`, `test_control`) only to correct the derived purpose, or `review_configuration`, `vendor_assurance` or `design_review` when the activity is a review of a setting, a request to a vendor or a design review and not a test.
+     - `responsibility` (`client`, `vendor`, `shared`, `unknown`) for a component or entry point, only from evidence or the caller.
+   - **Code access** (`code_access`: `none`, `partial`, `full`): from the caller or the envelope's inspection coverage. When no code was reviewed, say so in the approach and limitations, and describe controls as reported by the client or vendor, never as implemented.
+   - **Artefact register**: when the caller supplies `id`, `category`, `file` and `reviewed` for artefacts, keep them; the report uses them to show what each finding is based on.
+   - **Validation** (`validation`): only a record of a client session the caller supplies. Never mark a record confirmed yourself.
    - **Verdicts** (`executive_summary.verdicts`): leave empty so the report states the counts itself, unless the caller wants specific wording.
    - **Assumptions** (`assumptions`): each assumption from the envelope, the threats that rely on it (`refs`) and, where the envelope supports it, what changes if it is wrong.
    - **Document control** (`document_control`) and **review triggers** (`review_triggers`): from the caller only. Without triggers the report lists general ones.

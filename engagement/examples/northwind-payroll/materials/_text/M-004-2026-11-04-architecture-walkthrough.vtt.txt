@@ -1,0 +1,9 @@
+[00:02:10] Dana Okafor (Product Security): Can you walk us through how payroll administrators get into the admin console?
+[00:02:26] Marcus Lee (Northwind payroll systems lead): Day to day it is SSO through Entra with MFA. But we kept two local admin accounts from the implementation project. They are shared by the payroll team and they do not have MFA switched on.
+[00:05:40] Dana Okafor (Product Security): On the nightly extract, what happens to the file on the integration host after it is sent?
+[00:06:06] Priya Raman (Northwind integration engineer): The job deletes it straight after a successful transfer. The SFTP key sits in the service account's home folder. It has not been rotated since go-live testing.
+[00:11:15] Dana Okafor (Product Security): Is the journal webhook into the general ledger authenticated?
+[00:11:41] Priya Raman (Northwind integration engineer): I am not sure. The endpoint is reachable from PayStream's address range only. I do not know whether signing is turned on.
+[00:15:02] Marcus Lee (Northwind payroll systems lead): For payments, I download the ABA file to my laptop and upload it to the bank portal. A second approver releases it in the bank portal.
+[00:19:20] Dana Okafor (Product Security): Do you see when PayStream support accesses your tenant?
+[00:19:46] Marcus Lee (Northwind payroll systems lead): No. We have never asked for the access log.

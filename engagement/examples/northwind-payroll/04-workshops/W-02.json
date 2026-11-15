@@ -1,0 +1,69 @@
+{
+  "id": "W-02",
+  "date": "2026-11-13",
+  "title": "Threat model validation and risk rating",
+  "material": "M-005",
+  "purpose": "Walk through the draft threat model, correct anything wrong and agree risk ratings.",
+  "attendees": [
+    {
+      "name": "Dana Okafor",
+      "role": "Lead consultant",
+      "organisation": "Product Security"
+    },
+    {
+      "name": "Marcus Lee",
+      "role": "Payroll systems lead",
+      "organisation": "Northwind Health"
+    },
+    {
+      "name": "Priya Raman",
+      "role": "Integration engineer",
+      "organisation": "Northwind Health"
+    }
+  ],
+  "outcomes": [
+    "Architecture diagram confirmed",
+    "Extract retention corrected: archived for thirty days, not deleted",
+    "New threat raised by the client: leaver accounts stay active",
+    "Local administrator accounts agreed as the top priority",
+    "Five threats rated"
+  ],
+  "statements": [
+    {
+      "id": "W-02-S01",
+      "speaker": "Marcus Lee",
+      "tag": "fact",
+      "text": "Administration console access is from the corporate network only; the diagram is correct.",
+      "lines": "2",
+      "answers": []
+    },
+    {
+      "id": "W-02-S02",
+      "speaker": "Priya Raman",
+      "tag": "correction",
+      "text": "The extract is not deleted; it is archived for thirty days.",
+      "lines": "3",
+      "answers": [
+        "Q-003"
+      ]
+    },
+    {
+      "id": "W-02-S03",
+      "speaker": "Marcus Lee",
+      "tag": "fact",
+      "text": "Leavers are not removed from PayStream.",
+      "lines": "4",
+      "answers": [
+        "Q-002"
+      ]
+    },
+    {
+      "id": "W-02-S04",
+      "speaker": "Marcus Lee",
+      "tag": "decision",
+      "text": "Northwind will treat the local administrator accounts as the top priority.",
+      "lines": "5",
+      "answers": []
+    }
+  ]
+}

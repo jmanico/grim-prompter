@@ -1,0 +1,28 @@
+WEBVTT
+
+00:02:10.000 --> 00:02:25.000
+<v Dana Okafor (Product Security)>Can you walk us through how payroll administrators get into the admin console?</v>
+
+00:02:26.000 --> 00:02:52.000
+<v Marcus Lee (Northwind payroll systems lead)>Day to day it is SSO through Entra with MFA. But we kept two local admin accounts from the implementation project. They are shared by the payroll team and they do not have MFA switched on.</v>
+
+00:05:40.000 --> 00:06:05.000
+<v Dana Okafor (Product Security)>On the nightly extract, what happens to the file on the integration host after it is sent?</v>
+
+00:06:06.000 --> 00:06:30.000
+<v Priya Raman (Northwind integration engineer)>The job deletes it straight after a successful transfer. The SFTP key sits in the service account's home folder. It has not been rotated since go-live testing.</v>
+
+00:11:15.000 --> 00:11:40.000
+<v Dana Okafor (Product Security)>Is the journal webhook into the general ledger authenticated?</v>
+
+00:11:41.000 --> 00:12:05.000
+<v Priya Raman (Northwind integration engineer)>I am not sure. The endpoint is reachable from PayStream's address range only. I do not know whether signing is turned on.</v>
+
+00:15:02.000 --> 00:15:30.000
+<v Marcus Lee (Northwind payroll systems lead)>For payments, I download the ABA file to my laptop and upload it to the bank portal. A second approver releases it in the bank portal.</v>
+
+00:19:20.000 --> 00:19:45.000
+<v Dana Okafor (Product Security)>Do you see when PayStream support accesses your tenant?</v>
+
+00:19:46.000 --> 00:20:05.000
+<v Marcus Lee (Northwind payroll systems lead)>No. We have never asked for the access log.</v>

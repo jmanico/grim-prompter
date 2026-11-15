@@ -1,0 +1,94 @@
+{
+  "id": "W-01",
+  "date": "2026-11-04",
+  "title": "Architecture walkthrough",
+  "material": "M-004",
+  "purpose": "Confirm components, data flows and trust boundaries, and answer the open questions from the document review.",
+  "attendees": [
+    {
+      "name": "Dana Okafor",
+      "role": "Lead consultant",
+      "organisation": "Product Security"
+    },
+    {
+      "name": "Marcus Lee",
+      "role": "Payroll systems lead",
+      "organisation": "Northwind Health"
+    },
+    {
+      "name": "Priya Raman",
+      "role": "Integration engineer",
+      "organisation": "Northwind Health"
+    }
+  ],
+  "outcomes": [
+    "Two shared local administrator accounts without multi-factor authentication identified",
+    "SFTP key storage and extract handling described",
+    "Webhook signing status unknown; to be checked with the vendor",
+    "Payment file is moved by hand through a laptop",
+    "Northwind does not review vendor support access"
+  ],
+  "statements": [
+    {
+      "id": "W-01-S01",
+      "speaker": "Marcus Lee",
+      "tag": "fact",
+      "text": "Two local administrator accounts are shared by the payroll team and have no multi-factor authentication.",
+      "lines": "2",
+      "answers": [
+        "Q-001"
+      ]
+    },
+    {
+      "id": "W-01-S02",
+      "speaker": "Priya Raman",
+      "tag": "control",
+      "text": "The extract is deleted after a successful transfer.",
+      "lines": "4",
+      "answers": [
+        "Q-003"
+      ],
+      "note": "Corrected in W-02."
+    },
+    {
+      "id": "W-01-S03",
+      "speaker": "Priya Raman",
+      "tag": "fact",
+      "text": "The SFTP key is in the service account's home folder and has not been rotated.",
+      "lines": "4",
+      "answers": [
+        "Q-003"
+      ]
+    },
+    {
+      "id": "W-01-S04",
+      "speaker": "Priya Raman",
+      "tag": "open_question",
+      "text": "Whether webhook signing is enabled is not known.",
+      "lines": "6",
+      "answers": [
+        "Q-004"
+      ]
+    },
+    {
+      "id": "W-01-S05",
+      "speaker": "Marcus Lee",
+      "tag": "fact",
+      "text": "The payment file is downloaded to a laptop and uploaded to the bank portal; a second approver releases it.",
+      "lines": "7",
+      "answers": [
+        "Q-005"
+      ]
+    },
+    {
+      "id": "W-01-S06",
+      "speaker": "Marcus Lee",
+      "tag": "fact",
+      "text": "Northwind has never requested the vendor's support access log.",
+      "lines": "9",
+      "answers": [
+        "Q-006"
+      ]
+    }
+  ]
+}

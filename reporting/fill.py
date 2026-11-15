@@ -35,13 +35,15 @@ REPORTABLE = {
 }
 ENGAGEMENT_KEYS = {"engagement_version", "title", "subtitle", "client", "project", "report_version", "report_date", "report_status", "authors",
                    "executive_summary", "scope_and_approach", "artefacts", "workshops", "risk_matrix", "options",
-                   "records", "assumptions", "document_control", "review_triggers"}
+                   "records", "assumptions", "document_control", "review_triggers", "code_access", "validation"}
 RECORD_KEYS = {"title", "impact", "response", "response_note", "target_rating", "coverage", "coverage_note", "priority",
-               "effort", "owner", "target_date", "type", "environment"}
+               "effort", "owner", "target_date", "type", "environment", "responsibility"}
 RECORD_ENUMS = {"response": {"mitigate", "eliminate", "transfer", "accept", "undecided"},
-                "coverage": {"none", "partial", "controlled", "verified"},
-                "type": {"confirm_weakness", "retest_fix", "test_control"}}
+                "coverage": {"none", "partial", "reported", "controlled", "verified"},
+                "responsibility": {"client", "vendor", "shared", "unknown"},
+                "type": {"confirm_weakness", "retest_fix", "test_control", "review_configuration", "vendor_assurance", "design_review"}}
 ENGAGEMENT_OPTIONS = {"show_excerpts", "include_data_download"}
+VALIDATION_OUTCOMES = {"confirmed", "corrected", "rejected", "added", "deferred", "not_discussed"}
 # Wording that names the tooling or its process. The report is a client document, so fill.py warns when it appears.
 TOOL_TERMS = re.compile(r"grim[\s_-]?prompter|SYSTEM_UNDER_REVIEW|runbook|quick[- ]report\.json|\b0[0-5]-[a-z-]+\.json|coding agent|\bAI agent\b|\bLLM\b|deep stage|quick (run|mode|analysis)|challenge stage|TM_[A-Z_]+", re.I)
 BRANDING_KEYS = {"branding_version", "name", "organisation", "prepared_by", "prepared_for", "logo_file",
@@ -172,7 +174,17 @@ def check_engagement(eng):
     _text_list(approach.get("limitations"), "scope_and_approach.limitations", 1000, 30)
     _text_list(approach.get("approach"), "scope_and_approach.approach", 4000, 20)
     _rows(approach.get("activities"), "scope_and_approach.activities", ("phase", "description"), count=50)
-    _rows(eng.get("artefacts"), "artefacts", ("name", "type", "version", "date", "source", "notes"))
+    _rows(eng.get("artefacts"), "artefacts", ("id", "name", "type", "category", "version", "date", "source", "notes", "file", "text_file", "reviewed"))
+    if eng.get("code_access") not in (None, "none", "partial", "full"):
+        raise InputError("engagement: code_access must be none, partial or full")
+    validation = eng.get("validation") or {}
+    if not isinstance(validation, dict) or set(validation) - {"sessions", "items"}:
+        raise InputError("engagement: validation may use only sessions and items")
+    _rows(validation.get("sessions"), "validation.sessions", ("date", "title"), ("attendees",), count=50)
+    _rows(validation.get("items"), "validation.items", ("ref", "outcome", "note"), count=5000)
+    for item in validation.get("items") or []:
+        if item.get("outcome") not in VALIDATION_OUTCOMES:
+            raise InputError(f"engagement: validation outcome must be one of {sorted(VALIDATION_OUTCOMES)}")
     _rows(eng.get("workshops"), "workshops", ("date", "title", "purpose"), ("attendees", "outcomes"), count=200)
     _rows(eng.get("assumptions"), "assumptions", ("statement", "if_wrong"), ("refs",), count=100)
     _text_list(eng.get("review_triggers"), "review_triggers", 400, 30)
@@ -193,8 +205,14 @@ def check_engagement(eng):
             if key in RECORD_ENUMS and value is not None and value not in RECORD_ENUMS[key]:
                 raise InputError(f"engagement: records[{rid!r}].{key} must be one of {sorted(RECORD_ENUMS[key])}")
     opts = eng.get("options") or {}
-    if not isinstance(opts, dict) or set(opts) - ENGAGEMENT_OPTIONS or not all(isinstance(v, bool) for v in opts.values()):
-        raise InputError(f"engagement: options must be booleans from {sorted(ENGAGEMENT_OPTIONS)}")
+    if not isinstance(opts, dict):
+        raise InputError("engagement: options must be an object")
+    pack = opts.get("pack")
+    if pack not in (None, "validation"):
+        raise InputError("engagement: options.pack may only be \"validation\"")
+    rest = {k: v for k, v in opts.items() if k != "pack"}
+    if set(rest) - ENGAGEMENT_OPTIONS or not all(isinstance(v, bool) for v in rest.values()):
+        raise InputError(f"engagement: options must be booleans from {sorted(ENGAGEMENT_OPTIONS)}, plus pack")
     matrix = eng.get("risk_matrix")
     if matrix is None:
         return

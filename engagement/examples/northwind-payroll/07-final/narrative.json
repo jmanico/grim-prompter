@@ -1,0 +1,339 @@
+{
+  "title": "PayStream payroll threat model",
+  "subtitle": "Go-live readiness review",
+  "report_version": "1.0 draft",
+  "report_status": "Draft for review",
+  "authors": [
+    "Product Security team"
+  ],
+  "executive_summary": {
+    "system_overview": [
+      "Northwind Health is replacing its in-house payroll module with PayStream, a SaaS payroll product run by PayStream Pty Ltd. Northwind's HRIS stays the system of record and sends PayStream a nightly extract of employee, salary, bank account and tax file number data. Staff sign in through Entra ID, PayStream posts payroll journals to the finance general ledger, and a payroll administrator carries the payment file to the bank portal by hand.",
+      "This review supports the decision to go live for the first pay run. It found six open threats, all at the points where Northwind's systems and processes meet the vendor's product. The most significant are two shared local administrator accounts that bypass single sign-on, and the nightly extract, which sits on an integration host for thirty days alongside an SFTP key that has never been rotated."
+    ],
+    "key_components": [
+      {
+        "ref": "EP2",
+        "name": "PayStream administration console",
+        "why": "Controls bank details and pay runs. Two shared local accounts reach it with a password alone."
+      },
+      {
+        "ref": "S2",
+        "name": "Integration host",
+        "why": "Holds the full employee extract for thirty days and the key that can upload data to PayStream."
+      },
+      {
+        "ref": "S4",
+        "name": "PayStream platform",
+        "why": "Holds all payroll data. Northwind depends on the vendor's controls and cannot currently see vendor support access."
+      },
+      {
+        "ref": "S6",
+        "name": "Bank portal",
+        "why": "The last check before money moves. The payment file reaches it by hand through a laptop."
+      }
+    ],
+    "next_steps": [
+      {
+        "step": "Remove the shared local administrator accounts or lock one down as a break-glass account, before go-live.",
+        "refs": [
+          "TR-001",
+          "T-001"
+        ]
+      },
+      {
+        "step": "Move the SFTP key into a vault and stop keeping the extract on the integration host.",
+        "refs": [
+          "TR-002",
+          "T-002"
+        ]
+      },
+      {
+        "step": "Confirm with PayStream whether webhook signing is on, then enable and verify it.",
+        "refs": [
+          "G1",
+          "TR-004"
+        ]
+      },
+      {
+        "step": "Obtain the vendor's SOC 2 Type II report and its support access log.",
+        "refs": [
+          "G2",
+          "V-005"
+        ]
+      },
+      {
+        "step": "Add PayStream to the leaver process and reconcile accounts against HR records.",
+        "refs": [
+          "TR-006",
+          "V-006"
+        ]
+      }
+    ]
+  },
+  "scope_and_approach": {
+    "approach": [
+      "We reviewed Northwind's solution architecture and context diagram and PayStream's security overview, then held an architecture walkthrough with Northwind's payroll and integration leads to fill the gaps the documents left.",
+      "From that we built a draft threat model, classified the threats with STRIDE, and walked it through with Northwind in a validation call. That call confirmed the architecture, corrected one control, added one threat and agreed the risk ratings using Northwind's risk matrix."
+    ],
+    "activities": [
+      {
+        "phase": "Document review",
+        "description": "Design documentation, context diagram and vendor security overview."
+      },
+      {
+        "phase": "Architecture walkthrough",
+        "description": "Workshop with Northwind's payroll systems lead and integration engineer."
+      },
+      {
+        "phase": "Threat modelling",
+        "description": "System model, trust boundaries, threats, reported controls and open questions."
+      },
+      {
+        "phase": "Validation and risk rating",
+        "description": "Draft model reviewed, corrected and rated with Northwind."
+      },
+      {
+        "phase": "Reporting",
+        "description": "Recommendations, verification plan and this report."
+      }
+    ],
+    "review_coverage": [
+      "All supplied design, vendor and workshop material was reviewed in full. PayStream's SOC 2 Type II report and the bank portal's approval configuration were requested but not available."
+    ],
+    "limitations": [
+      "This assessment is based on documentation and workshops. No source code, configuration or running system was examined.",
+      "PayStream's internal controls are as the vendor describes them; its SOC 2 Type II report was not available.",
+      "The bank portal's approval configuration was not seen."
+    ]
+  },
+  "assumptions": [
+    {
+      "statement": "PayStream's description of its own controls is accurate.",
+      "refs": [
+        "T-005"
+      ],
+      "if_wrong": "Threats involving the vendor's platform would be more likely; obtain the SOC 2 report to test this."
+    },
+    {
+      "statement": "The corporate network is the only route to the administration console.",
+      "refs": [
+        "T-001",
+        "T-006"
+      ],
+      "if_wrong": "Local accounts would be reachable from the internet, raising the likelihood of T-001 and T-006."
+    },
+    {
+      "statement": "The bank approver checks more than the payment total.",
+      "refs": [
+        "T-003"
+      ],
+      "if_wrong": "Nothing would detect an altered payment file before release."
+    }
+  ],
+  "document_control": {
+    "versions": [
+      {
+        "version": "0.1",
+        "date": "2026-11-06",
+        "author": "Product Security team",
+        "change": "Draft threat model for validation."
+      },
+      {
+        "version": "1.0 draft",
+        "date": "2026-11-16",
+        "author": "Product Security team",
+        "change": "Updated after the validation call; draft report for internal review."
+      }
+    ],
+    "reviewers": [
+      {
+        "name": "To be assigned",
+        "role": "Engagement lead",
+        "responsibility": "Technical review before issue",
+        "date": null
+      },
+      {
+        "name": "Marcus Lee",
+        "role": "Payroll systems lead, Northwind Health",
+        "responsibility": "Accepts the findings and owns the action plan",
+        "date": null
+      }
+    ],
+    "distribution": [
+      "Northwind payroll systems lead",
+      "Northwind integration engineer",
+      "Northwind vendor manager"
+    ]
+  },
+  "records": {
+    "T-001": {
+      "title": "Shared local administrator accounts bypass single sign-on",
+      "impact": "Whoever holds one of these passwords controls payroll: they could change bank details and redirect salaries, and the shared account would not show who did it.",
+      "target_rating": "Low",
+      "response": "mitigate",
+      "response_note": "Agreed by Northwind in the validation call on 13 November 2026.",
+      "coverage": "partial",
+      "coverage_note": "Single sign-on with multi-factor authentication covers normal access, but the local accounts sign in with a password and sit outside it."
+    },
+    "T-002": {
+      "title": "Nightly extract and SFTP key exposed on the integration host",
+      "impact": "The extract holds every employee's salary, bank account and tax file number. Its loss would be a notifiable data breach, and a stolen key would let someone feed PayStream false data.",
+      "target_rating": "Low"
+    },
+    "T-003": {
+      "title": "Payment file altered between PayStream and the bank",
+      "impact": "Salaries could be redirected to an attacker's account in a single pay run, with direct financial loss and staff not being paid.",
+      "target_rating": "Low"
+    },
+    "T-004": {
+      "title": "Forged or replayed payroll journals to the general ledger",
+      "impact": "False payroll figures in the ledger would distort financial reporting and take effort to find and reverse."
+    },
+    "T-005": {
+      "title": "Vendor support access to payroll data goes unseen",
+      "impact": "Northwind would not know if its payroll data were viewed or taken through the vendor's support channel, and could not meet its own breach notification duties.",
+      "target_rating": "Low"
+    },
+    "T-006": {
+      "title": "Leaver accounts stay active in PayStream",
+      "impact": "Former staff could keep access to payslips, and former payroll staff to administration, after they leave.",
+      "target_rating": "Low"
+    },
+    "C-001": {
+      "title": "Single sign-on with multi-factor authentication"
+    },
+    "C-002": {
+      "title": "SFTP transfer with key authentication"
+    },
+    "C-003": {
+      "title": "Extract archived for thirty days after transfer"
+    },
+    "C-004": {
+      "title": "Dual approval in the bank portal"
+    },
+    "C-005": {
+      "title": "Vendor-controlled and logged support access"
+    },
+    "C-006": {
+      "title": "Webhook restricted to PayStream addresses"
+    },
+    "TR-001": {
+      "title": "Remove or lock down the local administrator accounts",
+      "effort": "Small",
+      "owner": "Payroll systems lead",
+      "target_date": "2026-11-27"
+    },
+    "TR-002": {
+      "title": "Vault the SFTP key and stop retaining the extract",
+      "effort": "Medium",
+      "owner": "Integration engineer",
+      "target_date": "2026-12-18"
+    },
+    "TR-003": {
+      "title": "Protect the payment file's integrity on the way to the bank",
+      "effort": "Large",
+      "owner": "Payroll systems lead",
+      "target_date": "2027-02-26"
+    },
+    "TR-004": {
+      "title": "Enable and verify webhook signing",
+      "effort": "Small",
+      "owner": "Integration engineer",
+      "target_date": "2026-12-18"
+    },
+    "TR-005": {
+      "title": "Obtain vendor assurance and review support access",
+      "effort": "Small",
+      "owner": "Vendor manager",
+      "target_date": "2026-12-18"
+    },
+    "TR-006": {
+      "title": "Remove PayStream accounts in the leaver process",
+      "effort": "Medium",
+      "owner": "Payroll systems lead",
+      "target_date": "2027-01-29"
+    },
+    "V-001": {
+      "title": "Review local accounts in the administration console",
+      "type": "review_configuration",
+      "environment": "PayStream production tenant, read-only export",
+      "owner": "Payroll systems lead",
+      "target_date": "2026-11-27"
+    },
+    "V-002": {
+      "title": "Inspect key storage and extract retention on the integration host",
+      "type": "review_configuration",
+      "environment": "Integration host",
+      "owner": "Integration engineer",
+      "target_date": "2026-12-18"
+    },
+    "V-003": {
+      "title": "Walk through a pay run and the bank approval settings",
+      "type": "design_review",
+      "environment": "Workshop with payroll and treasury",
+      "owner": "Payroll systems lead",
+      "target_date": "2027-01-15"
+    },
+    "V-004": {
+      "title": "Unsigned and replayed webhook test",
+      "environment": "General ledger test environment",
+      "owner": "Integration engineer",
+      "target_date": "2026-12-18"
+    },
+    "V-005": {
+      "title": "SOC 2 report and support access log review",
+      "owner": "Vendor manager",
+      "target_date": "2026-12-18"
+    },
+    "V-006": {
+      "title": "Reconcile PayStream accounts against HR records",
+      "type": "review_configuration",
+      "environment": "PayStream production tenant, read-only export",
+      "owner": "Payroll systems lead",
+      "target_date": "2027-01-29"
+    },
+    "G1": {
+      "owner": "Integration engineer"
+    },
+    "G2": {
+      "owner": "Vendor manager"
+    },
+    "G3": {
+      "owner": "Payroll systems lead"
+    },
+    "G4": {
+      "owner": "Vendor manager"
+    },
+    "S1": {
+      "responsibility": "client"
+    },
+    "S2": {
+      "responsibility": "client"
+    },
+    "S3": {
+      "responsibility": "shared"
+    },
+    "S4": {
+      "responsibility": "vendor"
+    },
+    "S5": {
+      "responsibility": "vendor"
+    },
+    "S6": {
+      "responsibility": "vendor"
+    },
+    "S7": {
+      "responsibility": "client"
+    },
+    "EP1": {
+      "responsibility": "vendor"
+    },
+    "EP2": {
+      "responsibility": "vendor"
+    },
+    "EP3": {
+      "responsibility": "vendor"
+    }
+  }
+}

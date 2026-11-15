@@ -79,6 +79,24 @@ Turn a finished run into one self-contained HTML report:
 
 The report has a fixed structure: executive summary, technical summary (a clickable architecture diagram with threats, controls and verification marked on each component, plus an overview table), threats mapped to the frameworks used, controls in place, recommendations, verification required, scope and approach, and appendices for artefacts, workshops and the risk matrix. It loads nothing from the network and embeds the full model, so review it before sharing. See the [reporting guide](reporting/README.md).
 
+## Run a client engagement
+
+The [engagement workflow](engagement/README.md) runs a consulting engagement end to end, with or without source code: take in architecture diagrams, design documents, vendor documentation and workshop transcripts; choose architecture lenses and methods; produce workshop questions; build a base threat model; validate it with the client; and issue the report. Each phase stops for a consultant decision.
+
+```text
+/engagement init for Acme, Payments platform, no code
+/engagement intake
+/engagement plan
+/engagement questions
+/engagement workshop
+/engagement model
+/engagement validation-pack
+/engagement validate
+/engagement report
+```
+
+Link `skills/engagement` beside `skills/threat-model` to enable it.
+
 ## Review the results
 
 1. **Check the scope and evidence.** Start with the report's inspection coverage summary: compare the file ledger with the repository, review skipped areas and unmapped boundaries, and distinguish fresh reads from carried evidence. Correct missing services, misunderstood boundaries, and unsupported assumptions before relying on the findings.

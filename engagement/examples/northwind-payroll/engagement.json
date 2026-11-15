@@ -1,0 +1,101 @@
+{
+  "engagement_workspace_version": "1.0",
+  "client": "Northwind Health",
+  "system": "PayStream payroll",
+  "project": "Payroll platform replacement",
+  "created": "2026-11-16",
+  "code_access": "none",
+  "plan": {
+    "architectures": [
+      "multi-tenant-saas",
+      "identity-federation",
+      "enterprise-integration"
+    ],
+    "methods": [
+      "stride-per-element"
+    ],
+    "depth": "quick",
+    "review_scope": "security",
+    "risk_matrix_file": "02-plan/risk-matrix.json",
+    "confirmed_by": "Dana Okafor",
+    "confirmed_on": "2026-11-16"
+  },
+  "phases": {
+    "intake": {
+      "status": "complete",
+      "updated": "2026-11-16",
+      "by": "Dana Okafor",
+      "note": null
+    },
+    "plan": {
+      "status": "complete",
+      "updated": "2026-11-16",
+      "by": "Dana Okafor",
+      "note": null
+    },
+    "questions": {
+      "status": "complete",
+      "updated": "2026-11-16",
+      "by": "Dana Okafor",
+      "note": null
+    },
+    "workshops": {
+      "status": "complete",
+      "updated": "2026-11-16",
+      "by": "Dana Okafor",
+      "note": null
+    },
+    "model": {
+      "status": "complete",
+      "updated": "2026-11-16",
+      "by": "Dana Okafor",
+      "note": null
+    },
+    "validation": {
+      "status": "complete",
+      "updated": "2026-11-16",
+      "by": "Dana Okafor",
+      "note": null
+    },
+    "report": {
+      "status": "awaiting_review",
+      "updated": "2026-11-16",
+      "by": null,
+      "note": null
+    }
+  },
+  "log": [
+    {
+      "date": "2026-11-16",
+      "event": "Engagement workspace created"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "Plan confirmed by Dana Okafor: multi-tenant-saas, identity-federation, enterprise-integration; methods stride-per-element; quick"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "intake set to complete by Dana Okafor"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "questions set to complete by Dana Okafor"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "workshops set to complete by Dana Okafor"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "model set to complete by Dana Okafor"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "validation set to complete by Dana Okafor"
+    },
+    {
+      "date": "2026-11-16",
+      "event": "report set to awaiting_review"
+    }
+  ]
+}

@@ -1,0 +1,1954 @@
+{
+ "schema_version": "1.0",
+ "artifact_type": "TM_REVIEWED_MODEL",
+ "model_id": "northwind-paystream",
+ "revision": "final",
+ "parent_revision": "base",
+ "status": "complete",
+ "analysis_depth": "quick",
+ "architecture_ids": [
+  "multi-tenant-saas",
+  "identity-federation",
+  "enterprise-integration"
+ ],
+ "selected_methods": [
+  "stride-per-element"
+ ],
+ "processed_inputs": [
+  {
+   "id": "I1",
+   "locator": "materials/design/solution-architecture.md",
+   "access": "read",
+   "coverage": "v0.9; full read",
+   "reason": null
+  },
+  {
+   "id": "I2",
+   "locator": "materials/diagrams/context-diagram.mmd",
+   "access": "read",
+   "coverage": "v0.3; full read",
+   "reason": null
+  },
+  {
+   "id": "I3",
+   "locator": "materials/vendor/paystream-security-overview.md",
+   "access": "read",
+   "coverage": "v4.2; full read",
+   "reason": null
+  },
+  {
+   "id": "I4",
+   "locator": "materials/_text/M-004-2026-11-04-architecture-walkthrough.vtt.txt",
+   "access": "read",
+   "coverage": "4 November 2026; full read",
+   "reason": null
+  },
+  {
+   "id": "I5",
+   "locator": "materials/_text/M-005-2026-11-13-validation-call.vtt.txt",
+   "access": "read",
+   "coverage": "13 November 2026; full read",
+   "reason": null
+  }
+ ],
+ "unprocessed_inputs": [
+  {
+   "id": "U1",
+   "locator": "PayStream SOC 2 Type II report",
+   "access": "unavailable",
+   "coverage": "not supplied",
+   "reason": "Requested from the vendor; not received."
+  },
+  {
+   "id": "U2",
+   "locator": "Bank portal approval configuration",
+   "access": "unavailable",
+   "coverage": "not supplied",
+   "reason": "Not available to the engagement team."
+  }
+ ],
+ "attachments": [],
+ "continuation": null,
+ "model": {
+  "scope": {
+   "description": "Northwind Health's adoption of PayStream, a vendor-operated SaaS payroll product, and its integrations with the HRIS, Entra ID, the finance general ledger and the bank.",
+   "in_scope": [
+    "PayStream tenant configuration and access",
+    "Nightly HR extract and integration host",
+    "Single sign-on",
+    "Journal webhook to the general ledger",
+    "Payment file handling"
+   ],
+   "out_of_scope": [
+    "PayStream's internal platform security, other than as described by the vendor",
+    "The HRIS and general ledger applications themselves",
+    "The bank's systems"
+   ],
+   "objectives": [
+    "Decide whether PayStream can go live for the first pay run"
+   ],
+   "assumptions": [
+    "PayStream's description of its own controls is accurate.",
+    "The corporate network is the only route to the administration console."
+   ],
+   "limitations": [
+    "Based on design documentation, a vendor overview and workshops; no source code, configuration or running system was examined.",
+    "The vendor's SOC 2 report and the bank portal configuration were not available."
+   ]
+  },
+  "evidence": [
+   {
+    "id": "E1",
+    "locator": "materials/design/solution-architecture.md:10-18",
+    "source_kind": "document",
+    "source_revision": "0.9",
+    "date": "2026-10-21",
+    "statement": "The design lists six components: HRIS, integration host, Entra ID, the PayStream platform, the finance general ledger and the bank portal.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E2",
+    "locator": "materials/design/solution-architecture.md:19-26",
+    "source_kind": "document",
+    "source_revision": "0.9",
+    "date": "2026-10-21",
+    "statement": "Six data flows are described, including the nightly extract over SFTP, single sign-on, the journal webhook and the manual payment file upload.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E3",
+    "locator": "materials/design/solution-architecture.md:30",
+    "source_kind": "document",
+    "source_revision": "0.9",
+    "date": "2026-10-21",
+    "statement": "The design states that single sign-on with multi-factor authentication is enforced by Entra ID conditional access.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "Design statement; the conditional access policy was not seen.",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E4",
+    "locator": "materials/design/solution-architecture.md:33",
+    "source_kind": "document",
+    "source_revision": "0.9",
+    "date": "2026-10-21",
+    "statement": "The design states that payments require dual approval in the bank portal.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "Bank portal configuration was not seen.",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E5",
+    "locator": "materials/design/solution-architecture.md:37",
+    "source_kind": "document",
+    "source_revision": "0.9",
+    "date": "2026-10-21",
+    "statement": "Webhook authentication between PayStream and the general ledger is recorded as an open item.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E6",
+    "locator": "materials/diagrams/context-diagram.mmd",
+    "source_kind": "diagram",
+    "source_revision": "0.3",
+    "date": "2026-10-21",
+    "statement": "The context diagram shows three zones (corporate network, internet, PayStream cloud) and the flows between them. The bank portal and Entra ID are drawn outside any zone.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "The diagram does not show PayStream support access.",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E7",
+    "locator": "materials/vendor/paystream-security-overview.md:12-14",
+    "source_kind": "document",
+    "source_revision": "4.2",
+    "date": "2026-08",
+    "statement": "The vendor states that each tenant has local administrator accounts, and that multi-factor authentication for them is optional and configured by the customer.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E8",
+    "locator": "materials/vendor/paystream-security-overview.md:16-17",
+    "source_kind": "document",
+    "source_revision": "4.2",
+    "date": "2026-08",
+    "statement": "The vendor states that support engineers can access a customer tenant for a support case, with internal approval and logging, and that customers can request the log.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E9",
+    "locator": "materials/vendor/paystream-security-overview.md:22",
+    "source_kind": "document",
+    "source_revision": "4.2",
+    "date": "2026-08",
+    "statement": "The vendor states that outbound webhooks can be signed with an HMAC shared secret when the customer enables signing.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E10",
+    "locator": "materials/vendor/paystream-security-overview.md:26",
+    "source_kind": "document",
+    "source_revision": "4.2",
+    "date": "2026-08",
+    "statement": "The vendor states that it holds a SOC 2 Type II report covering security and availability.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "The report itself was not supplied.",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E11",
+    "locator": "materials/_text/M-004-2026-11-04-architecture-walkthrough.vtt.txt:2",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-04",
+    "statement": "Workshop, Marcus Lee: two local administrator accounts are shared by the payroll team and do not have multi-factor authentication switched on.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E12",
+    "locator": "materials/_text/M-004-2026-11-04-architecture-walkthrough.vtt.txt:4",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-04",
+    "statement": "Workshop, Priya Raman: the SFTP key sits in the service account's home folder and has not been rotated since go-live testing. She also said the extract file is deleted after transfer.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "The deletion statement was corrected in the validation call (E16).",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E13",
+    "locator": "materials/_text/M-004-2026-11-04-architecture-walkthrough.vtt.txt:6",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-04",
+    "statement": "Workshop, Priya Raman: the webhook endpoint accepts traffic from PayStream's address range only; whether signing is enabled is not known.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E14",
+    "locator": "materials/_text/M-004-2026-11-04-architecture-walkthrough.vtt.txt:7",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-04",
+    "statement": "Workshop, Marcus Lee: the payment file is downloaded to a laptop and uploaded to the bank portal, where a second approver releases it.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E15",
+    "locator": "materials/_text/M-004-2026-11-04-architecture-walkthrough.vtt.txt:9",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-04",
+    "statement": "Workshop, Marcus Lee: Northwind does not see when PayStream support accesses its tenant and has never requested the access log.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E20",
+    "locator": "caller:risk-matrix",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-04",
+    "statement": "Northwind supplied its 5x5 likelihood and consequence matrix as the rating rubric.",
+    "status": "observation",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E21",
+    "locator": "caller:risk-rating",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-13",
+    "statement": "Likelihood and consequence for each rated threat were agreed with Northwind.",
+    "status": "observation",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E16",
+    "locator": "materials/_text/M-005-2026-11-13-validation-call.vtt.txt:3",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-13",
+    "statement": "Validation call, Priya Raman: the extract is not deleted after transfer. It is moved to an archive folder and kept for thirty days.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E17",
+    "locator": "materials/_text/M-005-2026-11-13-validation-call.vtt.txt:4",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-13",
+    "statement": "Validation call, Marcus Lee: when staff leave, their PayStream account is not removed; single sign-on stops working but the account stays active.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E18",
+    "locator": "materials/_text/M-005-2026-11-13-validation-call.vtt.txt:4",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-13",
+    "statement": "Validation call, Marcus Lee: Northwind agrees the local administrator accounts are the top priority and will treat that threat.",
+    "status": "observation",
+    "purpose": "decision",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   },
+   {
+    "id": "E19",
+    "locator": "materials/_text/M-005-2026-11-13-validation-call.vtt.txt:2",
+    "source_kind": "caller",
+    "source_revision": null,
+    "date": "2026-11-13",
+    "statement": "Validation call, Marcus Lee: administration console access is from the corporate network only; the diagram is correct.",
+    "status": "claim",
+    "purpose": "description",
+    "access": "read",
+    "limitations": "",
+    "excerpt": null,
+    "derived_from": []
+   }
+  ],
+  "system": {
+   "actors": [
+    {
+     "id": "A1",
+     "kind": "employee",
+     "description": "Employee using the payslip portal",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "A2",
+     "kind": "privileged user",
+     "description": "Payroll administrator",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2",
+      "E14"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "A3",
+     "kind": "vendor staff",
+     "description": "PayStream support engineer",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E8"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    }
+   ],
+   "assets": [
+    {
+     "id": "S1",
+     "kind": "system of record",
+     "description": "Northwind HRIS",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "S2",
+     "kind": "integration server",
+     "description": "Integration host",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1",
+      "E12"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "S3",
+     "kind": "identity provider",
+     "description": "Microsoft Entra ID",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1",
+      "E3"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "S4",
+     "kind": "saas application",
+     "description": "PayStream platform",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1",
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "S5",
+     "kind": "data store",
+     "description": "PayStream data store",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "S6",
+     "kind": "external service",
+     "description": "Bank portal",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1",
+      "E4"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "S7",
+     "kind": "finance system",
+     "description": "Finance general ledger",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    }
+   ],
+   "data": [
+    {
+     "id": "D1",
+     "kind": "personal and financial data",
+     "description": "Employee master data, salaries and bank account details",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "D2",
+     "kind": "file",
+     "description": "Payroll payment file (ABA)",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E14"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "D3",
+     "kind": "government identifier",
+     "description": "Employee tax file numbers",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "D4",
+     "kind": "financial record",
+     "description": "Payroll journal",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    }
+   ],
+   "zones": [
+    {
+     "id": "Z1",
+     "kind": "corporate",
+     "description": "Northwind corporate network",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "Z2",
+     "kind": "internet",
+     "description": "Public internet",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "Z3",
+     "kind": "saas",
+     "description": "PayStream cloud",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "Z4",
+     "kind": "external",
+     "description": "Bank",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    }
+   ],
+   "entry_points": [
+    {
+     "id": "EP1",
+     "kind": "web portal",
+     "description": "PayStream employee portal",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2",
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "EP2",
+     "kind": "administration console",
+     "description": "PayStream administration console",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2",
+      "E7"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    },
+    {
+     "id": "EP3",
+     "kind": "file transfer",
+     "description": "PayStream SFTP endpoint",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2",
+      "E6"
+     ],
+     "rationale": "Described in the supplied design material.",
+     "related_refs": []
+    }
+   ],
+   "states": [],
+   "dependencies": [],
+   "boundaries": [
+    {
+     "id": "B1",
+     "kind": "organisational",
+     "description": "Northwind corporate network to PayStream cloud",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Shown on the context diagram.",
+     "related_refs": [],
+     "side_refs": [
+      "Z1",
+      "Z3"
+     ],
+     "owner_architecture": "enterprise-integration",
+     "gap_refs": []
+    },
+    {
+     "id": "B2",
+     "kind": "network",
+     "description": "Public internet to PayStream cloud",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Shown on the context diagram.",
+     "related_refs": [],
+     "side_refs": [
+      "Z2",
+      "Z3"
+     ],
+     "owner_architecture": "multi-tenant-saas",
+     "gap_refs": []
+    },
+    {
+     "id": "B3",
+     "kind": "organisational",
+     "description": "Northwind corporate network to the bank",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E1"
+     ],
+     "rationale": "Described in the design.",
+     "related_refs": [],
+     "side_refs": [
+      "Z1",
+      "Z4"
+     ],
+     "owner_architecture": "enterprise-integration",
+     "gap_refs": []
+    }
+   ],
+   "flows": [
+    {
+     "id": "F1",
+     "description": "Employee sign-in and payslip access",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "A1",
+     "target_ref": "EP1",
+     "data_refs": [
+      "D1"
+     ],
+     "boundary_refs": [
+      "B2"
+     ],
+     "gap_refs": []
+    },
+    {
+     "id": "F2",
+     "description": "Payroll administration from the corporate network",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2",
+      "E19"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "A2",
+     "target_ref": "EP2",
+     "data_refs": [
+      "D1"
+     ],
+     "boundary_refs": [
+      "B1"
+     ],
+     "gap_refs": []
+    },
+    {
+     "id": "F3",
+     "description": "SAML sign-on assertion",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E3",
+      "E6"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "S3",
+     "target_ref": "S4",
+     "data_refs": [],
+     "boundary_refs": [
+      "B1"
+     ],
+     "gap_refs": []
+    },
+    {
+     "id": "F4",
+     "description": "Nightly full employee extract",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "S1",
+     "target_ref": "S2",
+     "data_refs": [
+      "D1",
+      "D3"
+     ],
+     "boundary_refs": [],
+     "gap_refs": []
+    },
+    {
+     "id": "F5",
+     "description": "Extract upload over SFTP",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "S2",
+     "target_ref": "EP3",
+     "data_refs": [
+      "D1",
+      "D3"
+     ],
+     "boundary_refs": [
+      "B1"
+     ],
+     "gap_refs": []
+    },
+    {
+     "id": "F6",
+     "description": "Extract ingestion",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "EP3",
+     "target_ref": "S4",
+     "data_refs": [
+      "D1",
+      "D3"
+     ],
+     "boundary_refs": [],
+     "gap_refs": []
+    },
+    {
+     "id": "F7",
+     "description": "Portal requests",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "EP1",
+     "target_ref": "S4",
+     "data_refs": [
+      "D1"
+     ],
+     "boundary_refs": [],
+     "gap_refs": []
+    },
+    {
+     "id": "F8",
+     "description": "Administration requests",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "EP2",
+     "target_ref": "S4",
+     "data_refs": [
+      "D1"
+     ],
+     "boundary_refs": [],
+     "gap_refs": []
+    },
+    {
+     "id": "F9",
+     "description": "Payroll data storage",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E6"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "S4",
+     "target_ref": "S5",
+     "data_refs": [
+      "D1",
+      "D3"
+     ],
+     "boundary_refs": [],
+     "gap_refs": []
+    },
+    {
+     "id": "F10",
+     "description": "Payroll journal webhook",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E2",
+      "E13"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "S4",
+     "target_ref": "S7",
+     "data_refs": [
+      "D4"
+     ],
+     "boundary_refs": [
+      "B1"
+     ],
+     "gap_refs": [
+      "G1"
+     ]
+    },
+    {
+     "id": "F11",
+     "description": "Payment file upload",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E14"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "A2",
+     "target_ref": "S6",
+     "data_refs": [
+      "D2"
+     ],
+     "boundary_refs": [
+      "B3"
+     ],
+     "gap_refs": []
+    },
+    {
+     "id": "F12",
+     "description": "Vendor support access to the tenant",
+     "basis": "claimed",
+     "evidence_refs": [
+      "E8"
+     ],
+     "rationale": "Described in the design.",
+     "source_ref": "A3",
+     "target_ref": "S4",
+     "data_refs": [
+      "D1",
+      "D3"
+     ],
+     "boundary_refs": [],
+     "gap_refs": [
+      "G4"
+     ]
+    }
+   ]
+  },
+  "methods": [
+   {
+    "id": "M-1",
+    "method_id": "stride-per-element",
+    "source_revision": null,
+    "source_status": "verified",
+    "scope_refs": [
+     "EP1",
+     "EP2",
+     "EP3",
+     "S2",
+     "S4",
+     "S6",
+     "S7"
+    ],
+    "applied": [
+     "Each in-scope component and entry point examined against the applicable STRIDE categories"
+    ],
+    "status": "completed",
+    "omissions": [],
+    "evidence_refs": [
+     "E1",
+     "E2"
+    ],
+    "findings": [
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Spoofing",
+      "record_refs": [
+       "T-001"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Elevation of privilege",
+      "record_refs": [
+       "T-001"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Information disclosure",
+      "record_refs": [
+       "T-002"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Tampering",
+      "record_refs": [
+       "T-002"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Tampering",
+      "record_refs": [
+       "T-003"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Spoofing",
+      "record_refs": [
+       "T-004"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Repudiation",
+      "record_refs": [
+       "T-004"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Information disclosure",
+      "record_refs": [
+       "T-005"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     },
+     {
+      "name": "STRIDE category",
+      "kind": "text",
+      "value": "Elevation of privilege",
+      "record_refs": [
+       "T-006"
+      ],
+      "evidence_refs": [
+       "E1"
+      ],
+      "status": "supported",
+      "source": null,
+      "source_revision": null,
+      "identifier": null
+     }
+    ]
+   }
+  ],
+  "threats": [
+   {
+    "id": "T-001",
+    "scenario": "An attacker who obtains the password of a shared local administrator account signs in to the administration console directly, bypassing single sign-on and multi-factor authentication, and changes employee bank details before a pay run.",
+    "objective": "Take over payroll administration through a local account",
+    "affected_refs": [
+     "EP2",
+     "S4",
+     "D1"
+    ],
+    "prerequisites": [
+     "Password of a shared local administrator account",
+     "Network path to the administration console"
+    ],
+    "actor_assumptions": [
+     "External attacker with a phished or reused password, or a former member of the payroll team"
+    ],
+    "evidence_refs": [
+     "E7",
+     "E11"
+    ],
+    "method_refs": [
+     "M-1"
+    ],
+    "confidence": "high",
+    "confidence_rationale": "The vendor documents the local accounts and the client confirmed two exist without multi-factor authentication.",
+    "finding_type": "design_hypothesis",
+    "status": "open",
+    "gap_refs": [],
+    "related_threat_refs": [],
+    "resolution_evidence_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "T-002",
+    "scenario": "Someone with access to the integration host reads the nightly extract, which holds every employee's salary, bank account and tax file number, or copies the SFTP private key and uploads a modified extract to PayStream.",
+    "objective": "Steal or alter the nightly employee extract",
+    "affected_refs": [
+     "S2",
+     "D1",
+     "D3"
+    ],
+    "prerequisites": [
+     "Access to the integration host or its service account"
+    ],
+    "actor_assumptions": [
+     "Insider with server access, or an attacker who has compromised the host"
+    ],
+    "evidence_refs": [
+     "E12",
+     "E16"
+    ],
+    "method_refs": [
+     "M-1"
+    ],
+    "confidence": "medium",
+    "confidence_rationale": "The client described the key location and file handling; the host itself was not examined.",
+    "finding_type": "design_hypothesis",
+    "status": "open",
+    "gap_refs": [],
+    "related_threat_refs": [],
+    "resolution_evidence_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "T-003",
+    "scenario": "Malware on the payroll administrator's laptop, or the administrator, alters account numbers in the payment file after it is downloaded from PayStream and before it is uploaded to the bank.",
+    "objective": "Redirect payroll payments by altering the payment file",
+    "affected_refs": [
+     "A2",
+     "S6",
+     "D2"
+    ],
+    "prerequisites": [
+     "Control of the administrator's workstation or the administrator's cooperation"
+    ],
+    "actor_assumptions": [
+     "Malicious insider or malware on the workstation"
+    ],
+    "evidence_refs": [
+     "E14",
+     "E4"
+    ],
+    "method_refs": [
+     "M-1"
+    ],
+    "confidence": "medium",
+    "confidence_rationale": "The manual handling was described by the client; the bank portal's approval settings were not seen.",
+    "finding_type": "design_hypothesis",
+    "status": "open",
+    "gap_refs": [
+     "G3"
+    ],
+    "related_threat_refs": [],
+    "resolution_evidence_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "T-004",
+    "scenario": "An attacker who can reach the general ledger webhook from an allowed address posts a forged payroll journal, or replays an earlier one, and the ledger accepts it.",
+    "objective": "Post forged payroll journals to the general ledger",
+    "affected_refs": [
+     "S7",
+     "F10",
+     "D4"
+    ],
+    "prerequisites": [
+     "Ability to send requests from an address the endpoint accepts"
+    ],
+    "actor_assumptions": [
+     "Attacker with a foothold in the vendor's address range, or another PayStream tenant if addresses are shared"
+    ],
+    "evidence_refs": [
+     "E5",
+     "E9",
+     "E13"
+    ],
+    "method_refs": [
+     "M-1"
+    ],
+    "confidence": "low",
+    "confidence_rationale": "Whether webhook signing is enabled is unknown.",
+    "finding_type": "design_hypothesis",
+    "status": "open",
+    "gap_refs": [
+     "G1"
+    ],
+    "related_threat_refs": [],
+    "resolution_evidence_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "T-005",
+    "scenario": "A PayStream support engineer, or an attacker using a support engineer's access, views or exports Northwind's payroll data and Northwind does not find out.",
+    "objective": "Access tenant data through vendor support access",
+    "affected_refs": [
+     "A3",
+     "S4",
+     "S5",
+     "D3"
+    ],
+    "prerequisites": [
+     "PayStream support access to the tenant"
+    ],
+    "actor_assumptions": [
+     "Vendor insider or an attacker who has compromised a vendor support account"
+    ],
+    "evidence_refs": [
+     "E8",
+     "E15"
+    ],
+    "method_refs": [
+     "M-1"
+    ],
+    "confidence": "medium",
+    "confidence_rationale": "The vendor documents support access; Northwind does not review the access log.",
+    "finding_type": "design_hypothesis",
+    "status": "open",
+    "gap_refs": [
+     "G2",
+     "G4"
+    ],
+    "related_threat_refs": [],
+    "resolution_evidence_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "T-006",
+    "scenario": "A former employee, or someone with their credentials, signs in to a PayStream account that was never removed and views payslips or, for former payroll staff, uses administrator rights.",
+    "objective": "Use an account that was not removed when its owner left",
+    "affected_refs": [
+     "EP1",
+     "EP2",
+     "S4"
+    ],
+    "prerequisites": [
+     "A PayStream account that remains active after the person leaves",
+     "A way to sign in without single sign-on"
+    ],
+    "actor_assumptions": [
+     "Former employee"
+    ],
+    "evidence_refs": [
+     "E17",
+     "E7"
+    ],
+    "method_refs": [
+     "M-1"
+    ],
+    "confidence": "medium",
+    "confidence_rationale": "Raised by the client in the validation call; depends on whether the account has a local password.",
+    "finding_type": "design_hypothesis",
+    "status": "open",
+    "gap_refs": [],
+    "related_threat_refs": [],
+    "resolution_evidence_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   }
+  ],
+  "controls": [
+   {
+    "id": "C-001",
+    "description": "Single sign-on through Entra ID with multi-factor authentication enforced by conditional access",
+    "affected_refs": [
+     "EP1",
+     "EP2",
+     "S3"
+    ],
+    "threat_refs": [
+     "T-001",
+     "T-006"
+    ],
+    "status": "claimed",
+    "evidence_refs": [
+     "E3",
+     "E11"
+    ],
+    "limitations": "Does not apply to local administrator accounts, which sign in with a password.",
+    "verification_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "C-002",
+    "description": "Extract transferred over SFTP with key authentication",
+    "affected_refs": [
+     "S2",
+     "EP3"
+    ],
+    "threat_refs": [
+     "T-002"
+    ],
+    "status": "claimed",
+    "evidence_refs": [
+     "E2",
+     "E12"
+    ],
+    "limitations": "Protects the file in transit only. The key has not been rotated.",
+    "verification_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "C-003",
+    "description": "Extract file moved to an archive folder and kept for thirty days after transfer",
+    "affected_refs": [
+     "S2"
+    ],
+    "threat_refs": [
+     "T-002"
+    ],
+    "status": "claimed",
+    "evidence_refs": [
+     "E12",
+     "E16"
+    ],
+    "limitations": "The file is retained, not deleted, so it remains exposed on the host for thirty days.",
+    "verification_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "C-004",
+    "description": "Dual approval of payments in the bank portal",
+    "affected_refs": [
+     "S6"
+    ],
+    "threat_refs": [
+     "T-003"
+    ],
+    "status": "claimed",
+    "evidence_refs": [
+     "E4",
+     "E14"
+    ],
+    "limitations": "The approver sees totals in the bank portal; whether individual account changes are visible is unknown.",
+    "verification_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "C-005",
+    "description": "Vendor approval and logging of support access, covered by a SOC 2 Type II report",
+    "affected_refs": [
+     "S4",
+     "S5"
+    ],
+    "threat_refs": [
+     "T-005"
+    ],
+    "status": "claimed",
+    "evidence_refs": [
+     "E8",
+     "E10"
+    ],
+    "limitations": "The SOC 2 report was not supplied and Northwind does not review the access log.",
+    "verification_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   },
+   {
+    "id": "C-006",
+    "description": "Webhook endpoint accepts traffic from PayStream's address range only",
+    "affected_refs": [
+     "S7"
+    ],
+    "threat_refs": [
+     "T-004"
+    ],
+    "status": "claimed",
+    "evidence_refs": [
+     "E13"
+    ],
+    "limitations": "Address filtering does not prove who sent a request or prevent replay.",
+    "verification_refs": [],
+    "architecture_ids": [
+     "multi-tenant-saas"
+    ]
+   }
+  ],
+  "requirements": [],
+  "risks": [
+   {
+    "id": "R-001",
+    "threat_refs": [
+     "T-001"
+    ],
+    "status": "rated",
+    "rubric": {
+     "name": "Northwind enterprise risk matrix",
+     "version": "3.1",
+     "origin": "Supplied by Northwind for this engagement",
+     "evidence_refs": [
+      "E20"
+     ]
+    },
+    "inputs": [
+     {
+      "name": "likelihood",
+      "value": "Likely",
+      "evidence_refs": [
+       "E21"
+      ]
+     },
+     {
+      "name": "consequence",
+      "value": "Major",
+      "evidence_refs": [
+       "E21"
+      ]
+     }
+    ],
+    "rating": "High",
+    "original_values": [],
+    "rationale": "Rated with the client using the supplied matrix.",
+    "uncertainty": "Inputs are judgements agreed with the client."
+   },
+   {
+    "id": "R-002",
+    "threat_refs": [
+     "T-002"
+    ],
+    "status": "rated",
+    "rubric": {
+     "name": "Northwind enterprise risk matrix",
+     "version": "3.1",
+     "origin": "Supplied by Northwind for this engagement",
+     "evidence_refs": [
+      "E20"
+     ]
+    },
+    "inputs": [
+     {
+      "name": "likelihood",
+      "value": "Possible",
+      "evidence_refs": [
+       "E21"
+      ]
+     },
+     {
+      "name": "consequence",
+      "value": "Major",
+      "evidence_refs": [
+       "E21"
+      ]
+     }
+    ],
+    "rating": "High",
+    "original_values": [],
+    "rationale": "Rated with the client using the supplied matrix.",
+    "uncertainty": "Inputs are judgements agreed with the client."
+   },
+   {
+    "id": "R-003",
+    "threat_refs": [
+     "T-003"
+    ],
+    "status": "rated",
+    "rubric": {
+     "name": "Northwind enterprise risk matrix",
+     "version": "3.1",
+     "origin": "Supplied by Northwind for this engagement",
+     "evidence_refs": [
+      "E20"
+     ]
+    },
+    "inputs": [
+     {
+      "name": "likelihood",
+      "value": "Unlikely",
+      "evidence_refs": [
+       "E21"
+      ]
+     },
+     {
+      "name": "consequence",
+      "value": "Major",
+      "evidence_refs": [
+       "E21"
+      ]
+     }
+    ],
+    "rating": "Medium",
+    "original_values": [],
+    "rationale": "Rated with the client using the supplied matrix.",
+    "uncertainty": "Inputs are judgements agreed with the client."
+   },
+   {
+    "id": "R-005",
+    "threat_refs": [
+     "T-005"
+    ],
+    "status": "rated",
+    "rubric": {
+     "name": "Northwind enterprise risk matrix",
+     "version": "3.1",
+     "origin": "Supplied by Northwind for this engagement",
+     "evidence_refs": [
+      "E20"
+     ]
+    },
+    "inputs": [
+     {
+      "name": "likelihood",
+      "value": "Unlikely",
+      "evidence_refs": [
+       "E21"
+      ]
+     },
+     {
+      "name": "consequence",
+      "value": "Moderate",
+      "evidence_refs": [
+       "E21"
+      ]
+     }
+    ],
+    "rating": "Medium",
+    "original_values": [],
+    "rationale": "Rated with the client using the supplied matrix.",
+    "uncertainty": "Inputs are judgements agreed with the client."
+   },
+   {
+    "id": "R-004",
+    "threat_refs": [
+     "T-004"
+    ],
+    "status": "unrated",
+    "rubric": null,
+    "inputs": [],
+    "rating": null,
+    "original_values": [],
+    "rationale": "Not rated until the webhook signing configuration is known (G1).",
+    "uncertainty": "Depends on G1."
+   },
+   {
+    "id": "R-006",
+    "threat_refs": [
+     "T-006"
+    ],
+    "status": "rated",
+    "rubric": {
+     "name": "Northwind enterprise risk matrix",
+     "version": "3.1",
+     "origin": "Supplied by Northwind for this engagement",
+     "evidence_refs": [
+      "E20"
+     ]
+    },
+    "inputs": [
+     {
+      "name": "likelihood",
+      "value": "Possible",
+      "evidence_refs": [
+       "E21"
+      ]
+     },
+     {
+      "name": "consequence",
+      "value": "Moderate",
+      "evidence_refs": [
+       "E21"
+      ]
+     }
+    ],
+    "rating": "Medium",
+    "original_values": [],
+    "rationale": "Rated with the client using the supplied matrix.",
+    "uncertainty": "Inputs are judgements agreed with the client."
+   }
+  ],
+  "attack_trees": [],
+  "attack_paths": [],
+  "visualizations": [],
+  "coverage": [
+   {
+    "id": "COV-1",
+    "target_ref": null,
+    "method_ref": null,
+    "lens": "inspection-coverage",
+    "status": "partial",
+    "reason": "All supplied design, vendor and workshop material was read in full. No code or configuration was available, and two requested items were not supplied."
+   }
+  ],
+  "conflicts": [],
+  "gaps": [
+   {
+    "id": "G1",
+    "kind": "evidence",
+    "description": "Whether signing is enabled on the journal webhook is not known.",
+    "needed": "PayStream webhook configuration and the general ledger receiver's validation logic.",
+    "affected_refs": [
+     "F10",
+     "T-004"
+    ],
+    "status": "open",
+    "evidence_refs": [
+     "E5",
+     "E13"
+    ]
+   },
+   {
+    "id": "G2",
+    "kind": "evidence",
+    "description": "PayStream's SOC 2 Type II report has not been seen.",
+    "needed": "The current report from the vendor.",
+    "affected_refs": [
+     "T-005",
+     "C-005"
+    ],
+    "status": "open",
+    "evidence_refs": [
+     "E10"
+    ]
+   },
+   {
+    "id": "G3",
+    "kind": "evidence",
+    "description": "The bank portal's approval configuration was not seen.",
+    "needed": "Screenshots or an export of the approval settings.",
+    "affected_refs": [
+     "T-003",
+     "C-004"
+    ],
+    "status": "open",
+    "evidence_refs": [
+     "E4"
+    ]
+   },
+   {
+    "id": "G4",
+    "kind": "topology",
+    "description": "The route PayStream support staff use to reach a tenant is not documented.",
+    "needed": "Vendor description of the support access path and its controls.",
+    "affected_refs": [
+     "F12"
+    ],
+    "status": "open",
+    "evidence_refs": [
+     "E8"
+    ]
+   }
+  ],
+  "treatments": [
+   {
+    "id": "TR-001",
+    "threat_refs": [
+     "T-001"
+    ],
+    "outcome": "Remove the shared local administrator accounts, or keep one break-glass account with multi-factor authentication, a vaulted password and an alert on every use.",
+    "status": "proposed",
+    "alternatives": [
+     "Restrict local account sign-in to a named network location"
+    ],
+    "tradeoffs": [
+     "Emergency access needs a documented procedure"
+    ],
+    "dependency_refs": [],
+    "pack_dependencies": [],
+    "verification_refs": [
+     "V-001"
+    ],
+    "gap_refs": []
+   },
+   {
+    "id": "TR-002",
+    "threat_refs": [
+     "T-002"
+    ],
+    "outcome": "Store the SFTP key in a secrets vault with rotation, and encrypt or delete the extract on the integration host as soon as the transfer succeeds.",
+    "status": "proposed",
+    "alternatives": [
+     "Replace the file transfer with an API integration that sends only changed records"
+    ],
+    "tradeoffs": [
+     "Changes to the extract job and its monitoring"
+    ],
+    "dependency_refs": [],
+    "pack_dependencies": [],
+    "verification_refs": [
+     "V-002"
+    ],
+    "gap_refs": []
+   },
+   {
+    "id": "TR-003",
+    "threat_refs": [
+     "T-003"
+    ],
+    "outcome": "Send the payment file to the bank through a system-to-system channel, or verify a file hash from PayStream in the bank portal before release.",
+    "status": "proposed",
+    "alternatives": [
+     "Second approver checks changed bank accounts against a PayStream report before release"
+    ],
+    "tradeoffs": [
+     "Bank integration has cost and lead time"
+    ],
+    "dependency_refs": [],
+    "pack_dependencies": [],
+    "verification_refs": [
+     "V-003"
+    ],
+    "gap_refs": [
+     "G3"
+    ]
+   },
+   {
+    "id": "TR-004",
+    "threat_refs": [
+     "T-004"
+    ],
+    "outcome": "Enable webhook signing in PayStream and have the general ledger verify the signature and reject replays.",
+    "status": "proposed",
+    "alternatives": [
+     "Pull journals from PayStream over an authenticated API"
+    ],
+    "tradeoffs": [
+     "Requires a change to the ledger's webhook receiver"
+    ],
+    "dependency_refs": [],
+    "pack_dependencies": [],
+    "verification_refs": [
+     "V-004"
+    ],
+    "gap_refs": [
+     "G1"
+    ]
+   },
+   {
+    "id": "TR-005",
+    "threat_refs": [
+     "T-005"
+    ],
+    "outcome": "Obtain the SOC 2 Type II report, request the support access log on a schedule, and agree notification of support access in the contract.",
+    "status": "proposed",
+    "alternatives": [
+     "Ask the vendor for customer-approved support access"
+    ],
+    "tradeoffs": [
+     "Depends on what the vendor's contract offers"
+    ],
+    "dependency_refs": [],
+    "pack_dependencies": [],
+    "verification_refs": [
+     "V-005"
+    ],
+    "gap_refs": [
+     "G2",
+     "G4"
+    ]
+   },
+   {
+    "id": "TR-006",
+    "threat_refs": [
+     "T-006"
+    ],
+    "outcome": "Remove PayStream accounts as part of the leaver process, by automated provisioning where the vendor supports it, and reconcile accounts against HR records each month.",
+    "status": "proposed",
+    "alternatives": [
+     "Disable local passwords for all non-administrator accounts"
+    ],
+    "tradeoffs": [
+     "Needs a joiner, mover and leaver design"
+    ],
+    "dependency_refs": [],
+    "pack_dependencies": [],
+    "verification_refs": [
+     "V-006"
+    ],
+    "gap_refs": []
+   }
+  ],
+  "verification": [
+   {
+    "id": "V-001",
+    "threat_refs": [
+     "T-001"
+    ],
+    "control_refs": [],
+    "approach": "Export the user list and authentication settings from the PayStream administration console and review every local account.",
+    "expected_outcome": "No shared local accounts; any remaining local account has multi-factor authentication.",
+    "prerequisite_evidence_refs": [],
+    "pass_criteria": "Every local account is individually owned or is a single vaulted break-glass account with multi-factor authentication.",
+    "fail_criteria": "Any shared local account, or any local account without multi-factor authentication.",
+    "inconclusive_criteria": "The export does not show authentication method per account.",
+    "status": "not_run",
+    "result_evidence_refs": []
+   },
+   {
+    "id": "V-002",
+    "threat_refs": [
+     "T-002"
+    ],
+    "control_refs": [],
+    "approach": "Inspect the integration host: where the SFTP key is stored, who can read it, when it was last rotated, and how long extract files remain on disk.",
+    "expected_outcome": "The key is in a vault and no extract remains after transfer.",
+    "prerequisite_evidence_refs": [],
+    "pass_criteria": "Key not readable outside the job's identity and rotated within policy; no extract older than one day on the host.",
+    "fail_criteria": "Key readable by other accounts, never rotated, or extracts retained.",
+    "inconclusive_criteria": "Access to the host cannot be arranged.",
+    "status": "not_run",
+    "result_evidence_refs": []
+   },
+   {
+    "id": "V-003",
+    "threat_refs": [
+     "T-003"
+    ],
+    "control_refs": [],
+    "approach": "Walk through one pay run with the payroll administrator and the bank approver, and review the bank portal's approval configuration.",
+    "expected_outcome": "An altered file would be detected before release.",
+    "prerequisite_evidence_refs": [],
+    "pass_criteria": "The approver sees and checks changed beneficiary accounts, or the file's integrity is verified.",
+    "fail_criteria": "The approver sees totals only and nothing detects an altered file.",
+    "inconclusive_criteria": "The bank portal configuration cannot be viewed.",
+    "status": "not_run",
+    "result_evidence_refs": []
+   },
+   {
+    "id": "V-004",
+    "threat_refs": [
+     "T-004"
+    ],
+    "control_refs": [],
+    "approach": "In a test environment, send the general ledger webhook an unsigned request and a replayed request from an allowed address.",
+    "expected_outcome": "Both requests are rejected.",
+    "prerequisite_evidence_refs": [],
+    "pass_criteria": "Unsigned and replayed requests are rejected.",
+    "fail_criteria": "Either request is accepted.",
+    "inconclusive_criteria": "No test environment is available.",
+    "status": "not_run",
+    "result_evidence_refs": []
+   },
+   {
+    "id": "V-005",
+    "threat_refs": [
+     "T-005"
+    ],
+    "control_refs": [
+     "C-005"
+    ],
+    "approach": "Obtain PayStream's current SOC 2 Type II report and the support access log for the last quarter; check the report's privileged access controls and any exceptions.",
+    "expected_outcome": "Support access is approved, logged and limited, with no relevant exceptions.",
+    "prerequisite_evidence_refs": [],
+    "pass_criteria": "Report covers support access with no exceptions and the log matches Northwind's support cases.",
+    "fail_criteria": "Exceptions affecting support access, or log entries with no matching support case.",
+    "inconclusive_criteria": "The vendor does not supply the report or the log.",
+    "status": "not_run",
+    "result_evidence_refs": []
+   },
+   {
+    "id": "V-006",
+    "threat_refs": [
+     "T-006"
+    ],
+    "control_refs": [],
+    "approach": "Reconcile active PayStream accounts against current HR records and check whether leaver accounts have a local password.",
+    "expected_outcome": "No account belongs to someone who has left.",
+    "prerequisite_evidence_refs": [],
+    "pass_criteria": "Every active account maps to a current employee.",
+    "fail_criteria": "Any active account for a former employee.",
+    "inconclusive_criteria": "The account export lacks the detail to match against HR records.",
+    "status": "not_run",
+    "result_evidence_refs": []
+   }
+  ],
+  "decisions": [
+   {
+    "id": "DEC-1",
+    "subject_refs": [
+     "T-001",
+     "TR-001"
+    ],
+    "status": "accepted",
+    "rationale": "Northwind agreed in the validation call to treat the local administrator accounts as the top priority.",
+    "owner": null,
+    "date": "2026-11-13",
+    "evidence_refs": [
+     "E18"
+    ]
+   }
+  ],
+  "changes": [
+   {
+    "id": "CH-1",
+    "kind": "added",
+    "current_refs": [
+     "T-006",
+     "TR-006",
+     "V-006",
+     "R-006"
+    ],
+    "previous_ids": [],
+    "rationale": "Raised by the client in the validation call.",
+    "evidence_refs": [
+     "E17"
+    ]
+   },
+   {
+    "id": "CH-2",
+    "kind": "changed",
+    "current_refs": [
+     "C-003",
+     "T-002"
+    ],
+    "previous_ids": [
+     "C-003",
+     "T-002"
+    ],
+    "rationale": "The client corrected its earlier statement: the extract is retained for thirty days, not deleted.",
+    "evidence_refs": [
+     "E16"
+    ]
+   }
+  ],
+  "identity_map": []
+ }
+}

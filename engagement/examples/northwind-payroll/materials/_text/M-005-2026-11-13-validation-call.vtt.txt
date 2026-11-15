@@ -1,0 +1,5 @@
+[00:01:30] Dana Okafor (Product Security): We have drawn the admin console access from the corporate network only. Is that right?
+[00:01:56] Marcus Lee (Northwind payroll systems lead): Yes, that is right. The diagram is correct.
+[00:04:20] Priya Raman (Northwind integration engineer): One correction. I checked the job after the workshop. The extract is not deleted. It is moved to an archive folder and kept for thirty days.
+[00:08:05] Marcus Lee (Northwind payroll systems lead): Something you have not listed: when people leave, nobody removes them from PayStream. Their SSO stops working, but the PayStream account stays active. We agree the local admin accounts are the top priority. We will treat that one.
+[00:14:00] Priya Raman (Northwind integration engineer): I still need to check the webhook signing with the vendor.

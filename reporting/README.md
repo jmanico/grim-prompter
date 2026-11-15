@@ -50,7 +50,9 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 | `executive_summary.key_components` | `{ "ref": "<record id>", "name": "...", "why": "..." }` |
 | `executive_summary.next_steps` | `{ "step": "...", "refs": ["<record ids>"] }` |
 | `executive_summary.verdicts` | Optional wording for the three verdict cards: `threats`, `controls`, `actions` |
-| `records` | Annotations keyed by record id: `title`, `impact`, `response`, `response_note`, `target_rating`, `coverage`, `coverage_note`, `priority`, `effort`, `owner`, `target_date`, `type`, `environment` |
+| `records` | Annotations keyed by record id: `title`, `impact`, `response`, `response_note`, `target_rating`, `coverage`, `coverage_note`, `priority`, `effort`, `owner`, `target_date`, `type`, `environment`, `responsibility` |
+| `code_access` | `none`, `partial` or `full`: whether source code was reviewed. Sets how the report words what its findings are based on |
+| `validation` | The client validation record: `sessions` (`date`, `title`, `attendees`) and `items` (`ref`, `outcome`, `note`) |
 | `assumptions` | `{ "statement", "refs": ["<threat ids>"], "if_wrong" }` |
 | `document_control` | `versions` (`version`, `date`, `author`, `change`), `reviewers` (`name`, `role`, `responsibility`, `date`), `distribution` |
 | `review_triggers` | Events that should prompt a revisit; general ones are listed when empty |
@@ -58,12 +60,27 @@ Start from [`engagement-template.json`](engagement-template.json); [`examples/sa
 | `scope_and_approach.activities` | `{ "phase": "...", "description": "..." }` |
 | `scope_and_approach.review_coverage` | Paragraph on which code and documentation was reviewed in full, partly or not at all |
 | `scope_and_approach.limitations` | Limitations in client wording; replaces the limitations text recorded in the model |
-| `artefacts` | `{ "name", "type", "version", "date", "source", "notes" }` |
+| `artefacts` | `{ "name", "type", "version", "date", "source", "notes" }`, plus optional `id`, `category` (`code`, `configuration`, `design`, `diagram`, `vendor`, `workshop`, `other`), `file`, `text_file` and `reviewed` (`full`, `partial`, `none`). With `file` set, the report can show which artefacts each finding is based on |
 | `workshops` | `{ "date", "title", "attendees": [], "purpose", "outcomes": [] }` |
 | `risk_matrix` | `name`, `version`, `source`, `likelihood` and `consequence` levels (`label`, `description`), `cells` (one row per likelihood level, one rating label per consequence level) and `ratings` (`label`, `color`, `description`, highest first) |
-| `options` | `show_excerpts` (code excerpts in the evidence references, default off) and `include_data_download` (a button to download the underlying data, default off) |
+| `options` | `show_excerpts` (code excerpts in the evidence references, default off), `include_data_download` (a button to download the underlying data, default off) and `pack: "validation"` (build the short client validation pack instead of the report) |
 
 The agent drafts the narrative, short titles and impact statements from the model, so you can check each against its record. Workshops, artefact versions, the risk matrix, owners, dates, decisions and target ratings are never invented: supply them in the request or in files you name.
+
+### Reviews without source code
+
+The same report serves a code-backed review and an architecture review of a third-party product. What changes is what the model can claim, and the report shows it:
+
+- **Based on.** Each threat, control and component lists the kinds of artefact it rests on: code, configuration, design document, diagram, vendor documentation, workshop or client statement. This needs the artefact register (`artefacts` with `file`).
+- **Controls.** A control seen in code or configuration is "implemented"; one a document or person described is "reported"; one planned is "designed".
+- **Coverage.** A threat whose only controls are reported shows "control reported, not verified" (`reported`), between "no control" and "controlled".
+- **Who runs it.** `records.<component id>.responsibility` is `client`, `vendor`, `shared` or `unknown`. Vendor-run components are drawn differently on the diagram, and verification against them is shown as a vendor assurance request.
+- **Verification types.** `records.<verification id>.type` is `confirm_weakness`, `retest_fix`, `test_control`, `review_configuration`, `vendor_assurance` or `design_review`. The first three are derived; set the others where a test is not possible.
+- **Client validation.** With `validation` supplied, each record shows what the client said about it (`confirmed`, `corrected`, `rejected`, `added`, `deferred`, `not_discussed`), and Scope and approach summarises the session.
+
+### Validation pack
+
+`options.pack: "validation"` produces a short draft for a client call instead of the report: the system as understood, components and who runs them, assumptions, controls believed to be in place, draft threats and open questions, each with a column to confirm. It carries no ratings, recommendations or verification. The [engagement workflow](../engagement/README.md) builds both with `engage.py build`, which assembles the engagement file from the workspace.
 
 ### Risk ratings
 

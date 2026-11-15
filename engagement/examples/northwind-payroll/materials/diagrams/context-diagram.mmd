@@ -1,0 +1,22 @@
+%% PayStream payroll context diagram, version 0.3, 21 October 2026
+flowchart LR
+  subgraph Corporate network
+    HRIS[Northwind HRIS] --> IH[Integration host]
+    GL[Finance general ledger]
+    ADM((Payroll administrator))
+  end
+  subgraph Internet
+    EMP((Employee))
+  end
+  subgraph PayStream cloud
+    SFTP[SFTP endpoint] --> PS[PayStream platform]
+    PORTAL[Employee portal] --> PS
+    CONSOLE[Administration console] --> PS
+    PS --> DB[(PayStream data store)]
+  end
+  IH -- nightly extract --> SFTP
+  EMP -- SSO --> PORTAL
+  ADM --> CONSOLE
+  ENTRA[Microsoft Entra ID] -- SAML assertion --> PS
+  PS -- journal webhook --> GL
+  ADM -- payment file --> BANK[Bank portal]

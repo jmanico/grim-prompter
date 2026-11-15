@@ -1,0 +1,108 @@
+{
+  "name": "Northwind enterprise risk matrix",
+  "version": "3.1",
+  "source": "Supplied by Northwind Health risk management.",
+  "likelihood": [
+    {
+      "label": "Almost certain",
+      "description": "Expected to occur in most circumstances"
+    },
+    {
+      "label": "Likely",
+      "description": "Will probably occur"
+    },
+    {
+      "label": "Possible",
+      "description": "Might occur at some time"
+    },
+    {
+      "label": "Unlikely",
+      "description": "Could occur but not expected"
+    },
+    {
+      "label": "Rare",
+      "description": "Only in exceptional circumstances"
+    }
+  ],
+  "consequence": [
+    {
+      "label": "Insignificant",
+      "description": "Negligible impact"
+    },
+    {
+      "label": "Minor",
+      "description": "Limited, contained impact"
+    },
+    {
+      "label": "Moderate",
+      "description": "Noticeable impact on customers or operations"
+    },
+    {
+      "label": "Major",
+      "description": "Serious impact on customers, finances or reputation"
+    },
+    {
+      "label": "Severe",
+      "description": "Critical, widespread or irreversible impact"
+    }
+  ],
+  "cells": [
+    [
+      "Medium",
+      "Medium",
+      "High",
+      "Critical",
+      "Critical"
+    ],
+    [
+      "Low",
+      "Medium",
+      "High",
+      "High",
+      "Critical"
+    ],
+    [
+      "Low",
+      "Medium",
+      "Medium",
+      "High",
+      "High"
+    ],
+    [
+      "Low",
+      "Low",
+      "Medium",
+      "Medium",
+      "High"
+    ],
+    [
+      "Low",
+      "Low",
+      "Low",
+      "Medium",
+      "Medium"
+    ]
+  ],
+  "ratings": [
+    {
+      "label": "Critical",
+      "color": "#7a0019",
+      "description": "Immediate executive attention"
+    },
+    {
+      "label": "High",
+      "color": "#d6401c",
+      "description": "Senior management attention; treat as a priority"
+    },
+    {
+      "label": "Medium",
+      "color": "#e0a100",
+      "description": "Management responsibility; plan treatment"
+    },
+    {
+      "label": "Low",
+      "color": "#2e8b57",
+      "description": "Manage through routine procedures"
+    }
+  ]
+}
