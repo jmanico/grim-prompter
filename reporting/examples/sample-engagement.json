@@ -1,0 +1,283 @@
+{
+  "engagement_version": "1.0",
+  "title": "Invoice API threat model",
+  "subtitle": "Partner API readiness review",
+  "client": "Example Client Pty Ltd",
+  "project": "Partner API launch",
+  "report_version": "1.0 draft",
+  "authors": [
+    "Product Security team"
+  ],
+  "executive_summary": {
+    "system_overview": [
+      "The Invoice API lets customer finance users and partner systems read invoices, export them as CSV files, receive status webhooks and request refunds. It is a Node.js service behind a public REST API, backed by a PostgreSQL database, with background workers for exports and webhooks and a separate payments service for refunds.",
+      "This review supports the decision to open the API to partners. It found three weaknesses evidenced in code and two design hypotheses. The most significant is that bulk exports are not authorised per invoice, and the export worker reads with an all-tenant service role."
+    ],
+    "key_components": [
+      {
+        "ref": "S2",
+        "name": "Export worker",
+        "why": "Runs with a service role that can read every tenant's invoices, so any gap in export authorisation exposes data across users."
+      },
+      {
+        "ref": "S1",
+        "name": "Invoice API",
+        "why": "Enforces tenant membership but not per-user ownership on invoice reads and export requests."
+      },
+      {
+        "ref": "S3",
+        "name": "Webhook dispatcher",
+        "why": "Makes outbound calls from inside the application network to customer-chosen addresses and follows redirects."
+      },
+      {
+        "ref": "S6",
+        "name": "Payments and refunds service",
+        "why": "Moves money; its duplicate-request protection has not been fully traced."
+      }
+    ],
+    "next_steps": [
+      {
+        "step": "Authorise every invoice in an export against the requesting user, at request time and again in the worker.",
+        "refs": [
+          "TR-001",
+          "T-001"
+        ]
+      },
+      {
+        "step": "Decide the intended invoice visibility within a tenant, then bind reads to the owner or an explicit grant.",
+        "refs": [
+          "TR-002",
+          "G3"
+        ]
+      },
+      {
+        "step": "Validate webhook destinations at send time and stop following redirects to private addresses.",
+        "refs": [
+          "TR-003",
+          "T-003"
+        ]
+      },
+      {
+        "step": "Confirm partner credential scopes before partner onboarding begins.",
+        "refs": [
+          "G1",
+          "T-005"
+        ]
+      },
+      {
+        "step": "Run the four planned verification tests in an isolated environment.",
+        "refs": [
+          "V-001",
+          "V-002",
+          "V-003",
+          "V-004"
+        ]
+      }
+    ]
+  },
+  "scope_and_approach": {
+    "approach": [
+      "The engagement used the Grim Prompter quick API workflow. An AI coding agent inspected the repository read-only, recorded evidence with file and line references, modelled the system and its trust boundaries, and developed threats from that evidence.",
+      "Threats were classified with STRIDE per element and mapped to MITRE ATT&CK and CAPEC where the behaviour was specific enough. Risks were rated in a workshop with the client using the matrix in Appendix C."
+    ],
+    "activities": [
+      {
+        "phase": "Kick-off and scoping",
+        "description": "Agreed the decision the review supports, the in-scope components and exclusions."
+      },
+      {
+        "phase": "Evidence gathering",
+        "description": "Read-only inspection of code, infrastructure definitions and design documentation."
+      },
+      {
+        "phase": "Modelling and analysis",
+        "description": "System model, trust boundaries, threats, existing controls and gaps."
+      },
+      {
+        "phase": "Risk rating",
+        "description": "Likelihood and consequence agreed with the client for each rateable threat."
+      },
+      {
+        "phase": "Reporting",
+        "description": "Recommendations, verification plans and this report."
+      }
+    ]
+  },
+  "artefacts": [
+    {
+      "name": "Invoice platform architecture",
+      "type": "Design document",
+      "version": "v1.4",
+      "date": "2026-10-02",
+      "source": "docs/architecture.md",
+      "notes": "Primary description of components and flows"
+    },
+    {
+      "name": "invoice-platform",
+      "type": "Code repository",
+      "version": "commit a1b2c3d (main)",
+      "date": "2026-11-10",
+      "source": "Client Git hosting",
+      "notes": "API, workers and Terraform"
+    },
+    {
+      "name": "Risk matrix",
+      "type": "Risk framework",
+      "version": "1.0",
+      "date": null,
+      "source": "Supplied by client",
+      "notes": "See Appendix C"
+    }
+  ],
+  "workshops": [
+    {
+      "date": "2026-11-03",
+      "title": "Kick-off and scoping",
+      "attendees": [
+        "Product Security",
+        "Client engineering lead",
+        "Client product owner"
+      ],
+      "purpose": "Agree scope, objectives and the decision the review supports.",
+      "outcomes": [
+        "Admin console excluded",
+        "Partner API launch confirmed as the driver"
+      ]
+    },
+    {
+      "date": "2026-11-10",
+      "title": "Architecture walkthrough",
+      "attendees": [
+        "Product Security",
+        "Client API team"
+      ],
+      "purpose": "Confirm components, data flows and trust boundaries.",
+      "outcomes": [
+        "Export and webhook flows confirmed",
+        "Settlement integration flagged as not yet documented"
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "title": "Risk rating",
+      "attendees": [
+        "Product Security",
+        "Client risk manager",
+        "Client engineering lead"
+      ],
+      "purpose": "Agree likelihood and consequence for each threat using the client matrix.",
+      "outcomes": [
+        "Four threats rated",
+        "T-005 left unrated pending partner credential design"
+      ]
+    }
+  ],
+  "risk_matrix": {
+    "name": "Example 5x5 risk matrix",
+    "version": "1.0",
+    "source": "Generic example shipped with the library. Replace with your organisation's or client's matrix.",
+    "likelihood": [
+      {
+        "label": "Almost certain",
+        "description": "Expected to occur in most circumstances"
+      },
+      {
+        "label": "Likely",
+        "description": "Will probably occur"
+      },
+      {
+        "label": "Possible",
+        "description": "Might occur at some time"
+      },
+      {
+        "label": "Unlikely",
+        "description": "Could occur but not expected"
+      },
+      {
+        "label": "Rare",
+        "description": "Only in exceptional circumstances"
+      }
+    ],
+    "consequence": [
+      {
+        "label": "Insignificant",
+        "description": "Negligible impact"
+      },
+      {
+        "label": "Minor",
+        "description": "Limited, contained impact"
+      },
+      {
+        "label": "Moderate",
+        "description": "Noticeable impact on customers or operations"
+      },
+      {
+        "label": "Major",
+        "description": "Serious impact on customers, finances or reputation"
+      },
+      {
+        "label": "Severe",
+        "description": "Critical, widespread or irreversible impact"
+      }
+    ],
+    "cells": [
+      [
+        "Medium",
+        "Medium",
+        "High",
+        "Critical",
+        "Critical"
+      ],
+      [
+        "Low",
+        "Medium",
+        "High",
+        "High",
+        "Critical"
+      ],
+      [
+        "Low",
+        "Medium",
+        "Medium",
+        "High",
+        "High"
+      ],
+      [
+        "Low",
+        "Low",
+        "Medium",
+        "Medium",
+        "High"
+      ],
+      [
+        "Low",
+        "Low",
+        "Low",
+        "Medium",
+        "Medium"
+      ]
+    ],
+    "ratings": [
+      {
+        "label": "Critical",
+        "color": "#7a0019",
+        "description": "Immediate executive attention"
+      },
+      {
+        "label": "High",
+        "color": "#d6401c",
+        "description": "Senior management attention; treat as a priority"
+      },
+      {
+        "label": "Medium",
+        "color": "#e0a100",
+        "description": "Management responsibility; plan treatment"
+      },
+      {
+        "label": "Low",
+        "color": "#2e8b57",
+        "description": "Manage through routine procedures"
+      }
+    ]
+  }
+}

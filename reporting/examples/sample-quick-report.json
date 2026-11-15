@@ -9,7 +9,11 @@
   "architecture_ids": [
     "api"
   ],
-  "selected_methods": [],
+  "selected_methods": [
+    "stride-per-element",
+    "attack-enrichment",
+    "capec-enrichment"
+  ],
   "processed_inputs": [
     {
       "id": "I1",
@@ -115,7 +119,7 @@
         "id": "E1",
         "locator": "docs/architecture.md:1-48",
         "source_kind": "document",
-        "source_revision": "a1b2c3d",
+        "source_revision": "v1.4 (2026-10-02)",
         "date": null,
         "statement": "Architecture document describes a public REST API, an export worker and a webhook dispatcher.",
         "status": "claim",
@@ -231,6 +235,34 @@
         "date": null,
         "statement": "Caller stated the review supports the decision to open the partner API in Q1.",
         "status": "claim",
+        "purpose": "description",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E10",
+        "locator": "caller:risk-matrix-5x5",
+        "source_kind": "caller",
+        "source_revision": null,
+        "date": null,
+        "statement": "Caller supplied the engagement's 5x5 likelihood and consequence risk matrix as the rating rubric.",
+        "status": "observation",
+        "purpose": "description",
+        "access": "read",
+        "limitations": "",
+        "excerpt": null,
+        "derived_from": []
+      },
+      {
+        "id": "E11",
+        "locator": "caller:risk-workshop",
+        "source_kind": "caller",
+        "source_revision": null,
+        "date": null,
+        "statement": "Likelihood and consequence inputs agreed with the caller for T-001 to T-004.",
+        "status": "observation",
         "purpose": "description",
         "access": "read",
         "limitations": "",
@@ -659,7 +691,232 @@
       ],
       "dependencies": []
     },
-    "methods": [],
+    "methods": [
+      {
+        "id": "M-1",
+        "method_id": "stride-per-element",
+        "source_revision": null,
+        "source_status": "verified",
+        "scope_refs": [
+          "S1",
+          "S2",
+          "S3",
+          "S6",
+          "EP1"
+        ],
+        "applied": [
+          "Each in-scope element examined against applicable STRIDE categories"
+        ],
+        "status": "completed",
+        "omissions": [],
+        "evidence_refs": [
+          "E1",
+          "E2",
+          "E3",
+          "E4",
+          "E5",
+          "E6"
+        ],
+        "findings": [
+          {
+            "name": "STRIDE category",
+            "kind": "text",
+            "value": "Information disclosure",
+            "record_refs": [
+              "T-001"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": null,
+            "source_revision": null,
+            "identifier": null
+          },
+          {
+            "name": "STRIDE category",
+            "kind": "text",
+            "value": "Elevation of privilege",
+            "record_refs": [
+              "T-001"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": null,
+            "source_revision": null,
+            "identifier": null
+          },
+          {
+            "name": "STRIDE category",
+            "kind": "text",
+            "value": "Information disclosure",
+            "record_refs": [
+              "T-002"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": null,
+            "source_revision": null,
+            "identifier": null
+          },
+          {
+            "name": "STRIDE category",
+            "kind": "text",
+            "value": "Elevation of privilege",
+            "record_refs": [
+              "T-003"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": null,
+            "source_revision": null,
+            "identifier": null
+          },
+          {
+            "name": "STRIDE category",
+            "kind": "text",
+            "value": "Tampering",
+            "record_refs": [
+              "T-004"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": null,
+            "source_revision": null,
+            "identifier": null
+          },
+          {
+            "name": "STRIDE category",
+            "kind": "text",
+            "value": "Spoofing",
+            "record_refs": [
+              "T-005"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": null,
+            "source_revision": null,
+            "identifier": null
+          }
+        ]
+      },
+      {
+        "id": "M-2",
+        "method_id": "attack-enrichment",
+        "source_revision": "ATT&CK v20.0",
+        "source_status": "verified",
+        "scope_refs": [
+          "S3"
+        ],
+        "applied": [
+          "Mapped supported behaviours to techniques"
+        ],
+        "status": "partial",
+        "omissions": [
+          "Only T-003 and T-005 had behaviour specific enough to map"
+        ],
+        "evidence_refs": [
+          "E5"
+        ],
+        "findings": [
+          {
+            "name": "Technique",
+            "kind": "taxonomy_mapping",
+            "value": "Exploit Public-Facing Application",
+            "record_refs": [
+              "T-003"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": "MITRE ATT&CK",
+            "source_revision": "v20.0",
+            "identifier": "T1190"
+          },
+          {
+            "name": "Technique",
+            "kind": "taxonomy_mapping",
+            "value": "Valid Accounts",
+            "record_refs": [
+              "T-005"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": "MITRE ATT&CK",
+            "source_revision": "v20.0",
+            "identifier": "T1078"
+          }
+        ]
+      },
+      {
+        "id": "M-3",
+        "method_id": "capec-enrichment",
+        "source_revision": "CAPEC 3.9",
+        "source_status": "verified",
+        "scope_refs": [
+          "S1",
+          "S3"
+        ],
+        "applied": [
+          "Matched scenario mechanics to attack patterns"
+        ],
+        "status": "partial",
+        "omissions": [
+          "T-004 and T-005 not mapped"
+        ],
+        "evidence_refs": [
+          "E2",
+          "E3",
+          "E5"
+        ],
+        "findings": [
+          {
+            "name": "Attack pattern",
+            "kind": "taxonomy_mapping",
+            "value": "Exploiting Incorrectly Configured Access Control Security Levels",
+            "record_refs": [
+              "T-001",
+              "T-002"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": "CAPEC",
+            "source_revision": "3.9",
+            "identifier": "CAPEC-180"
+          },
+          {
+            "name": "Attack pattern",
+            "kind": "taxonomy_mapping",
+            "value": "Server Side Request Forgery",
+            "record_refs": [
+              "T-003"
+            ],
+            "evidence_refs": [
+              "E1"
+            ],
+            "status": "supported",
+            "source": "CAPEC",
+            "source_revision": "3.9",
+            "identifier": "CAPEC-664"
+          }
+        ]
+      }
+    ],
     "threats": [
       {
         "id": "T-001",
@@ -681,7 +938,10 @@
           "E3",
           "E4"
         ],
-        "method_refs": [],
+        "method_refs": [
+          "M-1",
+          "M-3"
+        ],
         "confidence": "high",
         "confidence_rationale": "Based on the cited implementation.",
         "finding_type": "evidenced_weakness",
@@ -712,7 +972,10 @@
         "evidence_refs": [
           "E2"
         ],
-        "method_refs": [],
+        "method_refs": [
+          "M-1",
+          "M-3"
+        ],
         "confidence": "medium",
         "confidence_rationale": "Based on the cited implementation.",
         "finding_type": "evidenced_weakness",
@@ -744,7 +1007,11 @@
         "evidence_refs": [
           "E5"
         ],
-        "method_refs": [],
+        "method_refs": [
+          "M-1",
+          "M-2",
+          "M-3"
+        ],
         "confidence": "medium",
         "confidence_rationale": "Based on the cited implementation.",
         "finding_type": "evidenced_weakness",
@@ -774,7 +1041,9 @@
         "evidence_refs": [
           "E6"
         ],
-        "method_refs": [],
+        "method_refs": [
+          "M-1"
+        ],
         "confidence": "low",
         "confidence_rationale": "Design inference without a traced implementation.",
         "finding_type": "design_hypothesis",
@@ -805,7 +1074,10 @@
         "evidence_refs": [
           "E9"
         ],
-        "method_refs": [],
+        "method_refs": [
+          "M-1",
+          "M-2"
+        ],
         "confidence": "unknown",
         "confidence_rationale": "Design inference without a traced implementation.",
         "finding_type": "design_hypothesis",
@@ -888,13 +1160,153 @@
         "threat_refs": [
           "T-001"
         ],
+        "status": "rated",
+        "rubric": {
+          "name": "Example 5x5 risk matrix",
+          "version": "1.0",
+          "origin": "Supplied by the caller for this engagement",
+          "evidence_refs": [
+            "E10"
+          ]
+        },
+        "inputs": [
+          {
+            "name": "likelihood",
+            "value": "Likely",
+            "evidence_refs": [
+              "E11"
+            ]
+          },
+          {
+            "name": "consequence",
+            "value": "Major",
+            "evidence_refs": [
+              "E11"
+            ]
+          }
+        ],
+        "rating": "High",
+        "original_values": [],
+        "rationale": "Rated with the supplied matrix from the agreed likelihood and consequence.",
+        "uncertainty": "Inputs are judgements agreed in the risk workshop, not measurements."
+      },
+      {
+        "id": "R-002",
+        "threat_refs": [
+          "T-002"
+        ],
+        "status": "rated",
+        "rubric": {
+          "name": "Example 5x5 risk matrix",
+          "version": "1.0",
+          "origin": "Supplied by the caller for this engagement",
+          "evidence_refs": [
+            "E10"
+          ]
+        },
+        "inputs": [
+          {
+            "name": "likelihood",
+            "value": "Possible",
+            "evidence_refs": [
+              "E11"
+            ]
+          },
+          {
+            "name": "consequence",
+            "value": "Moderate",
+            "evidence_refs": [
+              "E11"
+            ]
+          }
+        ],
+        "rating": "Medium",
+        "original_values": [],
+        "rationale": "Rated with the supplied matrix from the agreed likelihood and consequence.",
+        "uncertainty": "Inputs are judgements agreed in the risk workshop, not measurements."
+      },
+      {
+        "id": "R-003",
+        "threat_refs": [
+          "T-003"
+        ],
+        "status": "rated",
+        "rubric": {
+          "name": "Example 5x5 risk matrix",
+          "version": "1.0",
+          "origin": "Supplied by the caller for this engagement",
+          "evidence_refs": [
+            "E10"
+          ]
+        },
+        "inputs": [
+          {
+            "name": "likelihood",
+            "value": "Possible",
+            "evidence_refs": [
+              "E11"
+            ]
+          },
+          {
+            "name": "consequence",
+            "value": "Major",
+            "evidence_refs": [
+              "E11"
+            ]
+          }
+        ],
+        "rating": "High",
+        "original_values": [],
+        "rationale": "Rated with the supplied matrix from the agreed likelihood and consequence.",
+        "uncertainty": "Inputs are judgements agreed in the risk workshop, not measurements."
+      },
+      {
+        "id": "R-004",
+        "threat_refs": [
+          "T-004"
+        ],
+        "status": "rated",
+        "rubric": {
+          "name": "Example 5x5 risk matrix",
+          "version": "1.0",
+          "origin": "Supplied by the caller for this engagement",
+          "evidence_refs": [
+            "E10"
+          ]
+        },
+        "inputs": [
+          {
+            "name": "likelihood",
+            "value": "Unlikely",
+            "evidence_refs": [
+              "E11"
+            ]
+          },
+          {
+            "name": "consequence",
+            "value": "Moderate",
+            "evidence_refs": [
+              "E11"
+            ]
+          }
+        ],
+        "rating": "Medium",
+        "original_values": [],
+        "rationale": "Rated with the supplied matrix from the agreed likelihood and consequence.",
+        "uncertainty": "Inputs are judgements agreed in the risk workshop, not measurements."
+      },
+      {
+        "id": "R-005",
+        "threat_refs": [
+          "T-005"
+        ],
         "status": "unrated",
         "rubric": null,
         "inputs": [],
         "rating": null,
         "original_values": [],
-        "rationale": "No rating rubric was supplied.",
-        "uncertainty": "Exploitability depends on invoice ID predictability (not assessed)."
+        "rationale": "Not rated: partner credential design is unknown (G1).",
+        "uncertainty": "Depends on partner credential scopes."
       }
     ],
     "attack_trees": [

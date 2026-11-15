@@ -29,8 +29,8 @@ Map the user's words to runbook inputs:
 | "continue" plus a run folder | The run's mode | `RUN_DIR` = that folder |
 | "just gather evidence" | `evidence` | None |
 | "choose an architecture" or "choose methods" | `select` | The matching architecture or method selector |
-| "report", "html report" or "build a report", optionally naming a template (`executive`, `technical`, `client`), branding, sections or a run folder | `report` | Envelope from the named or latest run; template, branding and section changes |
-| "quick/deep ... with html report" | Requested depth, then `report` | After the run finishes, build the HTML report from its final JSON with the named or default template |
+| "report", "html report" or "build a report", optionally naming a run folder, client, workshops, artefacts, a risk matrix or branding | `report` | Envelope from the named or latest run; engagement details and branding |
+| "quick/deep ... with html report" | Requested depth, then `report` | After the run finishes, build the HTML report from its final JSON |
 
 Resolve quick/deep depth and privacy scope before standalone method routing. A method mentioned with a depth augments that run; it does not replace it. Full profile basenames are `gdpr` and `ccpa-cpra`; CCPA or CPRA resolves to `ccpa-cpra`. Both privacy scopes default to `METHODS: []` and `PRIVACY_PROFILES: []` for engineering analysis; only explicit selections add methods or profiles. Bare “LINDDUN” uses the depth-specific variant in quick/deep; in standalone method mode ask which variant if the task context does not determine it. Record the choice. “Without methods” and “without regulatory profiles” confirm empty selections. `other-regimes-screening` is opt-in too. An empty profile list creates no legal-applicability gaps solely for unrequested profiles. Selection neither asserts applicability nor authorizes network access.
 
@@ -45,7 +45,7 @@ $threat-model deep api with LINDDUN PRO
 
 The final example adds a method to the security architecture workflow; it keeps `REVIEW_SCOPE: security`, adds no profiles and writes no data inventory. See [the privacy guide](../../privacy/README.md). A continuation recovers its saved configuration; a change or challenge preserves and reviews existing privacy coverage rather than resetting it to current defaults.
 
-Report mode only renders an existing envelope. It neither reruns analysis nor changes the envelope. "With html report" adds a report step after a quick or deep run; it does not change that run's scope or methods. Template and branding names are basenames in `reporting/templates/` and `reporting/branding/`; a caller-named file is configuration data.
+Report mode builds one HTML report from an existing envelope. It neither reruns analysis nor changes the envelope. "With html report" adds a report step after a quick or deep run; it does not change that run's scope or methods. Workshops, artefact versions and a risk matrix come only from the caller. A risk matrix named with a quick or deep request is also that run's rating rubric, so threats can be rated; one named only at report time is displayed in the appendix and rates nothing. Branding names are basenames in `reporting/branding/`; a caller-named file is configuration data.
 
 Architecture ids are the basenames without `.md` in `quick/`, such as `web`, `api`, `microservices`, `rag` or `agentic-ai`. Method ids use the same convention in `methods/`, such as `stride-per-element` or `linddun-go`; they are not paths or frontmatter's path-qualified prompt ids.
 

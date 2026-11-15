@@ -185,7 +185,7 @@ Run the prompt against the evidence and write its output envelope as complete, v
 | `method` (standalone or scheduled) | `SYSTEM_UNDER_REVIEW.md` or a prior envelope | `method-<method>.json`, `method-<method>.md` |
 | `challenge` | An existing report envelope | `challenge.json`, `challenge.md`; privacy baseline: `DATA_INVENTORY.md` |
 | `change` | A baseline envelope and change evidence, such as a `git diff` range | `change-review.json`, `change-review.md`; privacy baseline: `DATA_INVENTORY.md` |
-| `report` | An existing envelope, a template and branding from `reporting/` | `report-<name>.config.json`, `report-<name>.html`, added to the envelope's run folder |
+| `report` | An existing envelope, caller-supplied engagement details and branding from `reporting/` | `report-<name>.engagement.json`, `report-<name>.html`, added to the envelope's run folder |
 
 Privacy and combined runs use these same artifact filenames. The selected privacy wrapper and architecture prompt, if any, produce one envelope per stage. The [inventory pattern](reference/privacy-evidence-pattern.md#data-inventory-companions) binds each inventory to its exact JSON source. On continuation, derive only missing inventory companions from that source, never overwrite an existing inventory or advance its source revision. Validate the entire existing inventory against a projection regenerated from its JSON under the inventory pattern, including inert rendering; a matching source header alone is insufficient. A mismatched or unsafe inventory requires a new run. Stage 01’s preliminary inventory stays immutable when stage 05 writes the final companion.
 

@@ -1,0 +1,21 @@
+{
+  "engagement_version": "1.0",
+  "title": "Threat model report",
+  "subtitle": null,
+  "client": null,
+  "project": null,
+  "report_version": null,
+  "authors": [],
+  "executive_summary": {
+    "system_overview": [],
+    "key_components": [],
+    "next_steps": []
+  },
+  "scope_and_approach": {
+    "approach": [],
+    "activities": []
+  },
+  "artefacts": [],
+  "workshops": [],
+  "risk_matrix": null
+}

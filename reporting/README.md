@@ -1,98 +1,64 @@
-# HTML reports
+# HTML report
 
-Turn any finished threat model into a self-contained HTML report you can open in a browser, filter, click through and print to PDF. Reports are built from the run's JSON envelope (`quick-report.json`, `05-report.json` or another reportable envelope), so the same model always produces the same report.
+Turn a finished threat model into one self-contained HTML report you can open in a browser, click through and print to PDF. It is built from the run's JSON envelope (`quick-report.json`, `05-report.json` or another reportable envelope) plus a short engagement file.
 
 ```text
-/threat-model report                                   # technical report for the latest run
-/threat-model report executive for threat-model/2026-11-15-quick-api
-/threat-model report client with branding ~/branding/acme.json
-/threat-model report technical, only threats, treatments and gaps, open threats only
-/threat-model quick api with html report               # run the review, then build the report
+/threat-model report
+/threat-model report for threat-model/2026-11-15-deep-api, client Acme, workshops in notes/workshops.md, risk matrix risk/matrix.json
+/threat-model deep api with STRIDE per element and ATT&CK, using risk/matrix.json as the rating rubric, with html report
 ```
 
-Codex uses `$threat-model` with the same words. The agent follows [the report builder](../helpers/report-builder.md): it writes a configuration file, then runs `fill.py` to embed the model, configuration and branding into [`renderer.html`](renderer.html). The browser does the rendering from the embedded JSON.
+Codex uses `$threat-model` with the same words. The agent follows [the report builder](../helpers/report-builder.md): it drafts the engagement file, then runs `fill.py` to embed the model, engagement file, branding and fonts into [`renderer.html`](renderer.html). The browser draws the report from the embedded JSON.
 
-Output goes into the same run folder: `report-<name>.html` and `report-<name>.config.json`. Existing files are never overwritten.
+Output goes into the run folder as `report-<name>.html` and `report-<name>.engagement.json`. Existing files are never overwritten.
 
-## What's here
+## Structure
 
-| File | Purpose |
+| Section | Contents | Comes from |
+| --- | --- | --- |
+| Executive summary | What the system is and does, key components, key next steps, headline counts, summary table, basis and limits | Narrative from the engagement file; everything else from the model |
+| Technical summary | Architecture diagram with threats, controls and verification on each component; overview table; component and flow inventory | Model |
+| Threats | Framework mapping table; threat details; attack trees and conflicts when present | Model (mappings come from method findings) |
+| Controls | Controls in place with status, limitations and the threats they address | Model |
+| Recommendations | Proposed treatments with alternatives and trade-offs; requirements and decisions when present | Model |
+| Verification required | Planned tests with pass, fail and inconclusive criteria | Model |
+| Scope and approach | Scope, approach, methods applied, inspection coverage, limitations, open unknowns | Model, plus approach narrative from the engagement file |
+| Appendix A: Artefacts | Artefact register with versions; sources and revisions cited by evidence; files inspected; evidence ledger | Engagement file and model |
+| Appendix B: Workshops | Date, title, attendees, purpose, outcomes | Engagement file |
+| Appendix C: Risk matrix | The matrix, rating definitions, rated threats placed on it, risk register | Engagement file and model |
+
+The architecture diagram is drawn from the model's flow records, arranged in flow order from the actors. Each component carries markers for its threats, controls and verification tests. Hover over a marker to see what it is; select it to open that entry. Select a component to highlight its connections. Flows that cross a trust boundary are dashed. Use the checkboxes to hide a layer and the zoom buttons to resize.
+
+When the engagement file leaves something out, the report says so and falls back to the model where it can: the scope description for the summary, the components with the most open threats, and the recommendations for the first open threats.
+
+## Engagement file
+
+Start from [`engagement-template.json`](engagement-template.json); [`examples/sample-engagement.json`](examples/sample-engagement.json) is a complete fictional one. All values are plain text.
+
+| Field | Purpose |
 | --- | --- |
-| `renderer.html` | The single report template: layout, styles and the JavaScript that draws every section. No external dependencies. |
-| `fill.py` | Validates inputs and embeds them into the template. Standard library only; no network. |
-| `templates/*.json` | Audience templates: which sections appear, in what order, with what options. |
-| `branding/*.json` | Organisation name, logo, colours, font, classification banner, footer and disclaimer. |
-| `examples/sample-quick-report.json` | A fictional model for previewing templates and branding. |
+| `title`, `subtitle`, `client`, `project`, `report_version`, `report_date`, `authors` | Cover details |
+| `executive_summary.system_overview` | One to three paragraphs: what the system is and does, and what the review found |
+| `executive_summary.key_components` | `{ "ref": "<record id>", "name": "...", "why": "..." }` |
+| `executive_summary.next_steps` | `{ "step": "...", "refs": ["<record ids>"] }` |
+| `scope_and_approach.approach` | Paragraphs on how the engagement was delivered |
+| `scope_and_approach.activities` | `{ "phase": "...", "description": "..." }` |
+| `artefacts` | `{ "name", "type", "version", "date", "source", "notes" }` |
+| `workshops` | `{ "date", "title", "attendees": [], "purpose", "outcomes": [] }` |
+| `risk_matrix` | `name`, `version`, `source`, `likelihood` and `consequence` levels (`label`, `description`), `cells` (one row per likelihood level, one rating label per consequence level) and `ratings` (`label`, `color`, `description`, highest first) |
+| `options` | `show_excerpts` (code excerpts in the evidence ledger, default off) and `hide_json_download` |
 
-To preview without an agent:
+The agent drafts the summary narrative from the model and cites record ids, so you can check each statement. Workshops, artefact versions and the risk matrix are never invented: supply them in the request or in files you name.
 
-```bash
-python3 -I -S -B reporting/fill.py reporting/examples/sample-quick-report.json \
-  reporting/templates/executive.json reporting/branding/default.json /tmp/preview.html
-```
+### Risk ratings
 
-## Templates
+[`examples/risk-matrix-5x5.json`](examples/risk-matrix-5x5.json) is a generic example. Replace it with your own.
 
-| Template | For | Contents |
-| --- | --- | --- |
-| `executive` | Leaders and decision makers | Summary tiles, threats for first attention, diagram, compact open threats and treatments, decisions, open unknowns |
-| `technical` | Engineers and security reviewers | Every section, including the system model, attack trees, the evidence ledger with excerpts and the raw JSON download |
-| `client` | Client deliverables | Full findings, treatments and verification approach; evidence locators without code excerpts; no raw JSON download button |
+Threats are rated only when the model itself holds rated risks. Name your matrix as the rating rubric when you run the review (`using risk/matrix.json as the rating rubric`) and give the likelihood and consequence for each threat when asked. The report then shows each rating, orders threats by it and places each threat on the matrix when its inputs are named `likelihood` and `consequence` (or `impact`) and match the matrix labels. A matrix supplied only at report time is displayed in Appendix C and rates nothing.
 
-Make your own by copying a template, renaming it and editing `sections`. Templates are plain JSON:
+### Framework mappings
 
-```json
-{
-  "report_config_version": "1.0",
-  "template": "board-pack",
-  "title": "Partner API: security review",
-  "subtitle": "Board risk committee, Q1",
-  "description": "One-line description of who this is for.",
-  "options": { "interactive": true, "show_excerpts": false },
-  "sections": [
-    "cover",
-    "notice",
-    { "id": "inspection-coverage", "options": { "compact": true } },
-    { "id": "executive-summary", "options": { "top_threats": 3 } },
-    { "id": "threats", "title": "Open findings", "options": { "compact": true, "filter": { "status": ["open"] } } },
-    { "id": "gaps", "options": { "filter": { "status": ["open"] } } }
-  ]
-}
-```
-
-Global options: `interactive` (filters, search, sorting and collapsible threats; `false` gives a static, fully expanded page) and `show_excerpts` (show sanitized code excerpts in the evidence ledger).
-
-## Sections
-
-`cover`, `notice` and `inspection-coverage` always appear first, in that order, even if a template leaves them out. The runbook requires limitations and inspection coverage before any findings.
-
-| Section id | Shows | Options |
-| --- | --- | --- |
-| `cover` | Title, organisation, logo, prepared for/by, report date, model identity, depth, status, architectures | |
-| `notice` | How to read the report, extra disclaimer from branding, limitations recorded in the model | |
-| `inspection-coverage` | Files read, partially read and skipped; inspection-coverage records; unmapped trust boundaries | `compact` |
-| `executive-summary` | Count tiles, open threats by confidence, threats for first attention, rated risks, key unknowns | `top_threats`, `top_gaps` |
-| `scope` | Description, in and out of scope, objectives, assumptions | |
-| `system` | Actors, assets, data, zones, entry points, states, boundaries, flows, dependencies | |
-| `diagram` | Interactive data-flow diagram drawn from flow records; boundary crossings in red | `max_nodes` |
-| `threats` | Filterable threat list with linked controls, treatments, verification, risks and decisions | `compact`, `filter`, `order` (`priority` or `id`), `expanded` |
-| `risks` | Risk records; ratings only when a supplied rubric is cited | |
-| `controls` | Existing controls with status and limitations | `filter` |
-| `requirements` | Proposed and supplied requirements | |
-| `treatments` | Proposed outcomes with alternatives, trade-offs and dependencies | `compact` |
-| `verification` | Approach, expected outcome, and pass, fail and inconclusive criteria | `compact` |
-| `decisions` | Caller-supplied decisions | |
-| `gaps` | Gaps and unknowns with what would settle them | `filter` |
-| `conflicts` | Unresolved and resolved conflicts with alternatives | |
-| `methods` | Selected methods and actual execution records with findings | |
-| `attack-trees` | AND/OR trees and state-transition graphs | |
-| `attack-paths` | Satisfying sets and state traces | |
-| `changes` | Change records from a change review | |
-| `evidence` | Evidence ledger with locators, status, purpose and access | `show_excerpts` |
-| `visualizations` | Visualization records carried in the model, shown as text | |
-| `appendix` | Envelope metadata, attachments list (not contents), other coverage records, raw JSON download | `include_raw_json` |
-
-Every section accepts a `title` to rename it. `filter` maps a record field to allowed values, such as `{ "status": ["open"] }` or `{ "kind": ["topology", "evidence"] }`; the report notes how many records the filter hid. References to records in sections you leave out appear as plain IDs rather than links.
+The mapping table has one column per method that recorded findings against threats, such as STRIDE, MITRE ATT&CK, CAPEC, ATLAS, LINDDUN or CVSS. Request the methods when you run the review (`with STRIDE per element and ATT&CK`). Without them, the report says no mappings are recorded.
 
 ## Branding
 
@@ -104,27 +70,44 @@ Every section accepts a `title` to rename it. `filter` maps a record field to al
   "prepared_by": "Product Security",
   "prepared_for": "Example Client Pty Ltd",
   "logo_file": "acme-logo.png",
-  "classification": { "label": "COMMERCIAL IN CONFIDENCE", "color": "#5a2a82" },
-  "colors": { "primary": "#2d1b4e", "accent": "#e0662b", "surface": "#f6f3fa" },
-  "font_family": "Georgia, 'Times New Roman', serif",
+  "classification": { "label": "COMMERCIAL IN CONFIDENCE", "color": "#005f73" },
+  "colors": { "primary": "#005f73", "accent": "#0a9396", "band": "#001219" },
   "footer_text": "Prepared for the named client only.",
   "disclaimer": "This assessment reflects the evidence available at the time of review."
 }
 ```
 
-- `logo_file` is a PNG, JPEG, GIF, WebP or SVG in the same folder as the branding file (512 KB maximum). It is embedded as a data URI. You can supply `logo_data_uri` directly instead.
-- `colors` accepts hex values for `primary`, `accent`, `text`, `bg`, `surface`, `muted` and `border`.
-- `font_family` must name fonts installed on the reader's machine; the report never downloads web fonts.
+- `colors`: `accent` (rules, numbers, buttons), `primary` (headings and links) and `band` (cover and diagram header). Leave empty for the default purple and black.
+- `logo_file` is a PNG, JPEG, GIF, WebP or SVG next to the branding file (512 KB maximum), embedded as a data URI.
+- `font_family` and `heading_font_family` override the bundled fonts with fonts installed on the reader's machine.
 - `classification: null` removes the banner.
 
-Keep client branding files outside this library if they are private, and name them in the request.
+Keep private client branding outside this library and name the file in the request. The report also has a dark mode button and prints to A4 landscape.
+
+## What's here
+
+| File | Purpose |
+| --- | --- |
+| `renderer.html` | The report template: layout, styles and the JavaScript that draws every section. |
+| `fill.py` | Validates inputs and embeds them into the template. Standard library only; no network. |
+| `engagement-template.json` | Empty engagement file to start from. |
+| `branding/` | Default and example branding. |
+| `fonts/` | Archivo, Hanken Grotesk and IBM Plex Mono (Latin subsets, SIL Open Font License; licences included), embedded into each report so it needs no web fonts. |
+| `examples/` | A fictional model, engagement file and risk matrix for previewing. |
+
+To preview without an agent:
+
+```bash
+python3 -I -S -B reporting/fill.py reporting/examples/sample-quick-report.json \
+  reporting/examples/sample-engagement.json reporting/branding/default.json /tmp/preview.html
+```
 
 ## Safety
 
-The model's text comes from the repositories under review and may contain hostile content. The renderer inserts all model, configuration and branding text as text nodes, never as markup. `fill.py` escapes `<`, `>`, `&` and line separators in the embedded JSON so nothing can close the script element. The page's Content-Security-Policy allows only its own inline script and styles and `data:` images, so it cannot load or send anything over the network.
+Model text comes from the repositories under review and may contain hostile content. The renderer inserts all model, engagement and branding text as text nodes, never as markup. `fill.py` escapes `<`, `>`, `&` and line separators in the embedded JSON so nothing can close the script element. The page's Content-Security-Policy allows only its own inline script and styles and `data:` images and fonts, so it cannot load or send anything over the network.
 
-The HTML embeds the complete model even when sections are hidden. Treat reports as private review material; review them before sharing.
+The HTML embeds the complete model. Treat reports as private review material and review them before sharing.
 
 ## Changing the renderer
 
-`renderer.html` is one file: CSS at the top, then one renderer function per section in the `R` object. To add a section, add its id to `SECTION_TITLES` and `R` in the renderer, to `SECTIONS` (and any new options to `SECTION_OPTIONS`) in `fill.py`, and to the table above. Build helpers `h()` and `s()` create elements safely; keep using them rather than `innerHTML`. Preview with the sample model, and test with hostile strings in the model before relying on a change.
+`renderer.html` is one file: CSS at the top, then one function per section. Build elements with the `h()` and `s()` helpers rather than `innerHTML`. When you add an engagement field, add it to the renderer, to the checks in `fill.py`, to the table above and to the report builder prompt. Preview with the sample files, and test with hostile strings in the model and engagement file before relying on a change.
